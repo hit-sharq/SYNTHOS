@@ -32,8 +32,8 @@ export default async function Home() {
             Synthos turns client conversations and creative briefs into structured project intelligence, strategic direction, proposals, quotes, and human-approved deliverables.
           </p>
           <div className="row gap-3 wrap">
-            <Link href="/dashboard/overview" className="btn btn-signal btn-lg">Open workspace →</Link>
-            <Link href="/dashboard/projects" className="btn btn-ghost btn-lg">View projects</Link>
+            <Link href="/intake" className="btn btn-signal btn-lg">Start a Project →</Link>
+            <Link href="/intake" className="btn btn-ghost btn-lg">View projects</Link>
           </div>
           <div className="row gap-2 wrap" style={{ marginTop: 22 }}>
             <span className="tag-ai"><span className="dot dot-ai" /> AI assists</span>
@@ -171,7 +171,7 @@ export default async function Home() {
         <div className="container" style={{ textAlign: "center" }}>
           <h2 className="display" style={{ fontSize: "clamp(1.8rem,3vw,2.4rem)", marginBottom: 14 }}>Ready to move work forward?</h2>
           <p className="lede" style={{ marginBottom: 28 }}>Open your workspace and see what needs your attention next.</p>
-          <Link href="/dashboard/overview" className="btn btn-signal btn-lg">Open Synthos →</Link>
+          <Link href="/dashboard/overview" className="btn btn-signal btn-lg">Get started →</Link>
         </div>
       </section>
     </main>

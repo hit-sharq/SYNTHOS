@@ -18,16 +18,6 @@ export default function Footer() {
         </div>
 
         <div className="foot-col">
-          <h5>Product</h5>
-          <Link href="/dashboard/overview">Overview</Link>
-          <Link href="/dashboard/projects">Projects</Link>
-          <Link href="/dashboard/intelligence">AI Intelligence</Link>
-          <Link href="/dashboard/workshops">Workshops</Link>
-          <Link href="/dashboard/proposals">Proposals</Link>
-          <Link href="/dashboard/quotes">Quotes</Link>
-        </div>
-
-        <div className="foot-col">
           <h5>News & Insights</h5>
           <Link href="/blog">Blog</Link>
           <Link href="/news">News</Link>
@@ -37,6 +27,7 @@ export default function Footer() {
         <div className="foot-col">
           <h5>Company</h5>
           <Link href="/team">Team</Link>
+          <Link href="/talents">Talents & Creators</Link>
           <Link href="/about">About</Link>
           <Link href="/contact">Contact</Link>
         </div>
