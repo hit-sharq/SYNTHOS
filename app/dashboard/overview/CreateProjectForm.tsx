@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { VoiceInput } from "@/components/app/VoiceInput"
 import { Panel } from "@/components/app/ui"
 
-const CAN_CREATE_ROLES = ["lead", "producer"]
+const CAN_CREATE_ROLES = ["talent"]
 const TYPES = [
   "Brand & Campaign",
   "Film & Motion",
@@ -64,7 +64,7 @@ export default function CreateProjectForm() {
   if (!canCreate) {
     return (
       <div className="panel-soft" style={{ padding: 16, textAlign: "center" }}>
-        <p className="tiny muted">Only account managers and producers can create projects.</p>
+        <p className="tiny muted">Only talents can create projects.</p>
       </div>
     )
   }

@@ -4,13 +4,16 @@ import { prisma } from "@/lib/prisma"
 import { Stage, ProjStatus, ReviewStatus } from "@prisma/client"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const url = new URL(req.url)
+    const owner = url.searchParams.get("owner")
     const projects = await prisma.project.findMany({
+      where: owner === "true" ? { ownerId: { not: null } } : undefined,
       orderBy: { updatedAt: "desc" },
       include: { brief: true, understanding: true, workshop: true, proposal: true, quote: true },
     })
-    return NextResponse.json(projects)
+    return NextResponse.json({ projects })
   } catch (error) {
     console.error("Failed to fetch projects:", error)
     return NextResponse.json({ error: "Failed to load projects" }, { status: 500 })

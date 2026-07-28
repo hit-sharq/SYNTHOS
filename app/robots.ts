@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/"],
     },
-    sitemap: "https://synthos.studio/sitemap.xml",
+    sitemap: "https://lumyn.co.ke/sitemap.xml",
   }
 }

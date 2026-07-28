@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       })
 
       const owner = await prisma.user.findFirst({
-        where: { role: { in: ["producer", "account_manager", "lead", "admin"] } },
+        where: { role: { in: ["talent"] } },
         orderBy: { createdAt: "asc" },
       })
 
@@ -82,8 +82,8 @@ export async function POST(req: Request) {
     }
 
     const today = new Date().toISOString().split("T")[0]
-    const roomName = `synthos-${targetProjectId}-${Date.now()}`
-    const roomUrl = `https://synthos.daily.co/${roomName}`
+    const roomName = `lumyn-${targetProjectId}-${Date.now()}`
+    const roomUrl = `https://lumyn.daily.co/${roomName}`
 
     const existing = await prisma.clientCall.findUnique({ where: { projectId: targetProjectId } })
 

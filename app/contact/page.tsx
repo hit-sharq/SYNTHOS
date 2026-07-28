@@ -79,7 +79,7 @@ export default function ContactPage() {
       <PageHead
         eyebrow="Contact"
         title="Get in touch"
-        desc="Have a question or want to see AIMS in action? We&apos;d love to hear from you."
+        desc="Have a question or want to see Lumyn in action? We&apos;d love to hear from you."
       />
 
       <div style={{ maxWidth: 860, margin: "0 auto" }}>
@@ -87,13 +87,13 @@ export default function ContactPage() {
           {/* Left column — contact info */}
           <div style={{ padding: "36px 32px", borderRight: "1px solid var(--line)" }}>
             <div className="section-title" style={{ marginBottom: 10 }}>Email</div>
-            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>hello@aims.studio</p>
+            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>hello@lumyn.co.ke</p>
 
             <div className="section-title" style={{ marginBottom: 10 }}>Sales &amp; Partnerships</div>
-            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>partners@aims.studio</p>
+            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>partners@lumyn.co.ke</p>
 
             <div className="section-title" style={{ marginBottom: 10 }}>Support</div>
-            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>support@aims.studio</p>
+            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>support@lumyn.co.ke</p>
 
             <div className="section-title" style={{ marginBottom: 10 }}>Location</div>
             <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>Remote-first, serving creative teams worldwide.</p>

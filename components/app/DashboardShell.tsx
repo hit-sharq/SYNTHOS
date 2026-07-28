@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
@@ -18,12 +19,12 @@ import {
   ChevronRight,
   X,
   GitBranch,
+  User,
 } from "lucide-react"
-import { useState } from "react"
 
 import "./dashboard.css"
 
-const NAV = [
+const ADMIN_NAV = [
   { href: "/dashboard/overview", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/pipeline", label: "Pipeline", icon: GitBranch },
   { href: "/dashboard/projects", label: "Projects", icon: FolderOpen },
@@ -35,10 +36,26 @@ const NAV = [
   { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
 ]
 
+const TALENT_NAV = [
+  { href: "/dashboard/talent", label: "My Dashboard", icon: User },
+  { href: "/dashboard/projects", label: "My Projects", icon: FolderOpen },
+  { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
+]
+
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [role, setRole] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch("/api/auth/role")
+      .then(res => res.json())
+      .then(data => setRole(data.role || null))
+      .catch(() => setRole(null))
+  }, [])
+
+  const NAV = role === "talent" ? TALENT_NAV : ADMIN_NAV
 
   return (
     <div className="dash-layout">
@@ -52,12 +69,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
                 <circle cx="19" cy="4" r="2.1" fill="currentColor" />
               </svg>
             </span>
-            {!collapsed && (
-              <span className="dash-brand-word">
-                Synthos
-                <em>Creative Intelligence</em>
-              </span>
-            )}
+             {!collapsed && (
+               <span className="dash-brand-word">
+                 Lumyn
+                 <em>Creative Intelligence</em>
+               </span>
+             )}
           </Link>
           <div className="dash-sidebar-actions">
             <button className="dash-collapse" onClick={() => setCollapsed((v) => !v)} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>

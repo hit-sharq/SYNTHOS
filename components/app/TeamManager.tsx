@@ -49,7 +49,7 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
     try {
       const fd = new FormData()
       fd.append("file", file)
-      fd.append("folder", "synthos/team")
+      fd.append("folder", "lumyn/team")
       const res = await fetch("/api/upload", { method: "POST", body: fd })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || "Upload failed")
@@ -82,7 +82,7 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
     await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
     setEditing(false)
     setEditId(null)
-    setForm({ name: "", email: "", role: "creative_writer", skills: "", availability: "available", avatar: "", description: "", notes: "" })
+    setForm({ name: "", email: "", role: "creative", skills: "", availability: "available", avatar: "", description: "", notes: "" })
     load()
     setSaving(false)
   }
@@ -115,7 +115,7 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
               </div>
               <div className="field">
                 <label>Email</label>
-                <input className="admin-input" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="joshua@synthos.studio" />
+                 <input className="admin-input" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} placeholder="joshua@lumyn.co.ke" />
               </div>
             </div>
             <div className="form-grid-2">

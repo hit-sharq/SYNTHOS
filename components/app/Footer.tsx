@@ -33,6 +33,12 @@ export default function Footer() {
         </div>
 
         <div className="foot-col">
+          <h5>For Creators</h5>
+          <Link href="/sign-up">Join as Talent</Link>
+          <Link href="/sign-in">Talent Login</Link>
+        </div>
+
+        <div className="foot-col">
           <h5>Resources</h5>
           <Link href="/">Documentation</Link>
           <Link href="/">Help center</Link>
@@ -46,7 +52,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="container foot-base">
-        <span className="tiny muted">© {new Date().getFullYear()} Synthos. Human + AI creative intelligence.</span>
+        <span className="tiny muted">© {new Date().getFullYear()} Lumyn. Human + AI creative intelligence.</span>
         <span className="tiny muted">Built for creative teams &amp; agencies.</span>
       </div>
     </footer>

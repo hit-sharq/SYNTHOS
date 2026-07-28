@@ -6,7 +6,7 @@ import { callScheduledEmail, contactReportReadyEmail, proposalReadyEmail, quoteR
 
 export async function createDailyRoom(roomName: string): Promise<string> {
   const dailyApiKey = process.env.DAILY_API_KEY
-  if (!dailyApiKey) return `https://synthos.daily.co/${roomName}`
+  if (!dailyApiKey) return `https://lumyn.daily.co/${roomName}`
   
   try {
     const createRes = await fetch("https://api.daily.co/v1/rooms", {
@@ -28,7 +28,7 @@ export async function createDailyRoom(roomName: string): Promise<string> {
   } catch (e) {
     console.error("Failed to create Daily.co room:", e)
   }
-  return `https://synthos.daily.co/${roomName}`
+  return `https://lumyn.daily.co/${roomName}`
 }
 
 const CONTACT_REPORT_FROM_BRIEF_PROMPT = (project: any) => `You are a creative intelligence AI. Generate a professional contact report for a client meeting based on the project brief ${project.call?.meetingSource && project.call.meetingSource !== "embedded" ? "and the real meeting transcript" : ""}.
@@ -208,7 +208,7 @@ export async function runAutoWorkflow(projectId: string) {
         currentStage = "call"
         await persistStatus("call", "schedule", "in_progress")
 
-        const roomName = `synthos-${projectId}-${Date.now()}`
+        const roomName = `lumyn-${projectId}-${Date.now()}`
         const dailyUrl = await createDailyRoom(roomName)
 
         await prisma.clientCall.create({

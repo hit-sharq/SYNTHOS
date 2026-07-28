@@ -115,7 +115,7 @@ export default function MeetingRoomClient({ roomName, project }: { roomName: str
     <div className="meeting-layout">
       <div className="meeting-video">
         <iframe
-          src={`https://synthos.daily.co/${roomName}`}
+          src={`https://lumyn.daily.co/${roomName}`}
           allow="camera; microphone; fullscreen; display-capture; autoplay"
           style={{ width: "100%", height: "100%", border: "none" }}
           title="Meeting room"

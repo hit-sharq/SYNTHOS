@@ -13,7 +13,7 @@ export default async function NewsPage() {
 
   return (
     <PageWrap>
-      <PageHead eyebrow="News" title="News" desc="Latest updates, announcements, and news from Synthos." />
+      <PageHead eyebrow="News" title="News" desc="Latest updates, announcements, and news from Lumyn." />
       <div className="blog-grid">
         {posts.map((post) => (
           <article key={post.id} className="blog-card">

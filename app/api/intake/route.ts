@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     })
 
     const owner = await prisma.user.findFirst({
-      where: { role: { in: ["producer", "account_manager", "lead", "admin"] } },
+      where: { role: { in: ["talent"] } },
       orderBy: { createdAt: "asc" },
     })
 

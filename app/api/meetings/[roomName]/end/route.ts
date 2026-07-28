@@ -61,7 +61,7 @@ export async function POST(req: Request, { params }: { params: { roomName: strin
 
     if (params.roomName) {
       callData.roomName = params.roomName
-      callData.roomUrl = `https://synthos.daily.co/${params.roomName}`
+      callData.roomUrl = `https://lumyn.daily.co/${params.roomName}`
     }
 
     if (meetingSource) callData.meetingSource = meetingSource
@@ -254,21 +254,21 @@ Return ONLY a JSON object:
           create: [
             {
               senderId: "system",
-              senderName: "Synthos AI",
+              senderName: "Lumyn AI",
               senderRole: "system",
               recipientId: clientEmail,
               subject: `Contact Report: ${b.title}`,
-              body: `Dear ${clientName},\n\nThank you for the meeting. Here is the contact report:\n\n${contactReportData.summary}\n\nKey Points:\n${(contactReportData.keyPoints || []).map((p: any) => `- ${p}`).join("\n")}\n\nNext Steps:\n${(contactReportData.nextSteps || []).map((s: any) => `- ${s}`).join("\n")}\n\nWe will send the proposal shortly.\n\nBest regards,\nSynthos`,
+               body: `Dear ${clientName},\n\nThank you for the meeting. Here is the contact report:\n\n${contactReportData.summary}\n\nKey Points:\n${(contactReportData.keyPoints || []).map((p: any) => `- ${p}`).join("\n")}\n\nNext Steps:\n${(contactReportData.nextSteps || []).map((s: any) => `- ${s}`).join("\n")}\n\nWe will send the proposal shortly.\n\nBest regards,\nLumyn`,
               kind: "report",
               refId: contactReport.id,
             },
             {
               senderId: "system",
-              senderName: "Synthos AI",
+              senderName: "Lumyn AI",
               senderRole: "system",
               recipientId: clientEmail,
               subject: `Proposal: ${b.title}`,
-              body: `Dear ${clientName},\n\nPlease find attached the proposal for ${project.name}.\n\nInvestment: ${proposalData.investment}\nTimeline: ${proposalData.timeline}\n\nPlease review and let us know if you have any questions.\n\nBest regards,\nSynthos`,
+              body: `Dear ${clientName},\n\nPlease find attached the proposal for ${project.name}.\n\nInvestment: ${proposalData.investment}\nTimeline: ${proposalData.timeline}\n\nPlease review and let us know if you have any questions.\n\nBest regards,\nLumyn`,
               kind: "proposal",
               refId: proposal.id,
             },

@@ -7,17 +7,17 @@ import Header from "@/components/app/Header"
 import Footer from "@/components/app/Footer"
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://synthos.studio"),
+  metadataBase: new URL("https://lumyn.co.ke"),
   title: {
-    default: "Synthos — Creative Intelligence & Project Automation",
-    template: "%s · Synthos",
+    default: "Lumyn — Creative Intelligence & Project Automation",
+    template: "%s · Lumyn",
   },
   description:
-    "Synthos is the operating system for creative intelligence. Turn client conversations and briefs into structured project intelligence, proposals, and human-approved deliverables.",
+    "Lumyn is the operating system for creative intelligence. Turn client conversations and briefs into structured project intelligence, proposals, and human-approved deliverables.",
   openGraph: {
-    title: "Synthos — Creative Intelligence & Project Automation",
+    title: "Lumyn — Creative Intelligence & Project Automation",
     description: "AI accelerates the work. Humans provide the judgment.",
-    url: "https://synthos.studio",
+    url: "https://lumyn.co.ke",
     type: "website",
   },
 }

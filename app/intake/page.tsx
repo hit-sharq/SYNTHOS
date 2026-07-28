@@ -36,7 +36,7 @@ export default function IntakePage() {
   const initialized = useRef(false)
 
   useEffect(() => {
-    const storedId = sessionStorage.getItem("synthos_last_project_id")
+    const storedId = sessionStorage.getItem("lumyn_last_project_id")
     if (storedId && !initialized.current) {
       initialized.current = true
       setSubmittedData({ name: "", title: "", projectId: storedId })
@@ -70,7 +70,7 @@ export default function IntakePage() {
       const data = await res.json()
       setStatus("success")
       setSubmittedData({ name: form.name, title: form.title, projectId: data.projectId })
-      sessionStorage.setItem("synthos_last_project_id", data.projectId)
+      sessionStorage.setItem("lumyn_last_project_id", data.projectId)
       setForm({ name: "", company: "", email: "", phone: "", type: "Brand & Campaign", title: "", objective: "", audience: "", direction: "", budget: "", timeline: "", context: "" })
       setPolling(true)
     } catch (err) {
@@ -84,7 +84,7 @@ export default function IntakePage() {
     setWorkflowStatus(null)
     setPolling(false)
     setSubmittedData(null)
-    sessionStorage.removeItem("synthos_last_project_id")
+    sessionStorage.removeItem("lumyn_last_project_id")
   }
 
   useEffect(() => {

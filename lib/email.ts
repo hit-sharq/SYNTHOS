@@ -16,7 +16,7 @@ export async function sendEmail(params: {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: params.from || process.env.RESEND_FROM_EMAIL || "Synthos <info@lumyn.co.ke>",
+      from: params.from || process.env.RESEND_FROM_EMAIL || "Lumyn <info@lumyn.co.ke>",
       to: params.to,
       subject: params.subject,
       html: params.html,

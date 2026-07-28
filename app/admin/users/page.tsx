@@ -4,10 +4,8 @@ import { useState, useEffect } from "react"
 import { PageHead } from "@/components/app/Page"
 
 const ROLES = [
-  { value: "strategist", label: "Strategist" },
-  { value: "creative", label: "Creative" },
-  { value: "producer", label: "Producer" },
-  { value: "lead", label: "Lead (Admin)" },
+  { value: "client", label: "Client" },
+  { value: "talent", label: "Talent" },
 ]
 
 type User = {

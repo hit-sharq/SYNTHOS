@@ -15,11 +15,12 @@ model User {
   email     String   @unique
   name      String
   initials  String
-  role      String   @default("strategist") // strategist | creative | producer | lead | client
+  role      String   @default("client") // client | talent
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   projects  Project[]
+  talentProfile Talent?
 }
 
 model Project {
@@ -338,9 +339,11 @@ model Invoice {
 // ----- Talent Management -----
 model Talent {
   id          String   @id @default(cuid())
+  userId      String?  @unique
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   name        String
   email       String
-  role        String // creative | strategist | producer | designer | developer | animator
+  position   String // creative | strategist | producer | designer | developer | animator
   skills      String[]
   experience  Int      @default(0) // years
   rating      Float    @default(0)
@@ -351,7 +354,7 @@ model Talent {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  @@index([role])
+  @@index([position])
   @@index([availability])
 }
 

@@ -50,8 +50,8 @@ Return ONLY a JSON object:
     const participants = Array.isArray(parsed.participants) ? parsed.participants : ["Producer", "Strategist", project.client]
     const summary = parsed.summary || `Discovery call for ${project.name}`
 
-    const roomName = `synthos-${params.id}-${Date.now()}`
-    const roomUrl = `https://synthos.daily.co/${roomName}`
+    const roomName = `lumyn-${params.id}-${Date.now()}`
+    const roomUrl = `https://lumyn.daily.co/${roomName}`
 
     const existing = await prisma.clientCall.findUnique({ where: { projectId: params.id } })
 

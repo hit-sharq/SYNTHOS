@@ -197,7 +197,7 @@ export default function AdminProjectsPage() {
     try {
       const formData = new FormData()
       formData.append("file", file)
-      formData.append("folder", `synthos/deliverables/${projectId}`)
+      formData.append("folder", `lumyn/deliverables/${projectId}`)
 
       const res = await fetch("/api/upload", {
         method: "POST",

@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { prisma } from "@/lib/prisma"
 import { PageHead, PageWrap } from "@/components/app/Page"
+import Link from "next/link"
 import "@/components/app/blog.css"
 
 export default async function TalentsPage() {
@@ -17,7 +18,7 @@ export default async function TalentsPage() {
         {talents.map((talent) => (
           <article key={talent.id} className="blog-card">
             <div className="blog-card-body">
-              <span className="eyebrow" style={{ textTransform: "capitalize" }}>{talent.role}</span>
+              <span className="eyebrow" style={{ textTransform: "capitalize" }}>{talent.position}</span>
               <h3>{talent.name}</h3>
               <p className="tiny muted" style={{ marginBottom: 8 }}>{talent.email}</p>
               {talent.notes && <p className="tiny" style={{ color: "var(--ink-2)", marginBottom: 10, lineHeight: 1.55 }}>{talent.notes}</p>}
@@ -48,6 +49,7 @@ export default async function TalentsPage() {
         {talents.length === 0 && (
           <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: 60 }}>
             <p className="muted">No talents listed yet.</p>
+            <Link href="/sign-up" className="btn btn-signal" style={{ marginTop: 20 }}>Join as Creator</Link>
           </div>
         )}
       </div>

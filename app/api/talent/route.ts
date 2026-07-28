@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma"
 export async function GET() {
   try {
     const talents = await prisma.talent.findMany({
+      include: { user: { select: { id: true, email: true, name: true } } },
       orderBy: { createdAt: "desc" },
     })
     return NextResponse.json(talents)
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
       data: {
         name: body.name,
         email: body.email,
-        role: body.role,
+        position: body.position,
         skills: body.skills || [],
         experience: body.experience || 0,
         rating: body.rating || 0,

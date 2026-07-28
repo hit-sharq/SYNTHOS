@@ -10,7 +10,7 @@ import "./header.css"
 
 export function BrandMark({ compact }: { compact?: boolean }) {
   return (
-    <Link href="/" className="brandmark" aria-label="Synthos home">
+    <Link href="/" className="brandmark" aria-label="Lumyn home">
       <span className="brandmark-mark" aria-hidden>
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
           <path d="M3 17 L9 6 L13 13 L19 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -19,7 +19,7 @@ export function BrandMark({ compact }: { compact?: boolean }) {
       </span>
       {!compact && (
         <span className="brandmark-word">
-          Synthos
+          Lumyn
           <em>Creative Intelligence</em>
         </span>
       )}
@@ -34,6 +34,7 @@ export default function Header() {
   const [notifOpen, setNotifOpen] = useState(false)
   const { user, isLoaded, isSignedIn } = useUser()
   const [isAdmin, setIsAdmin] = useState(false)
+  const [userRole, setUserRole] = useState<string | null>(null)
   const [notifications, setNotifications] = useState<any[]>([])
   const [unread, setUnread] = useState(0)
   const notifRef = useRef<HTMLDivElement>(null)
@@ -42,9 +43,19 @@ export default function Header() {
     if (isSignedIn) {
       fetch("/api/auth/is-admin")
         .then(res => res.json())
-        .then(data => setIsAdmin(data.isAdmin))
+        .then(data => {
+          setIsAdmin(data.isAdmin)
+          if (data.isAdmin) setUserRole("admin")
+        })
+      fetch("/api/auth/role")
+        .then(res => res.json())
+        .then(data => {
+          if (data.role && data.role !== "client") setUserRole(data.role)
+        })
+        .catch(() => {})
     } else {
       setIsAdmin(false)
+      setUserRole(null)
     }
   }, [isSignedIn])
 
@@ -108,10 +119,10 @@ export default function Header() {
         <nav className={`topnav ${open ? "open" : ""}`}>
           <Link href="/" className={`topnav-link ${pathname === "/" ? "active" : ""}`} onClick={() => setOpen(false)}>Home</Link>
           <Link href="/intake" className={`topnav-link ${pathname === "/intake" ? "active" : ""}`} onClick={() => setOpen(false)}>Start a Project</Link>
-          {isSignedIn && isAdmin && (
+          {isSignedIn && (isAdmin || userRole === "talent") && (
             <>
               <Link href="/dashboard/overview" className={`topnav-link ${pathname === "/dashboard/overview" ? "active" : ""}`} onClick={() => setOpen(false)}>Dashboard</Link>
-              <Link href="/admin" className={`topnav-link ${pathname.startsWith("/admin") ? "active" : ""}`} onClick={() => setOpen(false)}>Admin</Link>
+              {isAdmin && <Link href="/admin" className={`topnav-link ${pathname.startsWith("/admin") ? "active" : ""}`} onClick={() => setOpen(false)}>Admin</Link>}
             </>
           )}
         </nav>
