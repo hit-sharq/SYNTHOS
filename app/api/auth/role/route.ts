@@ -12,12 +12,12 @@ export async function GET() {
 
   const email = clerkUser?.email_addresses?.[0]?.email_address || null
 
-  if (!email) return NextResponse.json({ role: "client" })
+  if (!email) return NextResponse.json({ role: "talent" })
 
   const user = await prisma.user.findUnique({
     where: { email },
     select: { role: true },
   })
 
-  return NextResponse.json({ role: user?.role || "client" })
+  return NextResponse.json({ role: user?.role || "talent" })
 }

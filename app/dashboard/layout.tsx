@@ -19,8 +19,43 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const email = clerkUser?.email_addresses?.[0]?.email_address || null
   if (!email) redirect("/")
 
-  const user = await prisma.user.findUnique({ where: { email }, select: { role: true } })
-  if (user?.role === "talent") {
+  const user = await prisma.user.findUnique({ where: { email } })
+  if (!user) {
+    const initials = (clerkUser?.first_name || email.split("@")[0] || "TL")
+      .split(" ")
+      .map((n: string) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase()
+
+    const newUser = await prisma.user.create({
+      data: {
+        email,
+        name: clerkUser?.first_name || email.split("@")[0],
+        initials: initials || "TL",
+        role: "talent",
+      },
+    })
+
+    await prisma.talent.create({
+      data: {
+        userId: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+        position: "creative",
+        skills: [],
+        experience: 0,
+        rating: 0,
+        availability: "available",
+        rate: "",
+        notes: "",
+      },
+    })
+
+    return <DashboardShell>{children}</DashboardShell>
+  }
+
+  if (user.role === "talent") {
     return <DashboardShell>{children}</DashboardShell>
   }
 

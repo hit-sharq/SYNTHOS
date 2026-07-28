@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { PageHead } from "@/components/app/Page"
 
 const ROLES = [
-  { value: "client", label: "Client" },
   { value: "talent", label: "Talent" },
 ]
 

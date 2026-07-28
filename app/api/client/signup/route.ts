@@ -29,14 +29,29 @@ export async function POST(req: Request) {
       data: {
         email: email.trim().toLowerCase(),
         name: name.trim(),
-        initials: initials || "CL",
-        role: "client",
+        initials: initials || "TL",
+        role: "talent",
+      },
+    })
+
+    await prisma.talent.create({
+      data: {
+        userId: user.id,
+        name: user.name,
+        email: user.email,
+        position: "creative",
+        skills: [],
+        experience: 0,
+        rating: 0,
+        availability: "available",
+        rate: "",
+        notes: "",
       },
     })
 
     return NextResponse.json({ id: user.id, email: user.email, name: user.name, role: user.role }, { status: 201 })
   } catch (error) {
-    console.error("Failed to create client:", error)
-    return NextResponse.json({ error: "Failed to create client account" }, { status: 500 })
+    console.error("Failed to create talent account:", error)
+    return NextResponse.json({ error: "Failed to create talent account" }, { status: 500 })
   }
 }
