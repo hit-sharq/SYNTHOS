@@ -124,8 +124,13 @@ export default function Header() {
           )}
           {isSignedIn && (isAdmin || userRole === "talent") && (
             <>
-              <Link href="/dashboard/overview" className={`topnav-link ${pathname === "/dashboard/overview" ? "active" : ""}`} onClick={() => setOpen(false)}>Dashboard</Link>
-              {isAdmin && <Link href="/admin" className={`topnav-link ${pathname.startsWith("/admin") ? "active" : ""}`} onClick={() => setOpen(false)}>Admin</Link>}
+              <Link 
+                href={isAdmin ? "/admin" : "/dashboard/overview"} 
+                className={`topnav-link ${pathname === (isAdmin ? "/admin" : "/dashboard/overview") ? "active" : ""}`} 
+                onClick={() => setOpen(false)}
+              >
+                {isAdmin ? "Admin" : "Dashboard"}
+              </Link>
             </>
           )}
         </nav>
