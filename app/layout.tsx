@@ -9,13 +9,13 @@ import Footer from "@/components/app/Footer"
 export const metadata: Metadata = {
   metadataBase: new URL("https://lumyn.co.ke"),
   title: {
-    default: "Lumyn — Creative Intelligence & Project Automation",
-    template: "%s · Lumyn",
+    default: "Synthos — Creative Intelligence & Project Automation",
+    template: "%s · Synthos",
   },
   description:
-    "Lumyn is the operating system for creative intelligence. Turn client conversations and briefs into structured project intelligence, proposals, and human-approved deliverables.",
+    "Synthos is the operating system for creative intelligence. Turn client conversations and briefs into structured project intelligence, proposals, and human-approved deliverables.",
   openGraph: {
-    title: "Lumyn — Creative Intelligence & Project Automation",
+    title: "Synthos — Creative Intelligence & Project Automation",
     description: "AI accelerates the work. Humans provide the judgment.",
     url: "https://lumyn.co.ke",
     type: "website",

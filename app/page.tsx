@@ -29,7 +29,7 @@ export default async function Home() {
             <span className="hero-human">Humans provide the judgment.</span>
           </h1>
           <p className="hero-lede">
-            Lumyn turns client conversations and creative briefs into structured project intelligence, strategic direction, proposals, quotes, and human-approved deliverables.
+            Synthos turns client conversations and creative briefs into structured project intelligence, strategic direction, proposals, quotes, and human-approved deliverables.
           </p>
           <div className="row gap-3 wrap">
             <Link href="/intake" className="btn btn-signal btn-lg">Start a Project →</Link>
@@ -129,7 +129,7 @@ export default async function Home() {
           <span className="eyebrow">Built for creative teams</span>
           <h2 className="display" style={{ fontSize: "clamp(1.8rem,3vw,2.4rem)", marginBottom: 18 }}>The operating system for creative intelligence</h2>
           <p className="lede" style={{ marginBottom: 28 }}>
-            From the first creative brief to the final human approval, Lumyn keeps the entire creative intelligence workflow in one calm, considered workspace.
+            From the first creative brief to the final human approval, Synthos keeps the entire creative intelligence workflow in one calm, considered workspace.
           </p>
           <Link href="/dashboard/overview" className="btn btn-signal btn-lg">Get started →</Link>
           <Link href="/intake" className="btn btn-ghost btn-lg">Start a project →</Link>

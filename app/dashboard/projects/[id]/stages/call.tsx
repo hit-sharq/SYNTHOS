@@ -95,7 +95,7 @@ export function CallStage({ project }: { project: Project }) {
           <VoiceInput label="Summary" value={form.summary} onChange={(v) => setForm({ ...form, summary: v })} wide textarea />
           <div className="field"><label>Meeting source</label>
             <select className="input" value={form.meetingSource} onChange={(e) => setForm({ ...form, meetingSource: e.target.value })}>
-              <option value="embedded">Lumyn Embedded (Daily.co)</option>
+              <option value="embedded">Synthos Embedded (Daily.co)</option>
               <option value="zoom">Zoom</option>
               <option value="teams">Microsoft Teams</option>
               <option value="google-meet">Google Meet</option>
@@ -179,7 +179,7 @@ function Field({ label, value, onChange, wide, textarea }: { label: string; valu
 
 function formatMeetingSource(source: string): string {
   const map: Record<string, string> = {
-    embedded: "Lumyn Embedded (Daily.co)",
+    embedded: "Synthos Embedded (Daily.co)",
     zoom: "Zoom",
     teams: "Microsoft Teams",
     "google-meet": "Google Meet",

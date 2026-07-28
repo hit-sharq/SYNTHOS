@@ -71,7 +71,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             </span>
              {!collapsed && (
                <span className="dash-brand-word">
-                 Lumyn
+                 Synthos
                  <em>Creative Intelligence</em>
                </span>
              )}

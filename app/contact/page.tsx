@@ -79,7 +79,7 @@ export default function ContactPage() {
       <PageHead
         eyebrow="Contact"
         title="Get in touch"
-        desc="Have a question or want to see Lumyn in action? We&apos;d love to hear from you."
+        desc="Have a question or want to see Synthos in action? We&apos;d love to hear from you."
       />
 
       <div style={{ maxWidth: 860, margin: "0 auto" }}>

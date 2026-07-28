@@ -20,13 +20,13 @@ export default function AboutPage() {
 
         <div className="section-title">Who We Serve</div>
         <p style={{ fontSize: "1.05rem", color: "var(--ink-2)", lineHeight: 1.7, marginBottom: 32 }}>
-          Modern creative agencies, brand teams, and production studios that need structure without sacrificing creativity. Lumyn fits into your existing workflow and amplifies your team&apos;s output.
+          Modern creative agencies, brand teams, and production studios that need structure without sacrificing creativity. Synthos fits into your existing workflow and amplifies your team&apos;s output.
         </p>
 
         <div style={{ padding: 32, background: "var(--surface-2)", border: "1px solid var(--line)", marginTop: 40 }}>
           <div className="section-title" style={{ marginBottom: 12 }}>Built In</div>
           <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", lineHeight: 1.6 }}>
-            Lumyn is designed and developed for creative teams worldwide. We combine cutting-edge AI with proven agency workflows to deliver a platform that feels native to how creative work actually happens.
+            Synthos is designed and developed for creative teams worldwide. We combine cutting-edge AI with proven agency workflows to deliver a platform that feels native to how creative work actually happens.
           </p>
         </div>
       </div>

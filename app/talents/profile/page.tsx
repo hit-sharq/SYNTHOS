@@ -180,7 +180,7 @@ export default function TalentProfilePage() {
   if (!profile) {
     return (
       <PageWrap>
-        <PageHead eyebrow="Profile" title="Talent Profile" desc="Create your talent profile to join the Lumyn creator network." />
+        <PageHead eyebrow="Profile" title="Talent Profile" desc="Create your talent profile to join the Synthos creator network." />
         <div style={{ maxWidth: 640, margin: "0 auto" }}>
           {error && (
             <div style={{ padding: "12px 16px", background: "var(--rejected-soft)", border: "1px solid var(--rejected)", color: "var(--rejected)", fontFamily: "var(--font-mono)", fontSize: "0.8rem", marginBottom: 20 }}>
@@ -193,7 +193,7 @@ export default function TalentProfilePage() {
             </div>
           )}
           <div className="panel-soft" style={{ padding: 24 }}>
-            <h3 style={{ marginTop: 0, marginBottom: 12 }}>Welcome to Lumyn</h3>
+            <h3 style={{ marginTop: 0, marginBottom: 12 }}>Welcome to Synthos</h3>
             <p style={{ color: "var(--ink-2)", marginBottom: 20 }}>
               You&apos;re signed in as <strong>{email}</strong>. Create your talent profile to start collaborating on projects.
             </p>

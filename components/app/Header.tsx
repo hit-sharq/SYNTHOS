@@ -10,7 +10,7 @@ import "./header.css"
 
 export function BrandMark({ compact }: { compact?: boolean }) {
   return (
-    <Link href="/" className="brandmark" aria-label="Lumyn home">
+    <Link href="/" className="brandmark" aria-label="Synthos home">
       <span className="brandmark-mark" aria-hidden>
         <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
           <path d="M3 17 L9 6 L13 13 L19 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
@@ -19,7 +19,7 @@ export function BrandMark({ compact }: { compact?: boolean }) {
       </span>
       {!compact && (
         <span className="brandmark-word">
-          Lumyn
+          Synthos
           <em>Creative Intelligence</em>
         </span>
       )}

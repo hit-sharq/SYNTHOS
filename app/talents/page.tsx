@@ -13,7 +13,7 @@ export default async function TalentsPage() {
 
   return (
     <PageWrap>
-      <PageHead eyebrow="Creators" title="Talents & Creators" desc="The creative talent behind Lumyn. Writers, strategists, producers, designers, developers, and animators ready to bring your vision to life." />
+      <PageHead eyebrow="Creators" title="Talents & Creators" desc="The creative talent behind Synthos. Writers, strategists, producers, designers, developers, and animators ready to bring your vision to life." />
       <div className="blog-grid">
         {talents.map((talent) => (
           <article key={talent.id} className="blog-card">

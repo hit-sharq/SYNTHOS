@@ -13,7 +13,7 @@ export default async function TeamPage() {
 
   return (
     <PageWrap>
-      <PageHead eyebrow="Team" title="Our Team" desc="The people behind Lumyn. Creative writers, producers, and account managers dedicated to your success." />
+      <PageHead eyebrow="Team" title="Our Team" desc="The people behind Synthos. Creative writers, producers, and account managers dedicated to your success." />
       <div className="blog-grid">
         {members.map((member) => (
           <article key={member.id} className="blog-card">
