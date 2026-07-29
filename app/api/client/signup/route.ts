@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Role } from "@prisma/client"
 
 export async function POST(req: Request) {
   try {
@@ -30,22 +31,7 @@ export async function POST(req: Request) {
         email: email.trim().toLowerCase(),
         name: name.trim(),
         initials: initials || "TL",
-        role: "talent",
-      },
-    })
-
-    await prisma.talent.create({
-      data: {
-        userId: user.id,
-        name: user.name,
-        email: user.email,
-        position: "creative",
-        skills: [],
-        experience: 0,
-        rating: 0,
-        availability: "available",
-        rate: "",
-        notes: "",
+        role: Role.client,
       },
     })
 

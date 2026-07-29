@@ -10,12 +10,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  talent
+  client
+  admin
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String
   initials  String
-  role      String   @default("talent") // talent
+  role      Role      @default(talent)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -343,7 +349,6 @@ model Talent {
   user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   name        String
   email       String
-  position   String // creative | strategist | producer | designer | developer | animator
   skills      String[]
   experience  Int      @default(0) // years
   rating      Float    @default(0)
@@ -354,7 +359,6 @@ model Talent {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  @@index([position])
   @@index([availability])
 }
 
@@ -430,17 +434,15 @@ model TeamMember {
   id          String   @id @default(cuid())
   name        String
   email       String   @unique
-  role        String   // creative_writer | producer | account_manager | admin
   skills      String[]
   availability String  @default("available") // available | busy | unavailable
   avatar      String?
   description String?
   calendarJson Json?   // busy slots from external calendar
   notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  @@index([role])
   @@index([availability])
 }
 
@@ -469,8 +471,8 @@ model ProductionMeeting {
   project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   decision    String   // approved | declined | revised
   notes       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@index([projectId])
 }

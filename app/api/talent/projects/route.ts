@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Role } from "@prisma/client"
 
 export async function GET() {
   try {
@@ -19,12 +20,12 @@ export async function GET() {
     if (!user) return NextResponse.json({ projects: [] })
 
     const projects = await prisma.project.findMany({
-      where: user.role === "talent" ? { ownerId: user.id } : undefined,
+      where: user.role === Role.talent ? { ownerId: user.id } : undefined,
       orderBy: { updatedAt: "desc" },
       include: { brief: true, understanding: true, workshop: true, proposal: true, quote: true },
     })
 
-    return NextResponse.json({ projects: user.role === "talent" ? projects : [] })
+    return NextResponse.json({ projects: user.role === Role.talent ? projects : [] })
   } catch (error) {
     console.error("Failed to fetch talent projects:", error)
     return NextResponse.json({ error: "Failed to load projects" }, { status: 500 })

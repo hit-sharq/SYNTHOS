@@ -14,7 +14,6 @@ type TalentProfile = {
   userId?: string
   name: string
   email: string
-  position: string
   skills: string[]
   experience: number
   rating: number
@@ -33,15 +32,6 @@ type Project = {
   status: string
   nextAction: string
 }
-
-const POSITIONS = [
-  { value: "creative", label: "Creative" },
-  { value: "strategist", label: "Strategist" },
-  { value: "producer", label: "Producer" },
-  { value: "designer", label: "Designer" },
-  { value: "developer", label: "Developer" },
-  { value: "animator", label: "Animator" },
-]
 
 const AVAILABILITY = [
   { value: "available", label: "Available" },
@@ -110,7 +100,6 @@ export default function TalentDashboardPage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          position: profile.position,
           skills: profile.skills,
           experience: profile.experience,
           rating: profile.rating,
@@ -178,8 +167,8 @@ export default function TalentDashboardPage() {
       <div className="ov-stats">
         <div className="ov-stat panel">
           <span className="eyebrow">Profile</span>
-          <span className="ov-stat-value" style={{ color: "var(--signal)" }}>{profile.position}</span>
-          <span className="tiny muted">{profile.availability}</span>
+          <span className="ov-stat-value" style={{ color: "var(--signal)" }}>{profile.availability}</span>
+          <span className="tiny muted">availability</span>
         </div>
         <div className="ov-stat panel">
           <span className="eyebrow">Active projects</span>
@@ -199,12 +188,6 @@ export default function TalentDashboardPage() {
           <button className="btn btn-signal btn-sm" onClick={handleSave} disabled={saving}>{saving ? "Saving..." : "Save Changes"}</button>
         </div>
         <div className="form-grid-2">
-          <div className="field">
-            <label>Position</label>
-            <select className="select" value={profile.position} onChange={(e) => setProfile({ ...profile, position: e.target.value })}>
-              {POSITIONS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-            </select>
-          </div>
           <div className="field">
             <label>Availability</label>
             <select className="select" value={profile.availability} onChange={(e) => setProfile({ ...profile, availability: e.target.value })}>

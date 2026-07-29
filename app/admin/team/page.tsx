@@ -11,7 +11,7 @@ export default async function AdminTeamPage() {
 
   return (
     <div className="admin-content">
-      <PageHead eyebrow="Admin" title="Team" desc="Manage team members, roles, and availability for scheduling." />
+      <PageHead eyebrow="Admin" title="Team" desc="Manage team members and availability for scheduling." />
       <TeamManager initialMembers={members as any} />
     </div>
   )

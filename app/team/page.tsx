@@ -27,7 +27,6 @@ export default async function TeamPage() {
               )}
             </div>
             <div className="blog-card-body">
-              <span className="eyebrow" style={{ textTransform: "capitalize" }}>{member.role.replace("_", " ")}</span>
               <h3>{member.name}</h3>
               <p className="tiny muted" style={{ marginBottom: 8 }}>{member.email}</p>
               {member.description && <p className="tiny" style={{ color: "var(--ink-2)", marginBottom: 10, lineHeight: 1.55 }}>{member.description}</p>}

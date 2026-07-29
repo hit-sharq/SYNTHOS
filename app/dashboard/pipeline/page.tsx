@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { prisma } from "@/lib/prisma"
-import { DashboardShell } from "@/components/app/DashboardShell"
+import { AdminShell } from "@/components/app/AdminShell"
 import { PageHead } from "@/components/app/Page"
 
 const STAGES = [
@@ -34,7 +34,7 @@ export default async function PipelinePage() {
   }, {} as Record<string, typeof projects>)
 
   return (
-    <DashboardShell>
+    <AdminShell>
       <div className="admin-content">
         <PageHead
           eyebrow="Dashboard"
@@ -129,6 +129,6 @@ export default async function PipelinePage() {
           ))}
         </div>
       </div>
-    </DashboardShell>
+    </AdminShell>
   )
 }

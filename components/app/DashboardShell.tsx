@@ -47,15 +47,25 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [role, setRole] = useState<string | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
+    fetch("/api/auth/is-admin")
+      .then(res => res.json())
+      .then(data => {
+        setIsAdmin(data.isAdmin)
+        if (data.isAdmin) setRole("admin")
+      })
+      .catch(() => {})
     fetch("/api/auth/role")
       .then(res => res.json())
-      .then(data => setRole(data.role || null))
-      .catch(() => setRole(null))
-  }, [])
+      .then(data => {
+        if (data.role && !isAdmin) setRole(data.role)
+      })
+      .catch(() => {})
+  }, [isAdmin])
 
-  const NAV = role === "talent" ? TALENT_NAV : ADMIN_NAV
+  const NAV = isAdmin || role === "admin" ? ADMIN_NAV : role === "talent" ? TALENT_NAV : ADMIN_NAV
 
   return (
     <div className="dash-layout">

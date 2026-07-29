@@ -89,6 +89,22 @@
   gap: 0;
 }
 
+.admin-nav-section-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--ink-3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 14px 12px 6px;
+}
+
+.admin-nav-divider {
+  height: 1px;
+  background: var(--line);
+  margin: 8px 10px;
+}
+
 .admin-nav-item {
   display: flex;
   align-items: center;

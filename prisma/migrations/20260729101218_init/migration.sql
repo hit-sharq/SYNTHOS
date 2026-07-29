@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "Stage" AS ENUM ('brief', 'call', 'transcript', 'understanding', 'projectBrief', 'workshop', 'synthesis', 'proposal', 'quote', 'approval');
+CREATE TYPE "Stage" AS ENUM ('brief', 'call', 'contactReport', 'productionMeeting', 'proposal', 'quote', 'approval', 'transcript', 'understanding', 'projectBrief', 'workshop', 'synthesis');
 
 -- CreateEnum
 CREATE TYPE "ProjStatus" AS ENUM ('active', 'attention', 'review', 'complete');
@@ -16,7 +16,7 @@ CREATE TABLE "User" (
     "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "initials" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'strategist',
+    "role" TEXT NOT NULL DEFAULT 'talent',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -29,6 +29,7 @@ CREATE TABLE "Project" (
     "slug" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "client" TEXT NOT NULL,
+    "clientId" TEXT,
     "type" TEXT NOT NULL,
     "stage" "Stage" NOT NULL DEFAULT 'brief',
     "progress" INTEGER NOT NULL DEFAULT 0,
@@ -37,6 +38,9 @@ CREATE TABLE "Project" (
     "nextAction" TEXT NOT NULL,
     "ownerId" TEXT,
     "aiActivity" INTEGER NOT NULL DEFAULT 0,
+    "publicToken" TEXT,
+    "deliverables" JSONB,
+    "aiWorkflowStatus" JSONB DEFAULT '{}',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -83,6 +87,11 @@ CREATE TABLE "ClientCall" (
     "duration" TEXT NOT NULL,
     "participants" TEXT[],
     "summary" TEXT NOT NULL,
+    "roomName" TEXT,
+    "roomUrl" TEXT,
+    "meetingSource" TEXT DEFAULT 'embedded',
+    "artifacts" JSONB,
+    "transcript" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -211,6 +220,9 @@ CREATE TABLE "Proposal" (
     "terms" TEXT NOT NULL,
     "status" "ReviewStatus" NOT NULL DEFAULT 'draft',
     "sections" JSONB NOT NULL,
+    "publicToken" TEXT,
+    "sentToClient" BOOLEAN NOT NULL DEFAULT false,
+    "sentAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -226,6 +238,9 @@ CREATE TABLE "Quote" (
     "tax" INTEGER NOT NULL DEFAULT 0,
     "paymentTerms" TEXT NOT NULL,
     "status" "ReviewStatus" NOT NULL DEFAULT 'draft',
+    "publicToken" TEXT,
+    "sentToClient" BOOLEAN NOT NULL DEFAULT false,
+    "sentAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
@@ -249,11 +264,32 @@ CREATE TABLE "Approval" (
 );
 
 -- CreateTable
+CREATE TABLE "Invoice" (
+    "id" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
+    "number" TEXT NOT NULL,
+    "items" JSONB NOT NULL,
+    "subtotal" INTEGER NOT NULL,
+    "discount" INTEGER NOT NULL DEFAULT 0,
+    "tax" INTEGER NOT NULL DEFAULT 0,
+    "total" INTEGER NOT NULL,
+    "paymentTerms" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'draft',
+    "dueDate" TIMESTAMP(3),
+    "paidAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Invoice_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Talent" (
     "id" TEXT NOT NULL,
+    "userId" TEXT,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
-    "role" TEXT NOT NULL,
+    "position" TEXT NOT NULL,
     "skills" TEXT[],
     "experience" INTEGER NOT NULL DEFAULT 0,
     "rating" DOUBLE PRECISION NOT NULL DEFAULT 0,
@@ -337,6 +373,8 @@ CREATE TABLE "TeamMember" (
     "role" TEXT NOT NULL,
     "skills" TEXT[],
     "availability" TEXT NOT NULL DEFAULT 'available',
+    "avatar" TEXT,
+    "description" TEXT,
     "calendarJson" JSONB,
     "notes" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -354,12 +392,25 @@ CREATE TABLE "ContactReport" (
     "decisions" TEXT[],
     "actionItems" JSONB,
     "nextSteps" TEXT[],
+    "approved" BOOLEAN NOT NULL DEFAULT false,
     "sentToClient" BOOLEAN NOT NULL DEFAULT false,
     "sentAt" TIMESTAMP(3),
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "ContactReport_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ProductionMeeting" (
+    "id" TEXT NOT NULL,
+    "projectId" TEXT NOT NULL,
+    "decision" TEXT NOT NULL,
+    "notes" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "ProductionMeeting_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -407,6 +458,20 @@ CREATE TABLE "Message" (
     CONSTRAINT "Message_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "Notification" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "title" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "kind" TEXT NOT NULL DEFAULT 'info',
+    "refId" TEXT,
+    "read" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
@@ -414,10 +479,16 @@ CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 CREATE UNIQUE INDEX "Project_slug_key" ON "Project"("slug");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Project_publicToken_key" ON "Project"("publicToken");
+
+-- CreateIndex
 CREATE INDEX "Project_stage_idx" ON "Project"("stage");
 
 -- CreateIndex
 CREATE INDEX "Project_status_idx" ON "Project"("status");
+
+-- CreateIndex
+CREATE INDEX "Project_clientId_idx" ON "Project"("clientId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Brief_projectId_key" ON "Brief"("projectId");
@@ -450,7 +521,13 @@ CREATE UNIQUE INDEX "Synthesis_projectId_key" ON "Synthesis"("projectId");
 CREATE UNIQUE INDEX "Proposal_projectId_key" ON "Proposal"("projectId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Proposal_publicToken_key" ON "Proposal"("publicToken");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "Quote_projectId_key" ON "Quote"("projectId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Quote_publicToken_key" ON "Quote"("publicToken");
 
 -- CreateIndex
 CREATE INDEX "Approval_projectId_idx" ON "Approval"("projectId");
@@ -459,7 +536,19 @@ CREATE INDEX "Approval_projectId_idx" ON "Approval"("projectId");
 CREATE INDEX "Approval_status_idx" ON "Approval"("status");
 
 -- CreateIndex
-CREATE INDEX "Talent_role_idx" ON "Talent"("role");
+CREATE UNIQUE INDEX "Invoice_number_key" ON "Invoice"("number");
+
+-- CreateIndex
+CREATE INDEX "Invoice_projectId_idx" ON "Invoice"("projectId");
+
+-- CreateIndex
+CREATE INDEX "Invoice_status_idx" ON "Invoice"("status");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Talent_userId_key" ON "Talent"("userId");
+
+-- CreateIndex
+CREATE INDEX "Talent_position_idx" ON "Talent"("position");
 
 -- CreateIndex
 CREATE INDEX "Talent_availability_idx" ON "Talent"("availability");
@@ -504,6 +593,12 @@ CREATE UNIQUE INDEX "ContactReport_projectId_key" ON "ContactReport"("projectId"
 CREATE INDEX "ContactReport_projectId_idx" ON "ContactReport"("projectId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "ProductionMeeting_projectId_key" ON "ProductionMeeting"("projectId");
+
+-- CreateIndex
+CREATE INDEX "ProductionMeeting_projectId_idx" ON "ProductionMeeting"("projectId");
+
+-- CreateIndex
 CREATE INDEX "ContactSubmission_status_idx" ON "ContactSubmission"("status");
 
 -- CreateIndex
@@ -514,6 +609,18 @@ CREATE INDEX "Message_conversationId_idx" ON "Message"("conversationId");
 
 -- CreateIndex
 CREATE INDEX "Message_refId_idx" ON "Message"("refId");
+
+-- CreateIndex
+CREATE INDEX "Notification_userId_idx" ON "Notification"("userId");
+
+-- CreateIndex
+CREATE INDEX "Notification_read_idx" ON "Notification"("read");
+
+-- CreateIndex
+CREATE INDEX "Notification_createdAt_idx" ON "Notification"("createdAt");
+
+-- AddForeignKey
+ALTER TABLE "Project" ADD CONSTRAINT "Project_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Project" ADD CONSTRAINT "Project_ownerId_fkey" FOREIGN KEY ("ownerId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -555,7 +662,16 @@ ALTER TABLE "Quote" ADD CONSTRAINT "Quote_projectId_fkey" FOREIGN KEY ("projectI
 ALTER TABLE "Approval" ADD CONSTRAINT "Approval_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Invoice" ADD CONSTRAINT "Invoice_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Talent" ADD CONSTRAINT "Talent_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "ContactReport" ADD CONSTRAINT "ContactReport_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ProductionMeeting" ADD CONSTRAINT "ProductionMeeting_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Conversation" ADD CONSTRAINT "Conversation_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE CASCADE ON UPDATE CASCADE;

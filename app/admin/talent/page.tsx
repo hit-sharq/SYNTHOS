@@ -12,7 +12,6 @@ type Talent = {
   user?: { id: string; email: string; name: string }
   name: string
   email: string
-  position: string
   skills: string[]
   experience: number
   rating: number
@@ -21,15 +20,6 @@ type Talent = {
   portfolio?: string
   notes?: string
 }
-
-const POSITIONS = [
-  { value: "creative", label: "Creative" },
-  { value: "strategist", label: "Strategist" },
-  { value: "producer", label: "Producer" },
-  { value: "designer", label: "Designer" },
-  { value: "developer", label: "Developer" },
-  { value: "animator", label: "Animator" },
-]
 
 const AVAILABILITY = [
   { value: "available", label: "Available" },
@@ -42,11 +32,10 @@ export default function TalentPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState("")
-  const [filterPosition, setFilterPosition] = useState("all")
   const [filterAvail, setFilterAvail] = useState("all")
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({
-    name: "", email: "", position: "creative", skills: "", experience: "0", rating: "0", availability: "available", rate: "", portfolio: "", notes: ""
+    name: "", email: "", skills: "", experience: "0", rating: "0", availability: "available", rate: "", portfolio: "", notes: ""
   })
   const [saving, setSaving] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
@@ -88,7 +77,7 @@ export default function TalentPage() {
         throw new Error(data.error || `Failed to ${editId ? "update" : "add"} talent`)
       }
       setEditId(null)
-      setForm({ name: "", email: "", position: "creative", skills: "", experience: "0", rating: "0", availability: "available", rate: "", portfolio: "", notes: "" })
+      setForm({ name: "", email: "", skills: "", experience: "0", rating: "0", availability: "available", rate: "", portfolio: "", notes: "" })
       setEditing(false)
       await load()
     } catch (e) {
@@ -115,7 +104,7 @@ export default function TalentPage() {
 
   const startEdit = (t: Talent) => {
     setForm({
-      name: t.name, email: t.email, position: t.position, skills: t.skills.join(", "),
+      name: t.name, email: t.email, skills: t.skills.join(", "),
       experience: String(t.experience), rating: String(t.rating), availability: t.availability,
       rate: t.rate, portfolio: t.portfolio || "", notes: t.notes || ""
     })
@@ -124,10 +113,9 @@ export default function TalentPage() {
   }
 
   const filtered = talents.filter((t) => {
-    const matchSearch = !search || `${t.name} ${t.email} ${t.position} ${t.skills.join(" ")}`.toLowerCase().includes(search.toLowerCase())
-    const matchPosition = filterPosition === "all" || t.position === filterPosition
+    const matchSearch = !search || `${t.name} ${t.email} ${t.skills.join(" ")}`.toLowerCase().includes(search.toLowerCase())
     const matchAvail = filterAvail === "all" || t.availability === filterAvail
-    return matchSearch && matchPosition && matchAvail
+    return matchSearch && matchAvail
   })
 
   return (
@@ -137,7 +125,7 @@ export default function TalentPage() {
         title="Talent Intelligence"
         desc="Identify, recruit, and manage creative talent. Match skills, experience, and availability to projects."
         actions={
-          <button className="admin-btn-primary" onClick={() => { setEditing(!editing); setEditId(null); setForm({ name: "", email: "", position: "creative", skills: "", experience: "0", rating: "0", availability: "available", rate: "", portfolio: "", notes: "" }) }}>
+          <button className="admin-btn-primary" onClick={() => { setEditing(!editing); setEditId(null); setForm({ name: "", email: "", skills: "", experience: "0", rating: "0", availability: "available", rate: "", portfolio: "", notes: "" }) }}>
             <UserPlus size={16} /> Add Talent
           </button>
         }
@@ -160,12 +148,6 @@ export default function TalentPage() {
                 </div>
               </div>
               <div className="form-grid-3">
-                <div className="field">
-                  <label>Position</label>
-                  <select className="admin-input" value={form.position} onChange={(e) => setForm({ ...form, position: e.target.value })}>
-                    {POSITIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-                  </select>
-                </div>
                 <div className="field">
                   <label>Availability</label>
                   <select className="admin-input" value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })}>
@@ -214,10 +196,6 @@ export default function TalentPage() {
             <Search size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--ink-3)" }} />
             <input className="admin-input" placeholder="Search talents…" value={search} onChange={(e) => setSearch(e.target.value)} style={{ paddingLeft: 36, width: "100%" }} />
           </div>
-          <select className="admin-input" value={filterPosition} onChange={(e) => setFilterPosition(e.target.value)} style={{ width: "auto" }}>
-            <option value="all">All positions</option>
-             {POSITIONS.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-          </select>
           <select className="admin-input" value={filterAvail} onChange={(e) => setFilterAvail(e.target.value)} style={{ width: "auto" }}>
             <option value="all">All availability</option>
             {AVAILABILITY.map((a) => <option key={a.value} value={a.value}>{a.label}</option>)}
@@ -238,7 +216,6 @@ export default function TalentPage() {
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Position</th>
                   <th>Skills</th>
                   <th>Experience</th>
                   <th>Rating</th>
@@ -254,7 +231,6 @@ export default function TalentPage() {
                       <div style={{ fontWeight: 600, color: "#1b1a17" }}>{t.name}</div>
                       <div style={{ fontSize: "0.78rem", color: "#8e8e93" }}>{t.email}</div>
                     </td>
-                    <td data-label="Position" style={{ textTransform: "capitalize" }}>{t.position}</td>
                     <td data-label="Skills">
                       <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
                         {t.skills.slice(0, 3).map((s) => (

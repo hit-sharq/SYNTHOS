@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Role } from "@prisma/client"
 
 export async function GET() {
   try {
@@ -16,7 +17,7 @@ export async function GET() {
     if (!email) return NextResponse.json({ error: "No email found" }, { status: 400 })
 
     const user = await prisma.user.findUnique({ where: { email } })
-    if (!user || user.role !== "talent") return NextResponse.json({ error: "Not found" }, { status: 404 })
+    if (!user || user.role !== Role.talent) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
     const talent = await prisma.talent.findUnique({ where: { userId: user.id } })
     if (!talent) return NextResponse.json({ error: "Not found" }, { status: 404 })
@@ -26,7 +27,6 @@ export async function GET() {
       userId: talent.userId,
       name: talent.name,
       email: talent.email,
-      position: talent.position,
       skills: talent.skills,
       experience: talent.experience,
       rating: talent.rating,
@@ -54,13 +54,12 @@ export async function PATCH(req: Request) {
     if (!email) return NextResponse.json({ error: "No email found" }, { status: 400 })
 
     const user = await prisma.user.findUnique({ where: { email } })
-    if (!user || user.role !== "talent") return NextResponse.json({ error: "Not found" }, { status: 404 })
+    if (!user || user.role !== Role.talent) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
     const body = await req.json()
     const talent = await prisma.talent.update({
       where: { userId: user.id },
       data: {
-        position: body.position,
         skills: body.skills,
         experience: body.experience,
         rating: body.rating,
@@ -76,7 +75,6 @@ export async function PATCH(req: Request) {
       userId: talent.userId,
       name: talent.name,
       email: talent.email,
-      position: talent.position,
       skills: talent.skills,
       experience: talent.experience,
       rating: talent.rating,

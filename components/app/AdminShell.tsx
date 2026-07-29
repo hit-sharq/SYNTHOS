@@ -4,10 +4,10 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Users, UserPlus, Briefcase, MessageSquare, Settings, Newspaper, FileText, ArrowLeft, Menu, X, FolderOpen, UserSearch, Contact } from "lucide-react"
+import { LayoutDashboard, Users, UserPlus, Briefcase, MessageSquare, Settings, Newspaper, FileText, ArrowLeft, Menu, X, FolderOpen, UserSearch, Contact, GitBranch, FileSignature, Calculator, CheckCircle, Calendar } from "lucide-react"
 import "./admin.css"
 
-const NAV = [
+const ADMIN_NAV = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/projects", label: "Projects", icon: FolderOpen },
   { href: "/admin/talent", label: "Talent", icon: UserSearch },
@@ -20,6 +20,18 @@ const NAV = [
   { href: "/admin/news", label: "News", icon: Newspaper },
   { href: "/admin/contact-reports", label: "Contact Reports", icon: FileText },
   { href: "/admin/settings", label: "Settings", icon: Settings },
+]
+
+const WORKSPACE_NAV = [
+  { href: "/dashboard/overview", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/pipeline", label: "Pipeline", icon: GitBranch },
+  { href: "/dashboard/projects", label: "Projects", icon: FolderOpen },
+  { href: "/dashboard/briefs", label: "Briefs", icon: FileText },
+  { href: "/dashboard/meetings", label: "Meetings", icon: Calendar },
+  { href: "/dashboard/proposals", label: "Proposals", icon: FileSignature },
+  { href: "/dashboard/quotes", label: "Quotes", icon: Calculator },
+  { href: "/dashboard/approvals", label: "Approvals", icon: CheckCircle },
+  { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
 ]
 
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -39,8 +51,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </svg>
             </span>
             <span className="admin-brand-word">
-              Admin
-              <em>Control Panel</em>
+              Synthos
+              <em>Unified Workspace</em>
             </span>
           </Link>
           <button className="admin-sidebar-close" onClick={() => setSidebarOpen(false)} aria-label="Close menu">
@@ -49,7 +61,21 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav className="admin-nav">
-          {NAV.map((item) => {
+          {ADMIN_NAV.map((item) => {
+            const active = pathname === item.href
+            const Icon = item.icon
+            return (
+              <Link key={item.href} href={item.href} className={cn("admin-nav-item", active && "admin-nav-item--active")} onClick={() => setSidebarOpen(false)}>
+                <Icon size={18} strokeWidth={1.8} />
+                <span className="admin-nav-label">{item.label}</span>
+              </Link>
+            )
+          })}
+
+          <div className="admin-nav-divider" />
+          <div className="admin-nav-section-label">Workspace</div>
+
+          {WORKSPACE_NAV.map((item) => {
             const active = pathname === item.href
             const Icon = item.icon
             return (
@@ -62,8 +88,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </nav>
 
         <div className="admin-sidebar-foot">
-          <Link href="/dashboard/overview" className="admin-back" onClick={() => setSidebarOpen(false)}>
-            <ArrowLeft size={14} /> Back to Dashboard
+          <Link href="/" className="admin-back" onClick={() => setSidebarOpen(false)}>
+            <ArrowLeft size={14} /> Back to Site
           </Link>
         </div>
       </aside>

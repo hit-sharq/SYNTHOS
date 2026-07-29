@@ -1,7 +1,7 @@
-import { DashboardShell } from "@/components/app/DashboardShell"
 import { AdminShell } from "@/components/app/AdminShell"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Role } from "@prisma/client"
 import { redirect } from "next/navigation"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const adminIds = process.env.ADMIN_USER_IDS?.split(",").map(id => id.trim()).filter(Boolean) || []
   if (adminIds.includes(userId)) {
-    redirect("/admin")
+    return <AdminShell>{children}</AdminShell>
   }
 
   const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
@@ -34,7 +34,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
         email,
         name: clerkUser?.first_name || email.split("@")[0],
         initials: initials || "TL",
-        role: "talent",
+        role: Role.talent,
       },
     })
 
@@ -43,7 +43,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
         userId: newUser.id,
         name: newUser.name,
         email: newUser.email,
-        position: "creative",
         skills: [],
         experience: 0,
         rating: 0,
@@ -53,11 +52,15 @@ export default async function DashboardLayout({ children }: { children: React.Re
       },
     })
 
-    return <DashboardShell>{children}</DashboardShell>
+    return <AdminShell>{children}</AdminShell>
   }
 
-  if (user.role === "talent") {
-    return <DashboardShell>{children}</DashboardShell>
+  if (user.role === Role.talent) {
+    return <AdminShell>{children}</AdminShell>
+  }
+
+  if (user.role === Role.client) {
+    redirect("/client/dashboard")
   }
 
   redirect("/")

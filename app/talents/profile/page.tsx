@@ -11,7 +11,6 @@ type TalentProfile = {
   userId?: string
   name: string
   email: string
-  position: string
   skills: string[]
   experience: number
   rating: number
@@ -20,15 +19,6 @@ type TalentProfile = {
   portfolio?: string
   notes?: string
 }
-
-const POSITIONS = [
-  { value: "creative", label: "Creative" },
-  { value: "strategist", label: "Strategist" },
-  { value: "producer", label: "Producer" },
-  { value: "designer", label: "Designer" },
-  { value: "developer", label: "Developer" },
-  { value: "animator", label: "Animator" },
-]
 
 const AVAILABILITY = [
   { value: "available", label: "Available" },
@@ -123,7 +113,6 @@ export default function TalentProfilePage() {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          position: profile.position,
           skills: profile.skills,
           experience: profile.experience,
           rating: profile.rating,
@@ -236,12 +225,6 @@ export default function TalentProfilePage() {
 
         <div className="panel-soft" style={{ padding: 24, marginBottom: 20 }}>
           <div className="form-grid">
-            <div className="field">
-              <label>Position <span style={{ color: "var(--signal)" }}>*</span></label>
-              <select className="admin-input" value={profile.position} onChange={(e) => setProfile({ ...profile, position: e.target.value })}>
-                {POSITIONS.map((p) => <option key={p.value} value={p.value}>{p.label}</option>)}
-              </select>
-            </div>
             <div className="field">
               <label>Availability</label>
               <select className="admin-input" value={profile.availability} onChange={(e) => setProfile({ ...profile, availability: e.target.value })}>

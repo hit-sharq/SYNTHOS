@@ -18,7 +18,6 @@ export default async function TalentsPage() {
         {talents.map((talent) => (
           <article key={talent.id} className="blog-card">
             <div className="blog-card-body">
-              <span className="eyebrow" style={{ textTransform: "capitalize" }}>{talent.position}</span>
               <h3>{talent.name}</h3>
               <p className="tiny muted" style={{ marginBottom: 8 }}>{talent.email}</p>
               {talent.notes && <p className="tiny" style={{ color: "var(--ink-2)", marginBottom: 10, lineHeight: 1.55 }}>{talent.notes}</p>}

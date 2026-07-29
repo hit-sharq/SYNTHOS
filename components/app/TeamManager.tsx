@@ -9,7 +9,6 @@ type TeamMember = {
   id: string
   name: string
   email: string
-  role: string
   skills: string[]
   availability: string
   avatar?: string
@@ -20,19 +19,12 @@ type TeamMember = {
   updatedAt: string
 }
 
-const ROLES = [
-  { value: "creative_writer", label: "Creative Writer" },
-  { value: "producer", label: "Producer" },
-  { value: "account_manager", label: "Account Manager" },
-  { value: "admin", label: "Admin" },
-]
-
 export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }) {
   const [members, setMembers] = useState<TeamMember[]>(initialMembers)
   const [editing, setEditing] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({
-    name: "", email: "", role: "creative_writer", skills: "", availability: "available", avatar: "", description: "", notes: ""
+    name: "", email: "", skills: "", availability: "available", avatar: "", description: "", notes: ""
   })
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
@@ -64,7 +56,7 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
 
   const startEdit = (m: TeamMember) => {
     setForm({
-      name: m.name, email: m.email, role: m.role, skills: m.skills.join(", "),
+      name: m.name, email: m.email, skills: m.skills.join(", "),
       availability: m.availability, avatar: m.avatar || "", description: m.description || "", notes: m.notes || ""
     })
     setEditId(m.id)
@@ -82,7 +74,7 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
     await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
     setEditing(false)
     setEditId(null)
-    setForm({ name: "", email: "", role: "creative", skills: "", availability: "available", avatar: "", description: "", notes: "" })
+    setForm({ name: "", email: "", skills: "", availability: "available", avatar: "", description: "", notes: "" })
     load()
     setSaving(false)
   }
@@ -119,14 +111,6 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
               </div>
             </div>
             <div className="form-grid-2">
-              <div className="field">
-                <label>Role</label>
-                <select className="admin-input" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-                  {ROLES.map((r) => (
-                    <option key={r.value} value={r.value}>{r.label}</option>
-                  ))}
-                </select>
-              </div>
               <div className="field">
                 <label>Availability</label>
                 <select className="admin-input" value={form.availability} onChange={(e) => setForm({ ...form, availability: e.target.value })}>
@@ -181,7 +165,6 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
                 <th>Avatar</th>
                 <th>Name</th>
                 <th>Email</th>
-                <th>Role</th>
                 <th>Availability</th>
                 <th style={{ width: 100 }}>Actions</th>
               </tr>
@@ -202,9 +185,6 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
                     <span style={{ fontWeight: 600, color: "#1b1a17" }}>{m.name}</span>
                   </td>
                   <td data-label="Email" className="admin-table-muted">{m.email}</td>
-                  <td data-label="Role">
-                    <span className="admin-badge admin-badge-active">{m.role.replace("_", " ")}</span>
-                  </td>
                   <td data-label="Availability">
                     <span className={`admin-badge admin-badge-${m.availability === "available" ? "active" : m.availability === "busy" ? "review" : "draft"}`}>
                       {m.availability}

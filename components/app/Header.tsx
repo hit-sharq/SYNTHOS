@@ -50,7 +50,7 @@ export default function Header() {
       fetch("/api/auth/role")
         .then(res => res.json())
         .then(data => {
-          if (data.role && data.role !== "client") setUserRole(data.role)
+          if (data.role) setUserRole(data.role)
         })
         .catch(() => {})
     } else {
@@ -132,6 +132,15 @@ export default function Header() {
                 {isAdmin ? "Admin" : "Dashboard"}
               </Link>
             </>
+          )}
+          {isSignedIn && userRole === "client" && (
+            <Link 
+              href="/client/dashboard" 
+              className={`topnav-link ${pathname === "/client/dashboard" ? "active" : ""}`} 
+              onClick={() => setOpen(false)}
+            >
+              Client Dashboard
+            </Link>
           )}
         </nav>
 

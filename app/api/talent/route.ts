@@ -22,7 +22,6 @@ export async function POST(req: Request) {
       data: {
         name: body.name,
         email: body.email,
-        position: body.position,
         skills: body.skills || [],
         experience: body.experience || 0,
         rating: body.rating || 0,

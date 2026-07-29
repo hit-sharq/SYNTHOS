@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Role } from "@prisma/client"
 import { generateWithGemini } from "@/lib/ai"
 import { sendNotification } from "@/lib/notifications"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
     })
 
     const owner = await prisma.user.findFirst({
-      where: { role: { in: ["talent"] } },
+      where: { role: { in: [Role.talent] } },
       orderBy: { createdAt: "asc" },
     })
 

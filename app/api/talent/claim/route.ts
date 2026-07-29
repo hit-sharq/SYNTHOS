@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Role } from "@prisma/client"
 
 export async function POST(req: Request) {
   try {
@@ -16,11 +17,11 @@ export async function POST(req: Request) {
     const existing = await prisma.user.findFirst({ where: { email: normalizedEmail } })
 
     if (existing) {
-      if (existing.role === "talent") {
+      if (existing.role === Role.talent) {
         const talent = await prisma.talent.findUnique({ where: { userId: existing.id } })
         return NextResponse.json({ userId: existing.id, talentId: talent?.id }, { status: 200 })
       }
-      await prisma.user.update({ where: { id: existing.id }, data: { role: "talent" } })
+      await prisma.user.update({ where: { id: existing.id }, data: { role: Role.talent } })
       const talent = await prisma.talent.upsert({
         where: { userId: existing.id },
         update: {},
@@ -28,7 +29,6 @@ export async function POST(req: Request) {
           userId: existing.id,
           name: existing.name,
           email: existing.email,
-          position: "creative",
           skills: [],
           experience: 0,
           rating: 0,
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
         email: normalizedEmail,
         name: (name?.trim() || email.split("@")[0]).trim(),
         initials: initials || "TL",
-        role: "talent",
+        role: Role.talent,
       },
     })
 
@@ -54,7 +54,6 @@ export async function POST(req: Request) {
         userId: user.id,
         name: user.name,
         email: user.email,
-        position: "creative",
         skills: [],
         experience: 0,
         rating: 0,
