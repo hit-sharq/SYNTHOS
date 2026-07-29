@@ -48,7 +48,7 @@ export default async function TalentsPage() {
         {talents.length === 0 && (
           <div style={{ gridColumn: "1 / -1", textAlign: "center", padding: 60 }}>
             <p className="muted">No talents listed yet.</p>
-            <Link href="/sign-up" className="btn btn-signal" style={{ marginTop: 20 }}>Join as Creator</Link>
+            <Link href="/join" className="btn btn-signal" style={{ marginTop: 20 }}>Join as Creator</Link>
           </div>
         )}
       </div>

@@ -34,7 +34,7 @@ export default function Footer() {
 
         <div className="foot-col">
           <h5>For Creators</h5>
-          <Link href="/sign-up">Join as Talent</Link>
+           <Link href="/join">Join</Link>
           <Link href="/sign-in">Talent Login</Link>
         </div>
 

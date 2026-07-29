@@ -137,7 +137,7 @@ Return ONLY a JSON object (no markdown, no code fences):
       await sendNotification({
         userId: owner.id,
         title: "New project + AI workflow started",
-        message: `AI is now processing "${title}" from ${name}. It will generate the call, contact report, proposal, and quote automatically.`,
+        message: `AI is now processing "${title}" from ${name}. It will generate a proposal and quote automatically.`,
         kind: "system",
         refId: project.id,
       })

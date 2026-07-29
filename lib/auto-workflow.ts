@@ -201,9 +201,34 @@ export async function runAutoWorkflow(projectId: string) {
     const hasRealProposal = !!project.proposal
     const hasRealQuote = !!project.quote
     const isExternalMeeting = !!(project.call && project.call.meetingSource !== "embedded" && project.call.transcript)
+    const isIntake = projectWithClient?.clientRef?.source === "Intake form" || (projectWithClient?.clientRef?.tags || []).includes("intake")
 
     if (currentStage === "brief" && project.brief) {
-      if (!hasRealCall && !isExternalMeeting) {
+      if (isIntake) {
+        const proposalData = await withRetry(
+          () => generateWithGemini(PROPOSAL_PROMPT(project)).then(cleanJson),
+          FALLBACKS.proposal
+        )
+        const publicToken = crypto.randomUUID()
+        await prisma.proposal.create({
+          data: { projectId, clientDetails: proposalData.clientDetails, overview: proposalData.overview, problem: proposalData.problem, solution: proposalData.solution, scope: proposalData.scope, deliverables: proposalData.deliverables, timeline: proposalData.timeline, team: proposalData.team, investment: proposalData.investment, terms: proposalData.terms, status: "review", sections: proposalData.sections, publicToken, sentToClient: true, sentAt: new Date() },
+        })
+        await prisma.project.update({ where: { id: projectId }, data: { stage: "proposal", nextAction: "Proposal sent to client for review" } })
+        currentStage = "proposal"
+        results.proposal = proposalData
+        results.steps.push({ stage: "proposal", step: "generate", status: "completed" })
+        await persistStatus("proposal", "generate", "completed")
+
+        if (project.ownerId) {
+          await sendNotification({
+            userId: project.ownerId,
+            title: "AI generated proposal",
+            message: `AI drafted a proposal for "${project.name}" from intake. It has been sent to the client for review.`,
+            kind: "info",
+            refId: project.id,
+          })
+        }
+      } else if (!hasRealCall && !isExternalMeeting) {
         await prisma.project.update({ where: { id: projectId }, data: { stage: "call", nextAction: "Discovery call scheduled" } })
         currentStage = "call"
         await persistStatus("call", "schedule", "in_progress")
