@@ -1,5 +1,5 @@
 const BRAND = {
-  name: "Lumyn",
+  name: "Synthos",
   domain: "lumyn.co.ke",
   email: "info@lumyn.co.ke",
   color: "#0f172a",

@@ -10,7 +10,7 @@ export default function AboutPage() {
       <div style={{ maxWidth: 720, margin: "0 auto" }}>
         <div className="section-title">Our Mission</div>
         <p style={{ fontSize: "1.05rem", color: "var(--ink-2)", lineHeight: 1.7, marginBottom: 32 }}>
-          synthos was built to solve a fundamental problem in creative agencies: the gap between client conversations and structured project intelligence. We believe AI should handle the workflow so humans can focus on what they do best — creativity, judgment, and relationships.
+          Lumyn was built to solve a fundamental problem in creative agencies: the gap between client conversations and structured project intelligence. We believe AI should handle the workflow so humans can focus on what they do best — creativity, judgment, and relationships.
         </p>
 
         <div className="section-title">What We Do</div>

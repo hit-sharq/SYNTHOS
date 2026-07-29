@@ -52,7 +52,7 @@ export default function Footer() {
         </div>
       </div>
       <div className="container foot-base">
-        <span className="tiny muted">© {new Date().getFullYear()} Lumyn. Human + AI creative intelligence.</span>
+        <span className="tiny muted">© {new Date().getFullYear()} Synthos. Human + AI creative intelligence.</span>
         <span className="tiny muted">Built for creative teams &amp; agencies.</span>
       </div>
     </footer>

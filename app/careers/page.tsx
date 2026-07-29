@@ -4,6 +4,27 @@ import { prisma } from "@/lib/prisma"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
 import "@/components/app/blog.css"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Careers",
+  description: "Help us build the future of creative intelligence. Explore open positions.",
+  openGraph: {
+    title: "Careers",
+    description: "Help us build the future of creative intelligence. Explore open positions.",
+    url: "https://synthos-three.vercel.app/careers",
+    siteName: "Synthos",
+    images: [
+      {
+        url:"https://synthos-three.vercel.app/og-image.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "en-US",
+    type: "website",
+  },
+}
 
 export default async function CareersPage() {
   const rawCareers = await prisma.career.findMany({

@@ -4,6 +4,27 @@ import { prisma } from "@/lib/prisma"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
 import "@/components/app/blog.css"
+import { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Thoughts on creative intelligence, AI-assisted workflows, and the future of creative agencies.",
+  openGraph: {
+    title: "Blog",
+    description: "Thoughts on creative intelligence, AI-assisted workflows, and the future of creative agencies.",
+    url: "https://synthos.ai/blog",
+    siteName: "Synthos",
+    images: [
+      {
+        url: "https://synthos.ai/og-image.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "en-US",
+    type: "website",
+  },
+} 
 
 export default async function BlogPage() {
   const posts = await prisma.post.findMany({
