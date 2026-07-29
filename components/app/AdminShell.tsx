@@ -31,6 +31,7 @@ const WORKSPACE_NAV = [
   { href: "/dashboard/proposals", label: "Proposals", icon: FileSignature },
   { href: "/dashboard/quotes", label: "Quotes", icon: Calculator },
   { href: "/dashboard/approvals", label: "Approvals", icon: CheckCircle },
+  { href: "/jobs", label: "Jobs", icon: Briefcase },
   { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
 ]
 

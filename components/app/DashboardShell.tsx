@@ -20,6 +20,7 @@ import {
   X,
   GitBranch,
   User,
+  Briefcase,
 } from "lucide-react"
 
 import "./dashboard.css"
@@ -39,6 +40,7 @@ const ADMIN_NAV = [
 const TALENT_NAV = [
   { href: "/dashboard/talent", label: "My Dashboard", icon: User },
   { href: "/dashboard/projects", label: "My Projects", icon: FolderOpen },
+  { href: "/jobs", label: "Open Gigs", icon: Briefcase },
   { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
 ]
 

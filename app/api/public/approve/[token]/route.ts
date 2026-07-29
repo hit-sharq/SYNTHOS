@@ -74,7 +74,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
       if (action === "approve") {
         const project = await prisma.project.findUnique({
           where: { id: proposal.projectId },
-          include: { owner: true, clientRef: true },
+          include: { owner: true, clientRef: true, brief: true },
         })
 
         if (project) {
@@ -105,15 +105,29 @@ export async function POST(req: Request, { params }: { params: { token: string }
               data: { stage: "approval", nextAction: "Final approval — project ready to begin", status: "complete", progress: 100 },
             })
 
+            await prisma.job.create({
+              data: {
+                projectId: project.id,
+                title: project.name,
+                description: proposal.overview || `Project for ${project.client}`,
+                requirements: [...(proposal.scope || []), ...(project.brief?.deliverables || [])],
+                skills: proposal.team || [],
+                budget: proposal.investment || "",
+                timeline: proposal.timeline || "",
+                type: "contract",
+                status: "open",
+              },
+            })
+
              if (project.ownerId) {
-               await sendNotification({
-                 userId: project.ownerId,
-                 title: "Project approved!",
-                 message: `"${project.name}" has been fully approved by the client. You can now begin production.`,
-                 kind: "system",
-                 refId: project.id,
-               })
-             }
+                await sendNotification({
+                  userId: project.ownerId,
+                  title: "Project approved!",
+                  message: `"${project.name}" has been fully approved by the client. You can now begin production.`,
+                  kind: "system",
+                  refId: project.id,
+                })
+              }
 
             const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
             for (const adminId of adminIds) {
@@ -180,7 +194,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
       if (action === "approve") {
         const project = await prisma.project.findUnique({
           where: { id: quote.projectId },
-          include: { owner: true, clientRef: true },
+          include: { owner: true, clientRef: true, proposal: true, brief: true },
         })
 
         if (project) {
@@ -214,6 +228,20 @@ export async function POST(req: Request, { params }: { params: { token: string }
             await prisma.project.update({
               where: { id: project.id },
               data: { status: "complete", progress: 100 },
+            })
+
+            await prisma.job.create({
+              data: {
+                projectId: project.id,
+                title: project.name,
+                description: proposal.overview || `Project for ${project.client}`,
+                requirements: [...(proposal.scope || []), ...(project.brief?.deliverables || [])],
+                skills: proposal.team || [],
+                budget: proposal.investment || "",
+                timeline: proposal.timeline || "",
+                type: "contract",
+                status: "open",
+              },
             })
 
             const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)

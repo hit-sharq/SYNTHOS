@@ -118,6 +118,7 @@ export default function Header() {
 
         <nav className={`topnav ${open ? "open" : ""}`}>
           <Link href="/" className={`topnav-link ${pathname === "/" ? "active" : ""}`} onClick={() => setOpen(false)}>Home</Link>
+          <Link href="/jobs" className={`topnav-link ${pathname === "/jobs" ? "active" : ""}`} onClick={() => setOpen(false)}>Jobs</Link>
           <Link href="/intake" className={`topnav-link ${pathname === "/intake" ? "active" : ""}`} onClick={() => setOpen(false)}>Start a Project</Link>
           {!isSignedIn && (
             <Link href="/join" className={`topnav-link ${pathname === "/join" ? "active" : ""}`} onClick={() => setOpen(false)}>Join</Link>

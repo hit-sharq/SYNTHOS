@@ -27,6 +27,7 @@ model User {
 
   projects  Project[]
   talentProfile Talent?
+  jobApplications JobApplication[]
 }
 
 model Project {
@@ -65,6 +66,7 @@ model Project {
   productionMeeting ProductionMeeting?
   conversations Conversation[]
   invoices     Invoice[]
+  job          Job?
 
   @@index([stage])
   @@index([status])
@@ -444,6 +446,45 @@ model TeamMember {
   updatedAt    DateTime @updatedAt
 
   @@index([availability])
+}
+
+// ----- Project Jobs -----
+model Job {
+  id           String   @id @default(cuid())
+  projectId    String   @unique
+  project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title        String
+  description  String
+  requirements String[]
+  skills       String[]
+  budget       String?
+  timeline     String?
+  type         String   @default("contract") // contract | part-time | full-time
+  status       String   @default("open") // open | filled | closed
+  postedAt     DateTime @default(now())
+  expiresAt    DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([status])
+  @@index([projectId])
+  applications JobApplication[]
+}
+
+model JobApplication {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  talentId  String
+  talent    User     @relation(fields: [talentId], references: [id])
+  message   String?
+  status    String   @default("pending") // pending | reviewed | accepted | rejected
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([jobId, talentId])
+  @@index([jobId])
+  @@index([talentId])
 }
 
 // ----- Contact Reports -----

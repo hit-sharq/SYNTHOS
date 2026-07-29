@@ -35,6 +35,7 @@ export default function Footer() {
         <div className="foot-col">
           <h5>For Creators</h5>
            <Link href="/join">Join</Link>
+           <Link href="/jobs">Open Gigs</Link>
           <Link href="/sign-in">Talent Login</Link>
         </div>
 
