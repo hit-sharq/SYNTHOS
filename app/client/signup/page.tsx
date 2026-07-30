@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useSignUp, useClerk } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { AuthLayout } from "@/components/app/AuthLayout"
 
 export default function ClientSignupPage() {
   const { signUp, isLoaded: signUpLoaded } = useSignUp()
@@ -52,8 +53,8 @@ export default function ClientSignupPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-      <div style={{ maxWidth: 420, width: "100%", border: "1px solid var(--line)", padding: "36px 32px" }}>
+    <AuthLayout>
+      <div style={{ width: "100%", maxWidth: 420 }}>
         <div style={{ marginBottom: 28 }}>
           <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.8rem", color: "var(--ink)", fontWeight: 500, marginBottom: 8 }}>Client Access</h1>
           <p style={{ fontSize: "0.92rem", color: "var(--ink-3)" }}>Create an account to view your projects.</p>
@@ -82,15 +83,15 @@ export default function ClientSignupPage() {
             <label>Password <span style={{ color: "var(--signal)" }}>*</span></label>
             <input className="admin-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
           </div>
-          <button type="submit" className="btn btn-signal" disabled={loading || !signUpLoaded} style={{ width: "100%" }}>
+          <button type="submit" className="btn btn-signal" disabled={loading} style={{ width: "100%" }}>
             {loading ? "Creating account…" : "Create Account"}
           </button>
         </form>
 
         <p style={{ marginTop: 20, fontSize: "0.88rem", color: "var(--ink-3)", textAlign: "center" }}>
-          Already have an account? <Link href="/client/login" style={{ color: "var(--signal)" }}>Log in</Link>
+          Already have an account? <Link href="/sign-in" style={{ color: "var(--signal)" }}>Sign in</Link>
         </p>
       </div>
-    </div>
+    </AuthLayout>
   )
 }

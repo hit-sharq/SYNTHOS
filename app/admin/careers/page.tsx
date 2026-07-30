@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { PageHead } from "@/components/app/Page"
 import { CareersManager } from "@/components/app/CareersManager"
 
+
 export default async function AdminCareersPage() {
   const rawCareers = await prisma.career.findMany({
     orderBy: { createdAt: "desc" },

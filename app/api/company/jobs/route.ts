@@ -1,42 +1,42 @@
-export const dynamic = 'force-dynamic'
-
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
-
-export async function GET() {
-  try {
-    const jobs = await prisma.jobPosting.findMany({
-      where: { status: "open" },
-      orderBy: { postedAt: "desc" },
-      include: { project: { select: { id: true, name: true, slug: true, client: true } } },
-    })
-
-    return NextResponse.json({ jobs: jobs.map(j => ({
-      id: j.id,
-      title: j.title,
-      description: j.description,
-      requirements: j.requirements,
-      skills: j.skills,
-      budget: j.budget,
-      timeline: j.timeline,
-      type: j.type,
-      status: j.status,
-      postedAt: j.postedAt.toISOString(),
-      expiresAt: j.expiresAt?.toISOString(),
-      project: j.project,
-    })) })
-  } catch (error) {
-    console.error("Failed to fetch jobs:", error)
-    return NextResponse.json({ error: "Failed to load jobs" }, { status: 500 })
-  }
-}
 
 export async function POST(req: Request) {
   try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+    const user = await prisma.user.findUnique({ where: { id: userId } })
+    if (!user || !user.companyId) {
+      return NextResponse.json({ error: "Only verified companies can post jobs" }, { status: 403 })
+    }
+
+    const company = await prisma.company.findUnique({ where: { id: user.companyId } })
+    if (!company || company.status !== "active") {
+      return NextResponse.json({ error: "Company must be active to post jobs" }, { status: 403 })
+    }
+
+    const startOfMonth = new Date()
+    startOfMonth.setDate(1)
+    startOfMonth.setHours(0, 0, 0, 0)
+
+    const jobsThisMonth = await prisma.jobPosting.count({
+      where: {
+        companyId: company.id,
+        createdAt: { gte: startOfMonth },
+      },
+    })
+
+    const FREE_LIMIT = company.verified ? Infinity : 1
+    if (jobsThisMonth >= FREE_LIMIT) {
+      return NextResponse.json({ error: company.verified ? "Monthly limit reached" : "Free tier limit reached. Verify your company for unlimited posts." }, { status: 403 })
+    }
+
     const body = await req.json()
     const job = await prisma.jobPosting.create({
       data: {
-        companyId: body.companyId,
+        companyId: company.id,
         title: body.title,
         description: body.description,
         requirements: body.requirements || [],
@@ -50,9 +50,7 @@ export async function POST(req: Request) {
         category: body.category || "",
         experience: body.experience || "",
         education: body.education || "",
-        status: body.status || "pending",
-        featured: body.featured || false,
-        expiresAt: body.expiresAt ? new Date(body.expiresAt) : null,
+        status: "pending",
       },
       include: { company: { select: { id: true, name: true, slug: true, verified: true } } },
     })
@@ -73,13 +71,11 @@ export async function POST(req: Request) {
       experience: job.experience,
       education: job.education,
       status: job.status,
-      featured: job.featured,
       postedAt: job.postedAt.toISOString(),
-      expiresAt: job.expiresAt?.toISOString(),
       company: job.company,
     } }, { status: 201 })
   } catch (error) {
-    console.error("Failed to create job:", error)
-    return NextResponse.json({ error: "Failed to create job" }, { status: 500 })
+    console.error("Failed to post job:", error)
+    return NextResponse.json({ error: "Failed to post job" }, { status: 500 })
   }
 }

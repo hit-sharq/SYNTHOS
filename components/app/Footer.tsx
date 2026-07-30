@@ -33,10 +33,16 @@ export default function Footer() {
         </div>
 
         <div className="foot-col">
+          <h5>For Companies</h5>
+           <Link href="/company/signup">Post a Job</Link>
+           <Link href="/company/login">Company Login</Link>
+        </div>
+
+        <div className="foot-col">
           <h5>For Creators</h5>
-           <Link href="/join">Join</Link>
-           <Link href="/jobs">Open Gigs</Link>
-          <Link href="/sign-in">Talent Login</Link>
+            <Link href="/join">Join</Link>
+            <Link href="/jobs">Open Gigs</Link>
+           <Link href="/sign-in">Talent Login</Link>
         </div>
 
         <div className="foot-col">

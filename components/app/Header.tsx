@@ -35,6 +35,7 @@ export default function Header() {
   const { user, isLoaded, isSignedIn } = useUser()
   const [isAdmin, setIsAdmin] = useState(false)
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [companyId, setCompanyId] = useState<string | null>(null)
   const [notifications, setNotifications] = useState<any[]>([])
   const [unread, setUnread] = useState(0)
   const notifRef = useRef<HTMLDivElement>(null)
@@ -51,11 +52,13 @@ export default function Header() {
         .then(res => res.json())
         .then(data => {
           if (data.role) setUserRole(data.role)
+          if (data.companyId) setCompanyId(data.companyId)
         })
         .catch(() => {})
     } else {
       setIsAdmin(false)
       setUserRole(null)
+      setCompanyId(null)
     }
   }, [isSignedIn])
 
@@ -134,7 +137,32 @@ export default function Header() {
               </Link>
             </>
           )}
-          {isSignedIn && userRole === "client" && (
+          {isSignedIn && userRole === "client" && companyId && (
+            <>
+              <Link 
+                href="/company/dashboard" 
+                className={`topnav-link ${pathname === "/company/dashboard" ? "active" : ""}`} 
+                onClick={() => setOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <Link 
+                href="/company/jobs" 
+                className={`topnav-link ${pathname === "/company/jobs" ? "active" : ""}`} 
+                onClick={() => setOpen(false)}
+              >
+                My Jobs
+              </Link>
+              <Link 
+                href="/company/jobs/new" 
+                className={`topnav-link ${pathname === "/company/jobs/new" ? "active" : ""}`} 
+                onClick={() => setOpen(false)}
+              >
+                Post Job
+              </Link>
+            </>
+          )}
+          {isSignedIn && userRole === "client" && !companyId && (
             <Link 
               href="/client/dashboard" 
               className={`topnav-link ${pathname === "/client/dashboard" ? "active" : ""}`} 

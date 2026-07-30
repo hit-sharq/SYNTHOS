@@ -105,7 +105,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
               data: { stage: "approval", nextAction: "Final approval — project ready to begin", status: "complete", progress: 100 },
             })
 
-            await prisma.job.create({
+            await prisma.projectJob.create({
               data: {
                 projectId: project.id,
                 title: project.name,
@@ -230,7 +230,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
               data: { status: "complete", progress: 100 },
             })
 
-            await prisma.job.create({
+            await prisma.projectJob.create({
               data: {
                 projectId: project.id,
                 title: project.name,

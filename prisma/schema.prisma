@@ -16,18 +16,37 @@ enum Role {
   admin
 }
 
+model JobApplication {
+  id        String   @id @default(cuid())
+  jobId     String
+  job       JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  talentId  String
+  talent    User     @relation(fields: [talentId], references: [id])
+  message   String?
+  status    String   @default("pending") // pending | reviewed | accepted | rejected
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([jobId, talentId])
+  @@index([jobId])
+  @@index([talentId])
+}
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
   name      String
   initials  String
   role      Role      @default(talent)
+  companyId String?
+  company   Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   projects  Project[]
   talentProfile Talent?
   jobApplications JobApplication[]
+  projectJobApplications ProjectJobApplication[]
 }
 
 model Project {
@@ -66,7 +85,7 @@ model Project {
   productionMeeting ProductionMeeting?
   conversations Conversation[]
   invoices     Invoice[]
-  job          Job?
+  job          ProjectJob?
 
   @@index([stage])
   @@index([status])
@@ -364,6 +383,90 @@ model Talent {
   @@index([availability])
 }
 
+// ----- Company Directory -----
+model Company {
+  id            String   @id @default(cuid())
+  name          String
+  slug          String   @unique
+  email         String   @unique
+  phone         String?
+  website       String?
+  industry      String?
+  location      String?
+  description   String?
+  logo          String?
+  verified      Boolean  @default(false)
+  verifiedAt    DateTime?
+  verifiedBy    String?
+  status        String   @default("pending") // pending | active | suspended
+  joinedAt      DateTime @default(now())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  jobs          JobPosting[]
+  verifications CompanyVerification[]
+  users         User[]
+
+  @@index([status])
+  @@index([verified])
+}
+
+// ----- Company Verification -----
+model CompanyVerification {
+  id           String   @id @default(cuid())
+  companyId    String
+  company      Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  type         String   // business_registration | kra_pin | bank_details | reference_call
+  status       String   @default("pending") // pending | approved | rejected
+  documentUrl  String?
+  notes        String?
+  reviewedBy   String?
+  reviewedAt   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([status])
+}
+
+// ----- Job Board -----
+model JobPosting {
+  id           String   @id @default(cuid())
+  companyId    String
+  company      Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  title        String
+  description  String
+  requirements String[]
+  skills       String[]
+  budget       String?
+  budgetMin    String?
+  budgetMax    String?
+  timeline     String?
+  location     String?
+  type         String   @default("full-time") // full-time | part-time | contract | internship | remote
+  category     String? // technology | marketing | finance | design | etc.
+  experience   String? // entry | mid | senior | executive
+  education    String?
+  status       String   @default("pending") // pending | approved | rejected | expired | filled
+  featured     Boolean  @default(false)
+  applications JobApplication[]
+  views        Int      @default(0)
+  expiresAt    DateTime?
+  approvedAt   DateTime?
+  approvedBy   String?
+  rejectedAt   DateTime?
+  rejectedBy   String?
+  rejectionReason String?
+  postedAt     DateTime @default(now())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([companyId])
+  @@index([status])
+  @@index([featured])
+  @@index([category])
+}
+
 // ----- Client CRM -----
 model Client {
   id          String   @id @default(cuid())
@@ -449,7 +552,7 @@ model TeamMember {
 }
 
 // ----- Project Jobs -----
-model Job {
+model ProjectJob {
   id           String   @id @default(cuid())
   projectId    String   @unique
   project      Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -468,13 +571,13 @@ model Job {
 
   @@index([status])
   @@index([projectId])
-  applications JobApplication[]
+  applications ProjectJobApplication[]
 }
 
-model JobApplication {
+model ProjectJobApplication {
   id        String   @id @default(cuid())
   jobId     String
-  job       Job      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  job       ProjectJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
   talentId  String
   talent    User     @relation(fields: [talentId], references: [id])
   message   String?

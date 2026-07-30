@@ -12,9 +12,9 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: "Only talents can apply" }, { status: 403 })
     }
 
-    const job = await prisma.job.findUnique({ where: { id: params.id } })
+    const job = await prisma.jobPosting.findUnique({ where: { id: params.id } })
     if (!job) return NextResponse.json({ error: "Job not found" }, { status: 404 })
-    if (job.status !== "open") return NextResponse.json({ error: "Job is not open" }, { status: 400 })
+    if (job.status !== "approved") return NextResponse.json({ error: "Job is not open" }, { status: 400 })
 
     const existing = await prisma.jobApplication.findUnique({
       where: { jobId_talentId: { jobId: job.id, talentId: user.id } },

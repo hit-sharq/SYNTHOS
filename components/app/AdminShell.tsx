@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Users, UserPlus, Briefcase, MessageSquare, Settings, Newspaper, FileText, ArrowLeft, Menu, X, FolderOpen, UserSearch, Contact, GitBranch, FileSignature, Calculator, CheckCircle, Calendar } from "lucide-react"
+import { LayoutDashboard, Users, UserPlus, Briefcase, MessageSquare, Settings, Newspaper, FileText, ArrowLeft, Menu, X, FolderOpen, UserSearch, Contact, GitBranch, FileSignature, Calculator, CheckCircle, Calendar, Building2 } from "lucide-react"
 import "./admin.css"
 
 const ADMIN_NAV = [
@@ -12,6 +12,8 @@ const ADMIN_NAV = [
   { href: "/admin/projects", label: "Projects", icon: FolderOpen },
   { href: "/admin/talent", label: "Talent", icon: UserSearch },
   { href: "/admin/clients", label: "Clients", icon: Contact },
+  { href: "/admin/companies", label: "Companies", icon: Building2 },
+  { href: "/admin/jobs", label: "Job Postings", icon: Briefcase },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/team", label: "Team", icon: UserPlus },
   { href: "/admin/careers", label: "Careers", icon: Briefcase },
