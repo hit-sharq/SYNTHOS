@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@clerk/nextjs/server"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
-import "./blog.css"
+import "@/components/app/blog.css"
 
 export default async function JobsPage() {
   const { userId } = await auth()
