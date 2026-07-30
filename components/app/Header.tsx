@@ -119,57 +119,35 @@ export default function Header() {
           <BrandMark />
         </div>
 
-        <nav className={`topnav ${open ? "open" : ""}`}>
+        <nav className={`topnav ${open ? "open" : ""}`} aria-label="Main navigation">
           <Link href="/" className={`topnav-link ${pathname === "/" ? "active" : ""}`} onClick={() => setOpen(false)}>Home</Link>
-          <Link href="/jobs" className={`topnav-link ${pathname === "/jobs" ? "active" : ""}`} onClick={() => setOpen(false)}>Jobs</Link>
-          <Link href="/intake" className={`topnav-link ${pathname === "/intake" ? "active" : ""}`} onClick={() => setOpen(false)}>Start a Project</Link>
+          <Link href="/platform" className={`topnav-link ${pathname === "/platform" ? "active" : ""}`} onClick={() => setOpen(false)}>Platform</Link>
+          <Link href="/workflow" className={`topnav-link ${pathname.startsWith("/workflow") ? "active" : ""}`} onClick={() => setOpen(false)}>Workflow</Link>
+          <Link href="/talents" className={`topnav-link ${pathname === "/talents" ? "active" : ""}`} onClick={() => setOpen(false)}>Talent</Link>
+          <Link href="/companies" className={`topnav-link ${pathname.startsWith("/company") ? "active" : ""}`} onClick={() => setOpen(false)}>Companies</Link>
           {!isSignedIn && (
             <Link href="/join" className={`topnav-link ${pathname === "/join" ? "active" : ""}`} onClick={() => setOpen(false)}>Join</Link>
           )}
-          {isSignedIn && (isAdmin || userRole === "talent") && (
+{isSignedIn && (
             <>
-              <Link 
-                href={isAdmin ? "/admin" : "/dashboard/overview"} 
-                className={`topnav-link ${pathname === (isAdmin ? "/admin" : "/dashboard/overview") ? "active" : ""}`} 
+              <Link
+                href="/dashboard/overview"
+                className={`topnav-link ${pathname === "/dashboard/overview" || pathname.startsWith("/dashboard") ? "active" : ""}`}
                 onClick={() => setOpen(false)}
               >
-                {isAdmin ? "Admin" : "Dashboard"}
+                Dashboard
               </Link>
             </>
           )}
           {isSignedIn && userRole === "client" && companyId && (
             <>
-              <Link 
-                href="/company/dashboard" 
-                className={`topnav-link ${pathname === "/company/dashboard" ? "active" : ""}`} 
-                onClick={() => setOpen(false)}
-              >
-                Dashboard
-              </Link>
-              <Link 
-                href="/company/jobs" 
-                className={`topnav-link ${pathname === "/company/jobs" ? "active" : ""}`} 
-                onClick={() => setOpen(false)}
-              >
-                My Jobs
-              </Link>
-              <Link 
-                href="/company/jobs/new" 
-                className={`topnav-link ${pathname === "/company/jobs/new" ? "active" : ""}`} 
-                onClick={() => setOpen(false)}
-              >
-                Post Job
-              </Link>
+              <Link href="/company/dashboard" className={`topnav-link ${pathname === "/company/dashboard" ? "active" : ""}`} onClick={() => setOpen(false)}>Dashboard</Link>
+              <Link href="/company/jobs" className={`topnav-link ${pathname === "/company/jobs" ? "active" : ""}`} onClick={() => setOpen(false)}>My Jobs</Link>
+              <Link href="/company/jobs/new" className={`topnav-link ${pathname === "/company/jobs/new" ? "active" : ""}`} onClick={() => setOpen(false)}>Post Job</Link>
             </>
           )}
           {isSignedIn && userRole === "client" && !companyId && (
-            <Link 
-              href="/client/dashboard" 
-              className={`topnav-link ${pathname === "/client/dashboard" ? "active" : ""}`} 
-              onClick={() => setOpen(false)}
-            >
-              Client Dashboard
-            </Link>
+            <Link href="/client/dashboard" className={`topnav-link ${pathname === "/client/dashboard" ? "active" : ""}`} onClick={() => setOpen(false)}>Client Dashboard</Link>
           )}
         </nav>
 

@@ -9,17 +9,17 @@ const TYPES = [
   "Brand & Campaign",
   "Film & Motion",
   "Web & Product",
-  "Strategy & Campaign",
+  "Strategy & Blueprint",
 ]
 
 const STAGE_LABELS: Record<string, string> = {
-  brief: "Brief analyzed",
-  call: "Discovery call scheduled",
-  contactReport: "Contact report generated",
-  productionMeeting: "Production meeting planned",
-  proposal: "Proposal generated",
-  quote: "Quote generated",
-  approval: "Awaiting client approval",
+  brief: "Blueprint analyzed",
+  call: "Discovery session scheduled",
+  contactReport: "Intelligence report generated",
+  productionMeeting: "Production roundtable planned",
+  proposal: "Pitch deck generated",
+  quote: "Estimate brief ready",
+  approval: "Awaiting partner greenlight",
 }
 
 export default function IntakePage() {
@@ -127,21 +127,21 @@ export default function IntakePage() {
   return (
     <PageWrap>
       <PageHead
-        eyebrow="Start a project"
-        title="Tell us about your project"
-        desc="Fill out the form below or use the microphone buttons to speak your answers. Our AI will prepare a brief and schedule a discovery call."
+        eyebrow="Open a blueprint"
+        title="Describe your creative mission"
+        desc="Fill out the form below or use the microphone buttons to speak your answers. Our intelligence pipeline will prepare a blueprint and schedule a discovery session."
       />
 
       {status === "success" ? (
         <Panel>
           <div style={{ padding: 40, textAlign: "center" }}>
-            <h3 style={{ fontSize: "1.2rem", marginBottom: 12 }}>Request received</h3>
+            <h3 style={{ fontSize: "1.2rem", marginBottom: 12 }}>Blueprint accepted</h3>
             <p className="muted" style={{ maxWidth: 480, margin: "0 auto", lineHeight: 1.6 }}>
-              Thanks, {submittedData?.name || "there"}. We&apos;ve received your project request for <strong>{submittedData?.title || "your project"}</strong>.
+              Thanks, {submittedData?.name || "there"}. We&apos;ve received your blueprint request for <strong>{submittedData?.title || "your project"}</strong>.
             </p>
 
             <div style={{ marginTop: 24, padding: 20, background: "var(--surface-2)", border: "1px solid var(--line)", maxWidth: 480, margin: "24px auto 0" }}>
-              <p style={{ fontSize: "0.82rem", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--ink-3)", marginBottom: 10 }}>AI Workflow</p>
+              <p style={{ fontSize: "0.82rem", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.06em", color: "var(--ink-3)", marginBottom: 10 }}>Intelligence Pipeline</p>
               <p style={{ fontSize: "0.92rem", color: "var(--ink)", lineHeight: 1.6, marginBottom: 12 }}>{currentStageLabel}</p>
 
               {workflowStatus && workflowStatus.steps.length > 0 && (
@@ -160,7 +160,7 @@ export default function IntakePage() {
             </div>
 
             <button className="btn btn-ghost btn-sm" style={{ marginTop: 20 }} onClick={resetForm}>
-              Submit another request
+              Submit another blueprint
             </button>
           </div>
         </Panel>
@@ -169,8 +169,8 @@ export default function IntakePage() {
           <Panel>
             <div style={{ padding: 24 }} className="stack gap-4">
               <div className="form-grid-2">
-                <div className="field"><label>Your Name *</label><VoiceInput value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="joshua " /></div>
-                <div className="field"><label>Company</label><VoiceInput value={form.company} onChange={(v) => setForm({ ...form, company: v })} placeholder="Acme Inc" /></div>
+                <div className="field"><label>Partner Name *</label><VoiceInput value={form.name} onChange={(v) => setForm({ ...form, name: v })} placeholder="joshua mwendwa" /></div>
+                <div className="field"><label>Organization</label><VoiceInput value={form.company} onChange={(v) => setForm({ ...form, company: v })} placeholder="Acme Inc" /></div>
               </div>
               <div className="form-grid-2">
                 <div className="field">
@@ -183,25 +183,25 @@ export default function IntakePage() {
                 </div>
               </div>
               <div className="field">
-                <label>Project Type</label>
+                <label>Creative Domain</label>
                 <select className="select" value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })}>
                   {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
-              <div className="field"><label>Project Title *</label><VoiceInput value={form.title} onChange={(v) => setForm({ ...form, title: v })} placeholder="e.g. Brand Refresh 2026" style={{ width: "100%" }} /></div>
-              <div className="field"><label>Business Objective</label><VoiceInput value={form.objective} onChange={(v) => setForm({ ...form, objective: v })} placeholder="What are you trying to achieve?" rows={3} style={{ width: "100%" }} /></div>
-              <div className="field"><label>Target Audience</label><VoiceInput value={form.audience} onChange={(v) => setForm({ ...form, audience: v })} placeholder="e.g. Gen Z, professionals, SMEs" rows={3} style={{ width: "100%" }} /></div>
-              <div className="field"><label>Creative Direction</label><VoiceInput value={form.direction} onChange={(v) => setForm({ ...form, direction: v })} placeholder="Any style, tone, or direction preferences?" rows={3} style={{ width: "100%" }} /></div>
+              <div className="field"><label>Blueprint Title *</label><VoiceInput value={form.title} onChange={(v) => setForm({ ...form, title: v })} placeholder="e.g. Brand Refresh 2026" style={{ width: "100%" }} /></div>
+              <div className="field"><label>Creative Mandate</label><VoiceInput value={form.objective} onChange={(v) => setForm({ ...form, objective: v })} placeholder="What are you trying to achieve?" rows={3} style={{ width: "100%" }} /></div>
+              <div className="field"><label>Intended Recipients</label><VoiceInput value={form.audience} onChange={(v) => setForm({ ...form, audience: v })} placeholder="e.g. Gen Z, professionals, SMEs" rows={3} style={{ width: "100%" }} /></div>
+              <div className="field"><label>Artistic Directive</label><VoiceInput value={form.direction} onChange={(v) => setForm({ ...form, direction: v })} placeholder="Any style, tone, or direction preferences?" rows={3} style={{ width: "100%" }} /></div>
               <div className="form-grid-2">
-                <div className="field"><label>Budget Range</label><VoiceInput value={form.budget} onChange={(v) => setForm({ ...form, budget: v })} placeholder="e.g. $50,000 - $100,000" /></div>
-                <div className="field"><label>Timeline</label><VoiceInput value={form.timeline} onChange={(v) => setForm({ ...form, timeline: v })} placeholder="e.g. 8-12 weeks" /></div>
+                <div className="field"><label>Budget Band</label><VoiceInput value={form.budget} onChange={(v) => setForm({ ...form, budget: v })} placeholder="e.g. $50,000 - $100,000" /></div>
+                <div className="field"><label>Timeline Span</label><VoiceInput value={form.timeline} onChange={(v) => setForm({ ...form, timeline: v })} placeholder="e.g. 8-12 weeks" /></div>
               </div>
-              <div className="field"><label>Additional Context</label><VoiceInput value={form.context} onChange={(v) => setForm({ ...form, context: v })} placeholder="Anything else we should know?" rows={3} style={{ width: "100%" }} /></div>
+              <div className="field"><label>Background Intelligence</label><VoiceInput value={form.context} onChange={(v) => setForm({ ...form, context: v })} placeholder="Anything else we should know?" rows={3} style={{ width: "100%" }} /></div>
 
               {error && <p style={{ color: "#c62828", fontSize: "0.82rem", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>{error}</p>}
 
               <button type="submit" className="btn btn-signal" disabled={status === "loading"} style={{ alignSelf: "flex-start" }}>
-                {status === "loading" ? "Submitting…" : "Submit Project Request →"}
+                {status === "loading" ? "Processing…" : "Launch Blueprint →"}
               </button>
             </div>
           </Panel>

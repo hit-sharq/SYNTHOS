@@ -61,7 +61,7 @@ export async function POST(req: Request, { params }: { params: { roomName: strin
 
     if (params.roomName) {
       callData.roomName = params.roomName
-      callData.roomUrl = `https://lumyn.daily.co/${params.roomName}`
+      callData.roomUrl = `https://synthos.daily.co/${params.roomName}`
     }
 
     if (meetingSource) callData.meetingSource = meetingSource

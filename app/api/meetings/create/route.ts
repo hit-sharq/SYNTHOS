@@ -83,8 +83,8 @@ export async function POST(req: Request) {
     }
 
     const today = new Date().toISOString().split("T")[0]
-    const roomName = `lumyn-${targetProjectId}-${Date.now()}`
-    const roomUrl = `https://lumyn.daily.co/${roomName}`
+    const roomName = `synthos-${targetProjectId}-${Date.now()}`
+    const roomUrl = `https://synthos.daily.co/${roomName}`
 
     const existing = await prisma.clientCall.findUnique({ where: { projectId: targetProjectId } })
 

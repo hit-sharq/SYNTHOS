@@ -29,16 +29,18 @@ const ADMIN_NAV = [
   { href: "/dashboard/overview", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/pipeline", label: "Pipeline", icon: GitBranch },
   { href: "/dashboard/projects", label: "Projects", icon: FolderOpen },
-  { href: "/dashboard/briefs", label: "Briefs", icon: FileText },
-  { href: "/dashboard/meetings", label: "Meetings", icon: Calendar },
-  { href: "/dashboard/proposals", label: "Proposals", icon: FileSignature },
-  { href: "/dashboard/quotes", label: "Quotes", icon: Calculator },
+  { href: "/dashboard/briefs", label: "Blueprints", icon: FileText },
+  { href: "/dashboard/talent", label: "Talent", icon: Users },
+  { href: "/dashboard/companies", label: "Companies", icon: Briefcase },
+  { href: "/dashboard/meetings", label: "Sessions", icon: Calendar },
+  { href: "/dashboard/proposals", label: "Offers", icon: FileSignature },
+  { href: "/dashboard/quotes", label: "Estimates", icon: Calculator },
   { href: "/dashboard/approvals", label: "Approvals", icon: CheckCircle },
   { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
 ]
 
 const TALENT_NAV = [
-  { href: "/dashboard/talent", label: "My Dashboard", icon: User },
+  { href: "/dashboard/talent", label: "My Workspace", icon: User },
   { href: "/dashboard/projects", label: "My Projects", icon: FolderOpen },
   { href: "/jobs", label: "Open Gigs", icon: Briefcase },
   { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },

@@ -67,7 +67,7 @@ export function PostsManager({ kind, initialPosts }: { kind: "blog" | "news"; in
     setUploading(true)
     const fd = new FormData()
     fd.append("file", file)
-    fd.append("folder", "lumyn/posts")
+    fd.append("folder", "synthos/posts")
     const res = await fetch("/api/upload", { method: "POST", body: fd })
     const data = await res.json()
     setUploading(false)

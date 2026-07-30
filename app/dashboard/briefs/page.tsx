@@ -9,7 +9,7 @@ export default async function BriefsPage() {
   const projects = await getProjects()
   return (
     <PageWrap>
-      <PageHead eyebrow="Intelligence" title="Briefs" desc="Every client brief, with the AI's read on what's clear, risky, and missing." />
+      <PageHead eyebrow="Intelligence" title="Blueprints" desc="Every partner's blueprint, with the AI's read on what's clear, risky, and missing." />
       <div className="feat-grid">
         {projects.map((p) => {
           const b = p.brief
@@ -24,7 +24,7 @@ export default async function BriefsPage() {
               <p className="tiny" style={{ marginTop: 6 }}>{p.client} · {b.businessObjective || ""}</p>
               <div className="row gap-2 wrap" style={{ marginTop: 14 }}>
                 {(b.aiRisks?.length || 0) > 0 && <span className="chip" style={{ color: "var(--rejected)", background: "var(--rejected-soft)" }}>{(b.aiRisks || []).length} risks</span>}
-                {(b.aiMissing?.length || 0) > 0 && <span className="chip" style={{ color: "var(--signal-ink)", background: "var(--signal-soft)" }}>{(b.aiMissing || []).length} missing</span>}
+                {(b.aiMissing?.length || 0) > 0 && <span className="chip" style={{ color: "var(--signal-ink)", background: "var(--signal-soft)" }}>{(b.aiMissing || []).length} gaps</span>}
               </div>
             </Link>
           )

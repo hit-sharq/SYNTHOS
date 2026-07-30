@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Synthos — Creative Operations Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet" />
+<style>
+:root{--bg:#fff;--ink:#000;--ink2:#404040;--ink3:#888;--inkm:#aaa;--line:#e0e0e0;--line-s:#000;--sig:#0066ff;--sig-soft:#e6f0ff;--sig-ink:#0052cc;--ai:#4b5d7a;--ai-soft:#e4e9f1;--ai-ink:#33425c;--human:#2f6b53;--human-soft:#dcebe3;--human-ink:#21503c;--sans:Inter,system-ui,-apple-system,sans-serif;--serif:Fraunces,Georgia,serif;--mono:IBM Plex Mono,ui-monospace,monospace;--ease:cubic-bezier(0.22,0.7,0.3,1);--tr:0.22s var(--ease)}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}body{font-family:var(--sans);color:var(--ink2);background:var(--bg);font-size:16px;line-height:1.55;letter-spacing:0.005em}
+h1,h2,h3,h4{font-family:var(--serif);color:var(--ink);font-weight:500;line-height:1.1;letter-spacing:-0.02em}
+.display{font-family:var(--serif);font-weight:400;font-size:clamp(2.5rem,5vw,4rem);line-height:1.03;letter-spacing:-0.025em;color:var(--ink)}.display em{font-style:italic;color:var(--sig)}
+.eyebrow{font-family:var(--mono);text-transform:uppercase;letter-spacing:0.15em;font-size:0.68rem;font-weight:400;color:var(--sig);display:flex;align-items:center;gap:10px;margin-bottom:14px}.eyebrow::before{content:"//";color:var(--inkm)}
+.lede{font-size:1.05rem;color:var(--ink3);line-height:1.65;max-width:760px}.mono{font-family:var(--mono);letter-spacing:0.02em;font-size:0.82rem}.muted{color:var(--ink3)}.tiny{font-size:0.76rem}
+
+.hdr{position:sticky;top:0;z-index:100;background:rgba(255,255,255,0.92);backdrop-filter:saturate(1.4);border-bottom:1px solid var(--line);padding:0 48px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.hdr-brand{font-family:var(--serif);font-weight:500;font-size:1.15rem;letter-spacing:-0.01em}.hdr-nav{display:flex;gap:24px;align-items:center}.hdr-nav a{font-family:var(--mono);font-size:0.7rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink3);transition:color var(--tr)}.hdr-nav a:hover{color:var(--ink);text-decoration:none}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:80px 48px;position:relative;overflow:hidden}
+.hero-title{font-family:var(--serif);font-weight:500;font-size:clamp(3.2rem,7vw,6.5rem);line-height:0.95;letter-spacing:-0.035em;color:var(--ink);margin-bottom:4px}
+.hero-sub{font-size:1.1rem;color:var(--ink3);max-width:620px;margin-top:20px;line-height:1.65}
+.hero-actions{display:flex;gap:14px;margin-top:36px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;font-family:var(--mono);font-size:0.76rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;border:1px solid var(--line-s);background:transparent;color:var(--ink);cursor:pointer;transition:all var(--tr);text-decoration:none}
+.btn:hover{background:var(--ink);color:var(--bg);text-decoration:none}
+.btn-sig{background:var(--sig);color:#fff;border-color:var(--sig)}.btn-sig:hover{background:var(--sig-ink);border-color:var(--sig-ink);color:#fff}
+.hero-meta{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);display:flex;gap:36px;font-family:var(--mono);font-size:0.68rem;letter-spacing:0.05em;color:var(--inkm);text-transform:uppercase}.hero-meta strong{color:var(--ink);font-weight:700;display:block;margin-top:2px;font-size:0.8rem;text-transform:none;letter-spacing:0}
+
+.scroll-hint{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:6px;font-family:var(--mono);font-size:0.63rem;color:var(--inkm);letter-spacing:0.1em;text-transform:uppercase;animation:float 2.4s ease-in-out infinite}
+.scroll-hint::before{content:"";width:1px;height:36px;background:var(--line-s)}
+@keyframes float{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(5px)}}
+
+section{padding:90px 48px}
+.section-label{margin-bottom:18px}.section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);margin-bottom:18px}.section-body{max-width:800px}
+
+.pipeline{display:flex;gap:0;overflow-x:auto;padding:32px 0;scroll-behavior:smooth}
+.pipeline::-webkit-scrollbar{height:2px}.pipeline::-webkit-scrollbar-track{background:#f5f5f5}.pipeline::-webkit-scrollbar-thumb{background:var(--inkm)}
+.pstage{flex:0 0 200px;display:flex;flex-direction:column;align-items:center;text-align:center;padding:28px 16px;position:relative;cursor:pointer;transition:transform var(--tr)}
+.pstage:hover{transform:translateY(-3px)}
+.pstage::after{content:"";position:absolute;top:50%;right:-1px;width:2px;height:28px;background:var(--line);transform:translateY(-50%)}
+.pstage:last-child::after{display:none}
+.pnum{font-family:var(--mono);font-size:0.63rem;letter-spacing:0.1em;color:var(--inkm);text-transform:uppercase;margin-bottom:10px}
+.picon{width:44px;height:44px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.1rem;font-weight:500;color:var(--ink3);margin-bottom:12px;transition:all var(--tr)}
+.pstage:hover .picon{border-color:var(--line-s);color:var(--ink);box-shadow:0 4px 12px rgba(0,0,0,0.05)}
+.pname{font-family:var(--serif);font-size:0.88rem;font-weight:500;color:var(--ink);margin-bottom:4px}
+.pdesc{font-size:0.78rem;color:var(--ink3);line-height:1.5}
+
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;margin-top:28px}
+.card{border:1px solid var(--line);padding:26px;transition:border-color var(--tr),box-shadow var(--tr);position:relative}
+.card:hover{border-color:var(--line-s);box-shadow:0 6px 20px rgba(0,0,0,0.04)}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-t{font-family:var(--serif);font-size:1.05rem;font-weight:500;color:var(--ink)}
+.card-b{font-size:0.9rem;color:var(--ink2);line-height:1.55}.card-b p+p{margin-top:8px}
+
+.tag{display:inline-flex;align-items:center;gap:5px;font-family:var(--mono);font-size:0.64rem;font-weight:400;letter-spacing:0.06em;text-transform:uppercase;padding:2px 8px;border:1px solid transparent;white-space:nowrap}
+.tag-ai{color:var(--ai-ink);background:var(--ai-soft);border-color:var(--ai)}
+.tag-human{color:var(--human-ink);background:var(--human-soft);border-color:var(--human)}
+.tag-sig{color:var(--sig-ink);background:var(--sig-soft);border-color:var(--sig)}
+.tag-neutral{color:var(--ink2);background:#f5f5f5;border-color:var(--line)}
+
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);margin-top:24px}
+.fcell{background:var(--bg);padding:26px;display:flex;flex-direction:column;gap:6px}
+.fcell .mono{color:var(--sig);font-size:0.64rem;letter-spacing:0.1em;text-transform:uppercase}
+.fcell h3{font-size:1rem;margin:0}.fcell p{font-size:0.88rem;color:var(--ink3);line-height:1.55;margin:0}
+
+.clr-sys{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:24px}
+.clr{aspect-ratio:1;border:1px solid var(--line);display:flex;flex-direction:column;justify-content:flex-end;padding:14px;transition:transform var(--tr)}.clr:hover{transform:scale(1.03)}
+.clr .nm{font-family:var(--serif);font-size:0.92rem;margin-bottom:1px}.clr .hx{font-family:var(--mono);font-size:0.64rem;color:var(--ink3)}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:24px}
+.stat-cell{background:var(--bg);padding:24px;text-align:center}
+.stat-cell .sv{font-family:var(--serif);font-size:2rem;font-weight:500;color:var(--ink)}
+.stat-cell .sl{font-family:var(--mono);font-size:0.63rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--inkm);margin-top:6px}
+
+.stats{display:flex;gap:0;border-top:2px solid var(--line-s);border-bottom:2px solid var(--line-s);margin-top:36px}
+.st{flex:1;padding:32px 24px;border-right:1px solid var(--line);text-align:center}.st:last-child{border-right:none}
+.st-v{font-family:var(--serif);font-size:clamp(1.8rem,3.5vw,2.8rem);font-weight:500;line-height:1;color:var(--ink)}
+.st-l{font-family:var(--mono);font-size:0.64rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--inkm);margin-top:8px}
+
+.dk{background:var(--ink);color:#fff}.dk h1,.dk h2,.dk h3{color:#fff}.dk .muted{color:#888}.dk .line{background:rgba(255,255,255,0.1)}
+.dk .card{border-color:rgba(255,255,255,0.12);background:rgba(255,255,255,0.03)}.dk .card:hover{border-color:rgba(255,255,255,0.28);box-shadow:0 6px 20px rgba(0,0,0,0.15)}
+.dk .picon{border-color:rgba(255,255,255,0.18);color:#888}.dk .pstage:hover .picon{border-color:#fff;color:#fff}
+.dk .pnum{color:rgba(255,255,255,0.35)}.dk .pname{color:#fff}.dk .pdesc{color:#888}
+.dk .st{border-color:rgba(255,255,255,0.1)}.dk .st-v{color:#fff}.dk .st-l{color:rgba(255,255,255,0.25)}
+.dk .fcell{background:var(--ink);border-color:rgba(255,255,255,0.07)}
+.dk .clr .nm{color:#fff}.dk .clr .hx{color:rgba(255,255,255,0.4)}
+
+.bq{max-width:860px;margin:0 auto;text-align:center;padding:56px 48px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.bq-text{font-family:var(--serif);font-size:clamp(1.4rem,3vw,1.8rem);font-weight:400;font-style:italic;line-height:1.4;color:var(--ink);margin-bottom:18px}
+.bq-att{font-family:var(--mono);font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink3)}
+
+.ftr{padding:40px 48px 28px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:0.66rem;color:var(--inkm);letter-spacing:0.05em;text-transform:uppercase}
+
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.5s var(--ease),transform 0.5s var(--ease)}.reveal.visible{opacity:1;transform:translateY(0)}
+
+@media(max-width:900px){section{padding:60px 24px}.hero{padding:60px 24px}.hdr{padding:0 24px}.card-grid{grid-template-columns:1fr}.clr-sys{grid-template-columns:repeat(3,1fr)}.stats{flex-direction:column}.st{border-right:none;border-bottom:1px solid var(--line)}.st:last-child{border-bottom:none}.frow{grid-template-columns:1fr}.hero-title{font-size:clamp(2.2rem,6vw,3.5rem)}.ftr{flex-direction:column;gap:10px;text-align:center}}
+@media(max-width:600px){.hdr-nav{display:none}.clr-sys{grid-template-columns:repeat(2,1fr)}.hero-actions{flex-direction:column}.stat-row{grid-template-columns:repeat(2,1fr)}}
+:focus-visible{outline:2px solid var(--sig);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-brand">Synthos</div>
+  <nav class="hdr-nav" aria-label="Main navigation">
+    <a href="#platform">Platform</a>
+    <a href="#workflow">Workflow</a>
+    <a href="#talent">Talent</a>
+    <a href="#companies">Companies</a>
+    <a href="#intelligence">Intelligence</a>
+  </nav>
+</header>
+
+<main>
+
+<section class="hero" id="hero">
+  <div class="reveal">
+    <div class="eyebrow">Design Concept</div>
+    <h1 class="hero-title">Creative<br/>Operations<br/><em>Platform</em></h1>
+    <p class="hero-sub">Synthos is the operating system for creative teams. It turns project briefs, conversations, and talent into structured intelligence, strategic direction, proposals, and human-approved deliverables.</p>
+    <div class="hero-actions">
+      <a href="#platform" class="btn">Explore Platform</a>
+      <a href="#workflow" class="btn btn-sig">See Workflow</a>
+    </div>
+    <div class="hero-meta">
+      <div><strong>6</strong>Core Modules</div>
+      <div><strong>10</strong>Pipeline Stages</div>
+      <div><strong>3</strong>User Roles</div>
+      <div><strong>Swiss</strong>Precision</div>
+    </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true">Scroll</div>
+</section>
+
+<section id="platform">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow section-label">Platform</div>
+      <h2 class="section-title">A system for<br/>creative operations.</h2>
+      <p class="lede">From intake to approval, from talent discovery to company hiring — Synthos handles the full lifecycle of creative project delivery with AI acceleration and human oversight.</p>
+    </div>
+
+    <div class="stat-row reveal">
+      <div class="stat-cell"><div class="sv">6</div><div class="sl">Core Modules</div></div>
+      <div class="stat-cell"><div class="sv">10</div><div class="sl">Workflow Stages</div></div>
+      <div class="stat-cell"><div class="sv">3</div><div class="sl">User Roles</div></div>
+      <div class="stat-cell"><div class="sv">AI</div><div class="sl">Human-Gated Decisions</div></div>
+    </div>
+
+    <div class="card-grid reveal">
+      <div class="card">
+        <div class="card-h"><span class="card-t">Projects</span><span class="tag tag-sig">Core</span></div>
+        <div class="card-b"><p>Central project workspace with grid, list, search, filter, and sort. Every project progresses through a defined 10-stage AI-human pipeline.</p></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">Talent</span><span class="tag tag-ai">AI Sourced</span></div>
+        <div class="card-b"><p>Browse and claim talent matches. AI understanding maps skills to project needs. Talent profiles include claimed projects and availability.</p></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">Companies</span><span class="tag tag-human">Human Managed</span></div>
+        <div class="card-b"><p>Company profiles with active job postings. Talent discovers opportunities and applies directly through the platform.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="workflow" class="dk">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow section-label">Workflow</div>
+      <h2 class="section-title">From brief to approval —<br/>ten stages of structured delivery.</h2>
+      <p class="lede" style="color:#888">Every project moves through a connected pipeline where AI accelerates understanding and humans make the final decisions.</p>
+    </div>
+
+    <div class="pipeline reveal">
+      <div class="pstage"><div class="pnum">01</div><div class="picon">C</div><div class="pname">Creative Brief</div><div class="pdesc">Capture objectives, audience, direction</div></div>
+      <div class="pstage"><div class="pnum">02</div><div class="picon">K</div><div class="pname">Client Call</div><div class="pdesc">Discovery conversation and intake</div></div>
+      <div class="pstage"><div class="pnum">03</div><div class="picon">M</div><div class="pname">Transcript</div><div class="pdesc">Intelligent meeting workspace</div></div>
+      <div class="pstage"><div class="pnum">04</div><div class="picon">A</div><div class="pname">AI Understanding</div><div class="pdesc">Structured intelligence extraction</div></div>
+      <div class="pstage"><div class="pnum">05</div><div class="picon">P</div><div class="pname">Project Brief</div><div class="pdesc">Refined brief combining sources</div></div>
+      <div class="pstage"><div class="pnum">06</div><div class="picon">W</div><div class="pname">Workshop</div><div class="pdesc">Human + AI strategy building</div></div>
+      <div class="pstage"><div class="pnum">07</div><div class="picon">S</div><div class="pname">Synthesis</div><div class="pdesc">Clear direction from all sources</div></div>
+      <div class="pstage"><div class="pnum">08</div><div class="picon">P</div><div class="pname">Proposal</div><div class="pdesc">Professional, AI-drafted, human-approved</div></div>
+      <div class="pstage"><div class="pnum">09</div><div class="picon">Q</div><div class="pname">Quote</div><div class="pdesc">Pricing ready for client review</div></div>
+      <div class="pstage"><div class="pnum">10</div><div class="picon">H</div><div class="pname">Approval</div><div class="pdesc">Final human decision gate</div></div>
+    </div>
+
+    <div class="stats reveal">
+      <div class="st"><div class="st-v">10</div><div class="st-l">Pipeline Stages</div></div>
+      <div class="st"><div class="st-v">AI-Assisted</div><div class="st-l">Stages 1-9</div></div>
+      <div class="st"><div class="st-v">Human-Gated</div><div class="st-l">Stage 10</div></div>
+      <div class="st"><div class="st-v">Full Trace</div><div class="st-l">Attribution Tracked</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="talent">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow section-label">Talent</div>
+      <h2 class="section-title">Discover the right<br/>talent for every project.</h2>
+      <p class="lede">AI-powered talent discovery matches skills to project needs. Talents browse opportunities, claim projects, and build their portfolios — all within a single platform.</p>
+    </div>
+
+    <div class="frow reveal">
+      <div class="fcell">
+        <div class="mono">AI Matching</div>
+        <h3>Skill-to-Project Alignment</h3>
+        <p>The platform understands project requirements and surfaces talent profiles with the right skills, experience, and availability.</p>
+      </div>
+      <div class="fcell">
+        <div class="mono">Human Curation</div>
+        <h3>Talent Vetting &amp; Review</h3>
+        <p>Companies review talent claims and project applications. Human decisions at every stage — AI suggests, humans select.</p>
+      </div>
+      <div class="fcell">
+        <div class="mono">Claiming</div>
+        <h3>Project Ownership</h3>
+        <p>Talents claim projects that match their expertise. Each claim is tracked with full attribution and project context.</p>
+      </div>
+      <div class="fcell">
+        <div class="mono">Portfolio</div>
+        <h3>Track Record</h3>
+        <p>Every approved project adds to a talent profile — building credibility and visibility for future opportunities.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="companies" class="dk">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow section-label">Companies</div>
+      <h2 class="section-title">Post jobs.<br/>Find talent.<br/>Build teams.</h2>
+      <p class="lede" style="color:#888">Companies create profiles, post opportunities, and manage applications — all in one integrated hiring workflow.</p>
+    </div>
+
+    <div class="card-grid reveal">
+      <div class="card">
+        <div class="card-h"><span class="card-t">Company Profiles</span><span class="tag tag-ai">Dynamic</span></div>
+        <div class="card-b"><p>Every company has a managed profile with active job listings, team size, and industry focus.</p></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">Job Postings</span><span class="tag tag-human">Admin</span></div>
+        <div class="card-b"><p>Companies post jobs with full details. Admin approves listings before they go live. Jobs are searchable and filterable.</p></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">Applications</span><span class="tag tag-sig">Tracked</span></div>
+        <div class="card-b"><p>Talent applies directly. Companies receive applications with full context — including talent profiles and claimed project history.</p></div>
+      </div>
+      <div class="card">
+        <div class="card-h"><span class="card-t">Admin Review</span><span class="tag tag-human">Gated</span></div>
+        <div class="card-b"><p>Job approvals and rejections are fully attributed. Admins manage the hiring pipeline with complete transparency.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="intelligence">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow section-label">Intelligence</div>
+      <h2 class="section-title">Raw input.<br/>Structured output.</h2>
+      <p class="lede">AI transforms scattered client input — calls, notes, briefs — into structured project intelligence. Every contribution is attributed and traceable.</p>
+    </div>
+
+    <div class="clr-sys reveal">
+      <div class="clr" style="background:#ffffff"><div class="nm">Canvas</div><div class="hx">#ffffff</div></div>
+      <div class="clr" style="background:#000000"><div class="nm" style="color:#fff">Ink</div><div class="hx" style="color:#aaa">#000000</div></div>
+      <div class="clr" style="background:#0066ff"><div class="nm" style="color:#fff">Signal</div><div class="hx" style="color:#cce0ff">#0066ff</div></div>
+      <div class="clr" style="background:#4b5d7a"><div class="nm">AI</div><div class="hx">#4b5d7a</div></div>
+      <div class="clr" style="background:#2f6b53"><div class="nm" style="color:#fff">Human</div><div class="hx" style="color:#b8d4c8">#2f6b53</div></div>
+      <div class="clr" style="background:#e4e9f1"><div class="nm">AI Soft</div><div class="hx">#e4e9f1</div></div>
+    </div>
+
+    <div class="bq reveal" style="margin-top:48px">
+      <div class="eyebrow" style="justify-content:center">Philosophy</div>
+      <blockquote class="bq-text">
+        Creative intelligence is not about replacing human judgment.<br/>
+        It is about giving teams the clarity and speed to make better decisions —<br/>
+        with full transparency and accountability at every step.
+      </blockquote>
+      <div class="bq-att">— Synthos Design Principle</div>
+    </div>
+
+    <div class="frow reveal">
+      <div class="fcell">
+        <div class="mono">Transcript to Understanding</div>
+        <h3>Extracting meaning from conversation</h3>
+        <p>AI reads meeting transcripts and surfaces wants, objectives, constraints, risks, and missing information automatically.</p>
+      </div>
+      <div class="fcell">
+        <div class="mono">Brief to Proposal to Quote</div>
+        <h3>Drafting with full attribution</h3>
+        <p>Every AI draft is tagged. Every human review is recorded. Clients see exactly what was AI-assisted and what was human-crafted.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="dk">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow section-label">Administration</div>
+      <h2 class="section-title">The full command center.</h2>
+      <p class="lede" style="color:#888">Admins manage users, roles, content, and system configuration from a single dashboard.</p>
+    </div>
+    <div class="card-grid reveal">
+      <div class="card"><div class="card-h"><span class="card-t">Users &amp; Roles</span></div><div class="card-b"><p>Manage all platform users with role-based access control. Admin, client, and company roles with distinct permissions.</p></div></div>
+      <div class="card"><div class="card-h"><span class="card-t">Blog &amp; News</span></div><div class="card-b"><p>Create and manage blog posts and news articles. Full editorial workflow with scheduling and publishing controls.</p></div></div>
+      <div class="card"><div class="card-h"><span class="card-t">Contacts &amp; Reports</span></div><div class="card-b"><p>Track all client contact requests with automated reports. No inquiry goes undocumented.</p></div></div>
+      <div class="card"><div class="card-h"><span class="card-t">Settings</span></div><div class="card-b"><p>System configuration, feature toggles, and platform-wide preferences managed from a single settings panel.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<footer class="ftr">
+  <div>Synthos — Creative Intelligence &amp; Project Automation</div>
+  <div>AI assists. Humans decide.</div>
+</footer>
+
+</main>
+
+<script>
+document.addEventListener("DOMContentLoaded",function(){
+  var reveals=document.querySelectorAll(".reveal");
+  var observer=new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){if(entry.isIntersecting)entry.target.classList.add("visible")});
+  },{threshold:0.1,rootMargin:"0px 0px -40px 0px"});
+  reveals.forEach(function(el){observer.observe(el)});
+  var stages=document.querySelectorAll(".pstage");
+  stages.forEach(function(stage){
+    stage.addEventListener("click",function(){
+      stages.forEach(function(s){s.style.opacity="0.4"});
+      stage.style.opacity="1";
+      setTimeout(function(){stages.forEach(function(s){s.style.opacity="1"})},1200);
+    });
+  });
+});
+</script>
+</body>
+</html>

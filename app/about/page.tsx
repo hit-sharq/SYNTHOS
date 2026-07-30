@@ -5,12 +5,12 @@ import { PageHead, PageWrap } from "@/components/app/Page"
 export default function AboutPage() {
   return (
     <PageWrap>
-      <PageHead eyebrow="Company" title="About Lumyn" desc="The operating system for creative intelligence. AI accelerates the work — humans provide the judgment." />
+      <PageHead eyebrow="Company" title="About Synthos" desc="The operating system for creative intelligence. AI accelerates the work — humans provide the judgment." />
 
       <div style={{ maxWidth: 720, margin: "0 auto" }}>
         <div className="section-title">Our Mission</div>
         <p style={{ fontSize: "1.05rem", color: "var(--ink-2)", lineHeight: 1.7, marginBottom: 32 }}>
-          Lumyn was built to solve a fundamental problem in creative agencies: the gap between client conversations and structured project intelligence. We believe AI should handle the workflow so humans can focus on what they do best — creativity, judgment, and relationships.
+          Synthos was built to solve a fundamental problem in creative agencies: the gap between client conversations and structured project intelligence. We believe AI should handle the workflow so humans can focus on what they do best — creativity, judgment, and relationships.
         </p>
 
         <div className="section-title">What We Do</div>

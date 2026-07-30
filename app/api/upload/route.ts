@@ -12,7 +12,7 @@ export async function POST(req: Request) {
   try {
     const formData = await req.formData()
     const file = formData.get("file") as File | null
-    const folder = (formData.get("folder") as string | null) || "lumyn"
+    const folder = (formData.get("folder") as string | null) || "synthos"
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 })

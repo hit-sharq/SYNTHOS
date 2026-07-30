@@ -71,8 +71,8 @@ export function ProposalStage({ project }: { project: Project }) {
   if (!p) {
     return (
       <Panel>
-        <PanelHeader eyebrow="Stage 8" title="Proposal" desc="The system will generate and send the proposal automatically." />
-        <div style={{ padding: 24 }}><Empty title="No proposal yet" hint="The proposal will be generated automatically by the AI workflow." /></div>
+        <PanelHeader eyebrow="Stage 8" title="Pitch Deck" desc="The system will generate and send the proposal automatically." />
+        <div style={{ padding: 24 }}><Empty title="No pitch deck yet" hint="The proposal will be generated automatically by the AI workflow." /></div>
       </Panel>
     )
   }
@@ -114,10 +114,10 @@ export function ProposalStage({ project }: { project: Project }) {
   return (
     <div className="stack gap-5">
       <Panel>
-        <PanelHeader eyebrow="Stage 8" title="Proposal" desc="AI-generated proposal. Sent to client for review." actions={
+        <PanelHeader eyebrow="Stage 8" title="Pitch Deck" desc="AI-generated proposal. Sent to partner for review." actions={
           <div className="row gap-2">
             <StatusPill status={p.status} />
-            <span className="chip" style={{ fontSize: "0.72rem" }}>{p.sentToClient ? "Sent to client" : "Draft"}</span>
+            <span className="chip" style={{ fontSize: "0.72rem" }}>{p.sentToClient ? "Sent to partner" : "Draft"}</span>
             <button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button>
           </div>
         } />

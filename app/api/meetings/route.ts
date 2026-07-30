@@ -7,7 +7,7 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { projectId, title, meetingSource } = body
 
-    const roomName = `lumyn-${projectId}-${Date.now()}`
+    const roomName = `synthos-${projectId}-${Date.now()}`
     const roomUrl = `https://meet.jit.si/${roomName}`
 
     const meeting = await prisma.clientCall.upsert({

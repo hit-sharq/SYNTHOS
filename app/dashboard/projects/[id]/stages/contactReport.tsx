@@ -9,8 +9,8 @@ export function ContactReportStage({ project }: { project: Project }) {
   if (!report) {
     return (
       <Panel>
-        <PanelHeader eyebrow="Stage 3" title="Contact Report" desc="AI-generated summary of the first meeting." />
-        <div style={{ padding: 24 }}><Empty title="No contact report yet" hint="Complete the first meeting to generate a contact report." /></div>
+        <PanelHeader eyebrow="Stage 3" title="Intelligence Report" desc="AI-generated summary of the first session." />
+        <div style={{ padding: 24 }}><Empty title="No intelligence report yet" hint="Complete the first session to generate an intelligence report." /></div>
       </Panel>
     )
   }
@@ -18,7 +18,7 @@ export function ContactReportStage({ project }: { project: Project }) {
   return (
     <div className="stack gap-5">
       <Panel>
-        <PanelHeader eyebrow="Stage 3" title="Contact Report" desc="AI-generated summary of the first meeting." actions={<StatusPill status={report.approved ? "approved" : "review"} />} />
+        <PanelHeader eyebrow="Stage 3" title="Intelligence Report" desc="AI-generated summary of the first session." actions={<StatusPill status={report.approved ? "approved" : "review"} />} />
         <div style={{ padding: 24 }} className="stack gap-4">
           <p style={{ color: "var(--ink-2)", lineHeight: 1.65 }}>{report.summary}</p>
 
@@ -59,7 +59,7 @@ export function ContactReportStage({ project }: { project: Project }) {
 
           <div style={{ padding: 16, background: "var(--surface-2)", border: "1px solid var(--line)", color: "var(--ink-2)" }}>
             {report.approved
-              ? "Contact report approved. The production meeting has been scheduled automatically."
+              ? "Intelligence report approved. The production meeting has been scheduled automatically."
               : "This report is AI-generated and has been sent to the client. The production meeting will be scheduled automatically."}
           </div>
         </div>

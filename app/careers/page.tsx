@@ -63,7 +63,7 @@ export default async function CareersPage() {
                   ))}
                 </ul>
               </div>
-                 <Link href={`mailto:careers@lumyn.co.ke?subject=Application: ${career.title}`} className="btn btn-signal btn-sm">
+                 <Link href={`mailto:careers@synthos.co.ke?subject=Application: ${career.title}`} className="btn btn-signal btn-sm">
                 Apply Now →
               </Link>
             </div>

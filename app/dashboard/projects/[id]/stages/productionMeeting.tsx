@@ -18,7 +18,7 @@ export function ProductionMeetingStage({ project }: { project: Project }) {
   if (!pm) {
     return (
       <Panel>
-        <PanelHeader eyebrow="Stage 4" title="Production Meeting" desc="Team and client align on scope and approach." />
+        <PanelHeader eyebrow="Stage 4" title="Production Session" desc="Team and partner align on scope and approach." />
         <div style={{ padding: 24 }}><Empty title="No production meeting yet" hint="The system will generate a production plan automatically." /></div>
       </Panel>
     )
@@ -27,7 +27,7 @@ export function ProductionMeetingStage({ project }: { project: Project }) {
   return (
     <div className="stack gap-5">
       <Panel>
-        <PanelHeader eyebrow="Stage 4" title="Production Meeting" desc="AI-generated production plan. Proposal generation starting automatically." actions={<StatusPill status={pm.decision === "approved" ? "approved" : "review"} />} />
+        <PanelHeader eyebrow="Stage 4" title="Production Session" desc="AI-generated production plan. Proposal generation starting automatically." actions={<StatusPill status={pm.decision === "approved" ? "approved" : "review"} />} />
         <div style={{ padding: 24 }} className="stack gap-4">
           <p style={{ color: "var(--ink-2)", lineHeight: 1.65 }}>{pm.notes}</p>
 

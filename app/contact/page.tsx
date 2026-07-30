@@ -87,13 +87,13 @@ export default function ContactPage() {
           {/* Left column — contact info */}
           <div style={{ padding: "36px 32px", borderRight: "1px solid var(--line)" }}>
             <div className="section-title" style={{ marginBottom: 10 }}>Email</div>
-            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>hello@lumyn.co.ke</p>
+            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>hello@synthos.co.ke</p>
 
             <div className="section-title" style={{ marginBottom: 10 }}>Sales &amp; Partnerships</div>
-            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>partners@lumyn.co.ke</p>
+            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>partners@synthos.co.ke</p>
 
             <div className="section-title" style={{ marginBottom: 10 }}>Support</div>
-            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>support@lumyn.co.ke</p>
+            <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>support@synthos.co.ke</p>
 
             <div className="section-title" style={{ marginBottom: 10 }}>Location</div>
             <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", marginBottom: 28 }}>Remote-first, serving creative teams worldwide.</p>

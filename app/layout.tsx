@@ -7,7 +7,7 @@ import Header from "@/components/app/Header"
 import Footer from "@/components/app/Footer"
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lumyn.co.ke"),
+  metadataBase: new URL("https://synthos.co.ke"),
   title: {
     default: "Synthos — Creative Intelligence & Project Automation",
     template: "%s · Synthos",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Synthos — Creative Intelligence & Project Automation",
     description: "AI accelerates the work. Humans provide the judgment.",
-    url: "https://lumyn.co.ke",
+    url: "https://synthos.co.ke",
     type: "website",
   },
 }

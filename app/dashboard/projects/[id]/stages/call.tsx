@@ -87,7 +87,7 @@ export function CallStage({ project }: { project: Project }) {
   if (editing) {
     return (
       <Panel>
-        <PanelHeader eyebrow="Stage 2" title={hasCall ? "Edit Client Call" : "Schedule Client Call"} />
+        <PanelHeader eyebrow="Stage 2" title={hasCall ? "Edit Discovery Session" : "Schedule Discovery Session"} />
         <div className="brief-grid" style={{ padding: 24 }}>
           <Field label="Meeting date" value={form.date} onChange={(v) => setForm({ ...form, date: v })} />
           <Field label="Duration" value={form.duration} onChange={(v) => setForm({ ...form, duration: v })} />
@@ -106,7 +106,7 @@ export function CallStage({ project }: { project: Project }) {
           </div>
           <VoiceInput label="AI Agent Transcript / Meeting Notes" value={form.transcript} onChange={(v) => setForm({ ...form, transcript: v })} wide textarea />
           <div style={{ gridColumn: "1 / -1" }} className="row gap-2">
-            <button className="btn btn-signal btn-sm" onClick={save}>Save call</button>
+            <button className="btn btn-signal btn-sm" onClick={save}>Save session</button>
             {hasCall && <button className="btn btn-ghost btn-sm" onClick={() => setEditing(false)}>Cancel</button>}
           </div>
         </div>
@@ -140,7 +140,7 @@ export function CallStage({ project }: { project: Project }) {
       ) : (
         <>
           <Panel>
-            <PanelHeader eyebrow="Stage 2" title="Client Call" desc="The discovery conversation." actions={<div className="row gap-2"><button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button><button className="btn btn-ghost btn-sm" onClick={() => { window.location.href = `/dashboard/meetings?project=${project.id}` }}>External Meeting</button><button className="btn btn-signal btn-sm" onClick={joinMeeting} disabled={joining}>{joining ? "Creating..." : "Join Meeting"}</button></div>} />
+            <PanelHeader eyebrow="Stage 2" title="Discovery Session" desc="Partnership conversation." actions={<div className="row gap-2"><button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button><button className="btn btn-ghost btn-sm" onClick={() => { window.location.href = `/dashboard/meetings?project=${project.id}` }}>External Meeting</button><button className="btn btn-signal btn-sm" onClick={joinMeeting} disabled={joining}>{joining ? "Creating..." : "Join Meeting"}</button></div>} />
             <div className="brief-grid">
               <Field label="Meeting date" value={c?.date} />
               <Field label="Duration" value={c?.duration} />

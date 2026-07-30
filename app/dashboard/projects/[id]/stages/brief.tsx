@@ -87,7 +87,7 @@ export function BriefStage({ project }: { project: Project }) {
   if (editing) {
     return (
       <Panel>
-        <PanelHeader eyebrow="Stage 1" title={b?.title ? "Edit Creative Brief" : "Create Creative Brief"} />
+        <PanelHeader eyebrow="Stage 1" title={b?.title ? "Edit Blueprint" : "Create Blueprint"} />
         <div className="brief-grid" style={{ padding: 24 }}>
           <VoiceInput label="Client name" value={form.clientName} onChange={(v) => setForm({ ...form, clientName: v })} placeholder="e.g. joshua mwendwa" />
           <VoiceInput label="Company" value={form.company} onChange={(v) => setForm({ ...form, company: v })} placeholder="Acme Inc" />
@@ -114,7 +114,7 @@ export function BriefStage({ project }: { project: Project }) {
   return (
     <div className="stack gap-5">
       <Panel>
-        <PanelHeader eyebrow="Stage 1" title="Creative Brief" desc="The client's starting point." actions={<div className="row gap-2"><button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button><button className="btn btn-signal btn-sm" onClick={generateAnalysis} disabled={generating}>{generating ? "Analyzing…" : "Generate AI Analysis"}</button><button className="btn btn-ghost btn-sm" onClick={autoFillBrief} disabled={generating}>{generating ? "Filling…" : "Auto-fill Brief"}</button></div>} />
+        <PanelHeader eyebrow="Stage 1" title="Creative Brief" desc="The partner's starting point." actions={<div className="row gap-2"><button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button><button className="btn btn-signal btn-sm" onClick={generateAnalysis} disabled={generating}>{generating ? "Analyzing…" : "Run Intelligence Read"}</button><button className="btn btn-ghost btn-sm" onClick={autoFillBrief} disabled={generating}>{generating ? "Filling…" : "Auto-fill Brief"}</button></div>} />
         <div className="brief-grid">
           <Field label="Client" value={b?.clientInfo?.name} />
           <Field label="Company" value={b?.clientInfo?.company} />
@@ -133,7 +133,7 @@ export function BriefStage({ project }: { project: Project }) {
       </Panel>
 
       <Panel>
-        <PanelHeader eyebrow="AI analysis" title="What the system read from the brief" desc="The AI distils the brief into signal." actions={<Confidence value={b?.aiAnalysis?.confidence || 0} />} />
+        <PanelHeader eyebrow="AI analysis" title="What the system read from the brief" desc="The system distils the blueprint into signal." actions={<Confidence value={b?.aiAnalysis?.confidence || 0} />} />
         <div className="analysis-grid">
           <Analysis title="What the client wants" items={b?.aiAnalysis?.wants || []} tone="ai" />
           <Analysis title="Key objectives" items={b?.aiAnalysis?.keyObjectives || []} tone="ai" />

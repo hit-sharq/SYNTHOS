@@ -18,38 +18,39 @@ export default function Footer() {
         </div>
 
         <div className="foot-col">
-          <h5>News & Insights</h5>
-          <Link href="/blog">Blog</Link>
-          <Link href="/news">News</Link>
-          <Link href="/careers">Careers</Link>
+          <h5>Platform</h5>
+          <Link href="/about">Overview</Link>
+          <Link href="/workflow">Workflow</Link>
+          <Link href="/talents">Talent</Link>
+          <Link href="/companies">Companies</Link>
         </div>
 
         <div className="foot-col">
           <h5>Company</h5>
           <Link href="/team">Team</Link>
-          <Link href="/talents">Talents & Creators</Link>
-          <Link href="/about">About</Link>
+          <Link href="/talents">Talents &amp; Creators</Link>
           <Link href="/contact">Contact</Link>
         </div>
 
         <div className="foot-col">
           <h5>For Companies</h5>
-           <Link href="/company/signup">Post a Job</Link>
-           <Link href="/company/login">Company Login</Link>
+          <Link href="/company/signup">Post a Job</Link>
+          <Link href="/company/login">Company Login</Link>
         </div>
 
         <div className="foot-col">
           <h5>For Creators</h5>
-            <Link href="/join">Join</Link>
-            <Link href="/jobs">Open Gigs</Link>
-           <Link href="/sign-in">Talent Login</Link>
+          <Link href="/join">Join</Link>
+          <Link href="/jobs">Open Gigs</Link>
+          <Link href="/sign-in">Talent Login</Link>
         </div>
 
         <div className="foot-col">
           <h5>Resources</h5>
-          <Link href="/">Documentation</Link>
+          <Link href="/blog">Blog</Link>
+          <Link href="/news">News</Link>
+          <Link href="/careers">Careers</Link>
           <Link href="/">Help center</Link>
-          <Link href="/">Contact</Link>
         </div>
 
         <div className="foot-col">

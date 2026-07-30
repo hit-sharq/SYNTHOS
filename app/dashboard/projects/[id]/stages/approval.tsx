@@ -9,8 +9,8 @@ export function ApprovalStage({ project }: { project: Project }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [items, setItems] = useState([
-    { title: "Proposal", kind: "proposal" as const, status: project.proposal?.status || "draft", attr: "mixed" as const, note: project.proposal?.overview || "No proposal yet" },
-    { title: "Quote", kind: "quote" as const, status: project.quote?.status || "draft", attr: "human" as const, note: project.quote?.services?.length ? `Total for ${project.quote.services.length} services` : "No quote yet" },
+    { title: "Offer", kind: "proposal" as const, status: project.proposal?.status || "draft", attr: "mixed" as const, note: project.proposal?.overview || "No proposal yet" },
+    { title: "Estimate", kind: "quote" as const, status: project.quote?.status || "draft", attr: "human" as const, note: project.quote?.services?.length ? `Total for ${project.quote.services.length} services` : "No quote yet" },
   ])
   const router = useRouter()
 
@@ -76,7 +76,7 @@ export function ApprovalStage({ project }: { project: Project }) {
           <div className="approve-banner">
             <span className="tag-ai"><span className="dot dot-ai" /> AI assists</span>
             <span className="tag-human"><span className="dot dot-human" /> Humans decide</span>
-            <p className="tiny muted">The system accelerated the work. Your sign-off is what sends it to the client.</p>
+            <p className="tiny muted">The system accelerated the work. Your sign-off is what sends it to the partner.</p>
           </div>
         </div>
       </Panel>

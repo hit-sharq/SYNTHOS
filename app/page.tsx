@@ -1,177 +1,122 @@
+
+"use client"
+
 import Link from "next/link"
 import { BrandMark } from "@/components/app/Header"
-import { prisma } from "@/lib/prisma"
 import "./home.css"
-import "@/components/app/blog.css"
 
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
-export default async function Home() {
-  const recentBlog = await prisma.post.findMany({
-    where: { kind: "blog", status: "published" },
-    orderBy: { publishedAt: "desc" },
-    take: 3,
-  })
-
-  const recentNews = await prisma.post.findMany({
-    where: { kind: "news", status: "published" },
-    orderBy: { publishedAt: "desc" },
-    take: 3,
-  })
-
+export default function Home() {
   return (
     <main>
       <section className="hero">
+        <div className="hero-grid" aria-hidden="true" />
         <div className="container">
-          <span className="eyebrow">Creative Intelligence Platform</span>
+          <span className="eyebrow">Creative Operations</span>
           <h1 className="hero-title">
-            AI accelerates the work.<br />
-            <span className="hero-human">Humans provide the judgment.</span>
+            AI accelerates.<br />
+            <span className="hero-human">Humans decide.</span>
           </h1>
           <p className="hero-lede">
-            Synthos turns client conversations and creative briefs into structured project intelligence, strategic direction, proposals, quotes, and human-approved deliverables.
+            The operating system for creative teams. Structured intelligence from first brief to final approval — calm, clear, human-centered.
           </p>
-          <div className="row gap-3 wrap">
-            <Link href="/intake" className="btn btn-signal btn-lg">Start a Project →</Link>
-            <Link href="/intake" className="btn btn-ghost btn-lg">View projects</Link>
+          <div className="hero-actions">
+            <Link href="/intake" className="btn btn-signal">Launch a Blueprint</Link>
           </div>
-          <div className="row gap-2 wrap" style={{ marginTop: 22 }}>
-            <span className="tag-ai"><span className="dot dot-ai" /> AI assists</span>
-            <span className="tag-human"><span className="dot dot-human" /> Humans decide</span>
+          <div className="hero-meta">
+            <div><strong>10</strong>Pipeline Stages</div>
+            <div><strong>AI + Human</strong>Decision Layer</div>
+            <div><strong>Swiss</strong>Precision</div>
           </div>
         </div>
       </section>
 
-      <section className="section">
+      <section>
         <div className="container">
-          <div className="workflow-steps">
+          <span className="eyebrow section-label">Design System</span>
+          <h2 className="section-title">Built on<br/>visual precision.</h2>
+          <p className="lede">Strong typography, generous whitespace, sharp edges, and purposeful color — no noise, just clarity.</p>
+
+          <div className="frow">
+            <div className="fcell">
+              <span className="mono">Typography</span>
+              <h3>Fraunces + Inter + Mono</h3>
+              <p>Serif for hierarchy. Sans for body clarity. Mono for system labels. Tight tracking, sharp alignment.</p>
+            </div>
+            <div className="fcell">
+              <span className="mono">Colour</span>
+              <h3>No gradients. No glow.</h3>
+              <p>White canvas. Black ink. Blue signal for action. Slate for AI. Green for human. Every color has a purpose.</p>
+            </div>
+            <div className="fcell">
+              <span className="mono">Spatial</span>
+              <h3>Generous whitespace</h3>
+              <p>Content breathes. Attention moves. Sharp edges divide without clutter. Every pixel serves a purpose.</p>
+            </div>
+            <div className="fcell">
+              <span className="mono">Attribution</span>
+              <h3>Traceable intelligence</h3>
+              <p>Every AI contribution is tagged. Every human edit is recorded. Full accountability at every step.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="dk">
+        <div className="container">
+          <span className="eyebrow section-label">Workflow</span>
+          <h2 className="section-title">From brief to greenlight —<br/>ten stages of structured delivery.</h2>
+          <p className="lede" style={{ color: "#888" }}>AI handles understanding and drafting. Humans review, refine, and approve at every gate.</p>
+
+          <div className="pipeline">
             {[
-              ["1", "Brief", "Capture client needs and objectives."],
-              ["2", "First Meeting", "Discovery call with the client."],
-              ["3", "Contact Report", "AI-generated summary for client confirmation."],
-              ["4", "Production Meeting", "Team and client align on scope and approach."],
-              ["5", "Proposal", "Account manager drafts the proposal."],
-              ["6", "Quote", "Professional quote ready for client."],
-              ["7", "Approval", "Client accepts and the gig starts."],
+              ["01", "Blueprint", "Intent and objectives"],
+              ["02", "Discovery", "Exploration and intake"],
+              ["03", "Capture", "Intelligent recording"],
+              ["04", "Intelligence", "Structured insight"],
+              ["05", "Blueprint", "Refined direction"],
+              ["06", "Workshop", "Human + AI strategy"],
+              ["07", "Synthesis", "Clear direction from all sources"],
+              ["08", "Pitch Deck", "Professional, AI-drafted"],
+              ["09", "Estimate", "Pricing for partner review"],
+              ["10", "Greenlight", "Final human decision"],
             ].map(([n, t, d]) => (
-              <div key={n as string} className="wf-step">
-                <span className="wf-num">{n as string}</span>
-                <h3>{t as string}</h3>
-                <p className="tiny muted">{d as string}</p>
+              <div key={n} className="pstage">
+                <span className="pnum">{n}</span>
+                <div className="picon">{t[0]}</div>
+                <span className="pname">{t}</span>
+                <span className="pdesc">{d}</span>
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {(recentBlog.length > 0 || recentNews.length > 0) && (
-        <section style={{ borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
-          <div className="container">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 28, paddingTop: 48 }}>
-              <span className="eyebrow">Stay updated</span>
-              <div style={{ display: "flex", gap: 12 }}>
-                {recentBlog.length > 0 && <Link href="/blog" className="btn btn-ghost btn-sm">All blog posts →</Link>}
-                {recentNews.length > 0 && <Link href="/news" className="btn btn-ghost btn-sm">All news →</Link>}
-              </div>
-            </div>
-
-            {recentBlog.length > 0 && (
-              <div style={{ marginBottom: 40 }}>
-                <span className="eyebrow" style={{ textTransform: "capitalize", color: "var(--signal)", marginBottom: 12, display: "block" }}>Blog</span>
-                <div className="blog-grid">
-                  {recentBlog.map((post) => (
-                    <article key={post.id} className="blog-card">
-                      {post.coverImage && (
-                        <div className="blog-card-img">
-                          <img src={post.coverImage} alt={post.title} />
-                        </div>
-                      )}
-                      <div className="blog-card-body">
-                        <span className="eyebrow">{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : ""}</span>
-                        <h3>{post.title}</h3>
-                        {post.excerpt && <p className="tiny muted">{post.excerpt}</p>}
-                        <Link href={`/blog/${post.slug}`} className="btn btn-ghost btn-sm">Read more →</Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {recentNews.length > 0 && (
-              <div style={{ paddingBottom: 48 }}>
-                <span className="eyebrow" style={{ textTransform: "capitalize", color: "var(--ai)", marginBottom: 12, display: "block" }}>News</span>
-                <div className="blog-grid">
-                  {recentNews.map((post) => (
-                    <article key={post.id} className="blog-card">
-                      {post.coverImage && (
-                        <div className="blog-card-img">
-                          <img src={post.coverImage} alt={post.title} />
-                        </div>
-                      )}
-                      <div className="blog-card-body">
-                        <span className="eyebrow">{post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : ""}</span>
-                        <h3>{post.title}</h3>
-                        {post.excerpt && <p className="tiny muted">{post.excerpt}</p>}
-                        <Link href={`/news/${post.slug}`} className="btn btn-ghost btn-sm">Read more →</Link>
-                      </div>
-                    </article>
-                  ))}
-                </div>
-              </div>
-            )}
+          <div className="stats">
+            <div className="st"><div className="st-v">10</div><div className="st-l">Pipeline Stages</div></div>
+            <div className="st"><div className="st-v">AI-Assisted</div><div className="st-l">Stages 1–9</div></div>
+            <div className="st"><div className="st-v">Human-Gated</div><div className="st-l">Stage 10</div></div>
+            <div className="st"><div className="st-v">Full Trace</div><div className="st-l">Attribution Tracked</div></div>
           </div>
-        </section>
-      )}
-
-      <section className="section" style={{ background: "var(--bg-elevated)", borderTop: "1px solid var(--line)", borderBottom: "1px solid var(--line)" }}>
-        <div className="container" style={{ maxWidth: 780, textAlign: "center" }}>
-          <span className="eyebrow">Built for creative teams</span>
-          <h2 className="display" style={{ fontSize: "clamp(1.8rem,3vw,2.4rem)", marginBottom: 18 }}>The operating system for creative intelligence</h2>
-          <p className="lede" style={{ marginBottom: 28 }}>
-            From the first creative brief to the final human approval, Synthos keeps the entire creative intelligence workflow in one calm, considered workspace.
-          </p>
-          <Link href="/dashboard/overview" className="btn btn-signal btn-lg">Get started →</Link>
-          <Link href="/intake" className="btn btn-ghost btn-lg">Start a project →</Link>
         </div>
       </section>
 
-      <section className="section">
+      <section>
         <div className="container">
-          <div className="features">
-            <div className="feat">
-              <h3>Briefs & Calls</h3>
-              <p className="tiny muted">Capture client briefs and discovery calls with intelligence built in.</p>
-            </div>
-            <div className="feat">
-              <h3>AI Understanding</h3>
-              <p className="tiny muted">The system extracts structured intelligence — wants, objectives, constraints, risks, missing info.</p>
-            </div>
-            <div className="feat">
-              <h3>Workshops</h3>
-              <p className="tiny muted">Human + AI collaboration to build strategic direction together.</p>
-            </div>
-            <div className="feat">
-              <h3>Proposals & Quotes</h3>
-              <p className="tiny muted">Professional deliverables with clear AI/human attribution on every section.</p>
-            </div>
-            <div className="feat">
-              <h3>Approval Center</h3>
-              <p className="tiny muted">A dedicated gate for human review — AI assists, humans decide.</p>
-            </div>
-            <div className="feat">
-              <h3>Workflow Visibility</h3>
-              <p className="tiny muted">See every project's stage, progress, and what needs attention next.</p>
-            </div>
-          </div>
+          <span className="eyebrow section-label">Philosophy</span>
+          <h2 className="section-title">Technology should amplify<br/>human judgment.</h2>
+          <blockquote className="bq-text">
+            The best creative work emerges when AI handles the heavy lifting<br/>
+            and humans make the final call — with full transparency at every step.
+          </blockquote>
+          <div className="bq-att">— Synthos Design Principle</div>
         </div>
       </section>
 
-      <section className="section foot-cta">
+      <section className="foot-cta">
         <div className="container" style={{ textAlign: "center" }}>
-          <h2 className="display" style={{ fontSize: "clamp(1.8rem,3vw,2.4rem)", marginBottom: 14 }}>Ready to move work forward?</h2>
-          <p className="lede" style={{ marginBottom: 28 }}>Open your workspace and see what needs your attention next.</p>
-          <Link href="/dashboard/overview" className="btn btn-signal btn-lg">Get started →</Link>
+          <h2 className="display" style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.6rem)", marginBottom: 14 }}>Ready to move work forward?</h2>
+          <p className="lede" style={{ marginBottom: 28 }}>Start your first blueprint and see what needs your attention next.</p>
+          <Link href="/intake" className="btn btn-signal btn-lg">Start a Blueprint →</Link>
         </div>
       </section>
     </main>

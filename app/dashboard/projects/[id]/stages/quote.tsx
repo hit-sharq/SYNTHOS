@@ -43,8 +43,8 @@ export function QuoteStage({ project }: { project: Project }) {
   if (!q) {
     return (
       <Panel>
-        <PanelHeader eyebrow="Stage 9" title="Quote" desc="The system will generate and send the quote automatically." />
-        <div style={{ padding: 24 }}><Empty title="No quote yet" hint="The quote will be generated automatically by the AI workflow." /></div>
+        <PanelHeader eyebrow="Stage 9" title="Estimate" desc="The system will generate and send the quote automatically." />
+        <div style={{ padding: 24 }}><Empty title="No estimate yet" hint="The quote will be generated automatically by the AI workflow." /></div>
       </Panel>
     )
   }
@@ -82,10 +82,10 @@ export function QuoteStage({ project }: { project: Project }) {
 
   return (
     <Panel>
-      <PanelHeader eyebrow="Stage 9" title="Quote" desc="AI-generated quote. Sent to client for review." actions={
+      <PanelHeader eyebrow="Stage 9" title="Estimate" desc="AI-generated quote. Sent to partner for review." actions={
         <div className="row gap-2">
           <StatusPill status={q.status} />
-          <span className="chip" style={{ fontSize: "0.72rem" }}>{q.sentToClient ? "Sent to client" : "Draft"}</span>
+          <span className="chip" style={{ fontSize: "0.72rem" }}>{q.sentToClient ? "Sent to partner" : "Draft"}</span>
           <button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button>
         </div>
       } />
