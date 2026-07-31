@@ -127,7 +127,7 @@ export default function Header() {
           {!isSignedIn && (
             <Link href="/talent/signup" className={`topnav-link ${pathname === "/talent/signup" ? "active" : ""}`} onClick={() => setOpen(false)}>Join</Link>
           )}
-{isSignedIn && (
+           {isSignedIn && isAdmin && (
             <>
               <Link
                 href="/dashboard/overview"
@@ -135,6 +135,13 @@ export default function Header() {
                 onClick={() => setOpen(false)}
               >
                 Dashboard
+              </Link>
+              <Link
+                href="/admin"
+                className={`topnav-link ${pathname === "/admin" || pathname.startsWith("/admin") ? "active" : ""}`}
+                onClick={() => setOpen(false)}
+              >
+                Admin
               </Link>
             </>
           )}

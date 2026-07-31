@@ -46,6 +46,15 @@ const TALENT_NAV = [
   { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
 ]
 
+const CLIENT_NAV = [
+  { href: "/dashboard/overview", label: "Overview", icon: LayoutDashboard },
+  { href: "/dashboard/projects", label: "Projects", icon: FolderOpen },
+  { href: "/dashboard/proposals", label: "Proposals", icon: FileSignature },
+  { href: "/dashboard/quotes", label: "Quotes", icon: Calculator },
+  { href: "/dashboard/approvals", label: "Approvals", icon: CheckCircle },
+  { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
+]
+
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [collapsed, setCollapsed] = useState(false)
@@ -69,7 +78,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       .catch(() => {})
   }, [isAdmin])
 
-  const NAV = isAdmin || role === "admin" ? ADMIN_NAV : role === "talent" ? TALENT_NAV : ADMIN_NAV
+  const NAV = isAdmin || role === "admin" ? ADMIN_NAV : role === "talent" ? TALENT_NAV : CLIENT_NAV
 
   return (
     <div className="dash-layout">
