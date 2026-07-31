@@ -1,5 +1,6 @@
 import { getProjects } from "@/lib/data-server"
 import { PageHead, PageWrap } from "@/components/app/Page"
+import { RevealOnScroll } from "@/components/app/useReveal"
 import ExternalMeetingForm from "./ExternalMeetingForm"
 import ExistingMeetings from "./ExistingMeetings"
 
@@ -13,10 +14,12 @@ export default async function MeetingsPage({ searchParams }: { searchParams: { p
     <PageWrap>
       <PageHead eyebrow="Intelligence" title="External Meeting Capture" desc="Paste a transcript or AI meeting capture from an external meeting source. The system will use it to enrich the project intelligence." />
 
-      <div className="stack gap-5">
-        <ExternalMeetingForm projects={projects} selectedId={selectedId} />
-        <ExistingMeetings projects={projects} />
-      </div>
+      <RevealOnScroll>
+        <div className="stack gap-5">
+          <ExternalMeetingForm projects={projects} selectedId={selectedId} />
+          <ExistingMeetings projects={projects} />
+        </div>
+      </RevealOnScroll>
     </PageWrap>
   )
 }

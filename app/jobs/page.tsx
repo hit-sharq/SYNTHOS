@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { auth } from "@clerk/nextjs/server"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
+import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import "@/components/app/blog.css"
 
 type Job = {
@@ -82,8 +83,10 @@ export default async function JobsPage() {
               <p className="muted">No open gigs right now. Approved jobs will appear here.</p>
             </div>
           )}
-          {jobs.map((job) => (
-            <article key={job.id} className="blog-card">
+          <StaggerContainer>
+            {jobs.map((job) => (
+              <RevealOnScroll key={job.id}>
+                <article key={job.id} className="blog-card">
               <div className="blog-card-body">
                 <span className="eyebrow" style={{ textTransform: "capitalize" }}>{job.type.replace("-", " ")}</span>
                 <h3>{job.title}</h3>
@@ -109,8 +112,10 @@ export default async function JobsPage() {
                   <button onClick={() => alert("Report feature coming soon")} className="btn btn-ghost btn-sm" style={{ border: "1px solid var(--line)" }}>Report</button>
                 </div>
               </div>
-            </article>
+              </article>
+            </RevealOnScroll>
           ))}
+        </StaggerContainer>
         </div>
       </div>
     </PageWrap>

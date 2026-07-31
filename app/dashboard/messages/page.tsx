@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import { Empty, StatusPill } from "@/components/app/ui"
+import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 
 type Notification = {
   id: string
@@ -55,39 +56,45 @@ export default function MessagesPage() {
       />
 
       {notifications.length === 0 ? (
-        <Empty title="No messages yet" hint="Notifications and messages will appear here as projects progress through the workflow." />
+        <RevealOnScroll>
+          <Empty title="No messages yet" hint="Notifications and messages will appear here as projects progress through the workflow." />
+        </RevealOnScroll>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {notifications.map((n) => (
-            <div
-              key={n.id}
-              className={`panel-soft ${!n.read ? "notif-item--unread" : ""}`}
-              style={{
-                padding: 18,
-                cursor: "pointer",
-                borderLeft: !n.read ? "3px solid var(--signal)" : "1px solid var(--line)",
-                background: !n.read ? "var(--surface-2)" : "var(--bg)",
-              }}
-              onClick={() => markAsRead(n.id)}
-            >
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
-                    <span style={{ fontWeight: !n.read ? 600 : 400, color: "var(--ink)", fontSize: "0.92rem" }}>{n.title}</span>
-                    <StatusPill status={n.kind === "approval" ? "review" : n.kind === "message" ? "active" : "draft"} />
+        <StaggerContainer>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {notifications.map((n) => (
+              <RevealOnScroll key={n.id}>
+                <div
+                  key={n.id}
+                  className={`panel-soft ${!n.read ? "notif-item--unread" : ""}`}
+                  style={{
+                    padding: 18,
+                    cursor: "pointer",
+                    borderLeft: !n.read ? "3px solid var(--signal)" : "1px solid var(--line)",
+                    background: !n.read ? "var(--surface-2)" : "var(--bg)",
+                  }}
+                  onClick={() => markAsRead(n.id)}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                        <span style={{ fontWeight: !n.read ? 600 : 400, color: "var(--ink)", fontSize: "0.92rem" }}>{n.title}</span>
+                        <StatusPill status={n.kind === "approval" ? "review" : n.kind === "message" ? "active" : "draft"} />
+                      </div>
+                      <p style={{ fontSize: "0.85rem", color: "var(--ink-2)", lineHeight: 1.5 }}>{n.message}</p>
+                      <span className="tiny muted" style={{ marginTop: 6, display: "block" }}>{new Date(n.createdAt).toLocaleString()}</span>
+                    </div>
+                    {n.refId && (
+                      <Link href={`/dashboard/projects/${n.refId}`} className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }}>
+                        Open
+                      </Link>
+                    )}
                   </div>
-                  <p style={{ fontSize: "0.85rem", color: "var(--ink-2)", lineHeight: 1.5 }}>{n.message}</p>
-                  <span className="tiny muted" style={{ marginTop: 6, display: "block" }}>{new Date(n.createdAt).toLocaleString()}</span>
                 </div>
-                {n.refId && (
-                  <Link href={`/dashboard/projects/${n.refId}`} className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }}>
-                    Open
-                  </Link>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
+              </RevealOnScroll>
+            ))}
+          </div>
+        </StaggerContainer>
       )}
     </PageWrap>
   )

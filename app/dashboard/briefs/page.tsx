@@ -4,18 +4,21 @@ import Link from "next/link"
 import { getProjects } from "@/lib/data-server"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import { Confidence, Empty } from "@/components/app/ui"
+import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 
 export default async function BriefsPage() {
   const projects = await getProjects()
   return (
     <PageWrap>
       <PageHead eyebrow="Intelligence" title="Blueprints" desc="Every partner's blueprint, with the AI's read on what's clear, risky, and missing." />
-      <div className="feat-grid">
-        {projects.map((p) => {
-          const b = p.brief
-          if (!b) return null
-          return (
-            <Link key={p.id} href={`/dashboard/projects/${p.id}`} className="feat-card">
+      <RevealOnScroll>
+        <div className="feat-grid">
+          {projects.map((p) => {
+            const b = p.brief
+            if (!b) return null
+            return (
+              <RevealOnScroll key={p.id}>
+                <Link href={`/dashboard/projects/${p.id}`} className="feat-card">
               <div className="row between" style={{ marginBottom: 10 }}>
                 <span className="feat-tag">{p.type}</span>
                 <Confidence value={b.aiConfidence || 0} />
@@ -26,10 +29,12 @@ export default async function BriefsPage() {
                 {(b.aiRisks?.length || 0) > 0 && <span className="chip" style={{ color: "var(--rejected)", background: "var(--rejected-soft)" }}>{(b.aiRisks || []).length} risks</span>}
                 {(b.aiMissing?.length || 0) > 0 && <span className="chip" style={{ color: "var(--signal-ink)", background: "var(--signal-soft)" }}>{(b.aiMissing || []).length} gaps</span>}
               </div>
-            </Link>
+              </Link>
+            </RevealOnScroll>
           )
         })}
       </div>
+    </RevealOnScroll>
     </PageWrap>
   )
 }

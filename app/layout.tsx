@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import type React from "react"
 import "./globals.css"
+import "@/components/app/animations.css"
 import { StoreProvider } from "@/lib/store"
 import { ClerkProvider } from "@clerk/nextjs"
 import Header from "@/components/app/Header"

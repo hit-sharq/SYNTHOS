@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { Plus, Trash2, Edit, ExternalLink, Share2, Paperclip, Play, FileText } from "lucide-react"
 import { PageHead } from "@/components/app/Page"
+import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { Empty, ErrorState } from "@/components/app/ui"
 
 type Project = {

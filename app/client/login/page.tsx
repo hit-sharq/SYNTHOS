@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useSignIn, useClerk } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import { AuthLayout } from "@/components/app/AuthLayout"
 
 export default function ClientLoginPage() {
   const { signIn, isLoaded: signInLoaded } = useSignIn()
@@ -52,43 +53,51 @@ export default function ClientLoginPage() {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-      <div style={{ maxWidth: 420, width: "100%", border: "1px solid var(--line)", padding: "36px 32px" }}>
-        <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.8rem", color: "var(--ink)", fontWeight: 500, marginBottom: 8 }}>Welcome back</h1>
-          <p style={{ fontSize: "0.92rem", color: "var(--ink-3)" }}>Log in to access your projects.</p>
+    <AuthLayout
+      brandTitle="Track your projects. <em>Review & approve.</em>"
+      brandDesc="Clients get token-based access to proposals, quotes, and deliverables. No account needed to view — but logging in gives you the full experience."
+    >
+      <div className="auth-form-card">
+        <div className="auth-form-header">
+          <h1>Welcome back</h1>
+          <p>Log in to access your projects.</p>
         </div>
 
         {registered && (
-          <div style={{ padding: "12px 16px", background: "var(--approved-soft)", border: "1px solid var(--approved)", color: "var(--approved)", fontFamily: "var(--font-mono)", fontSize: "0.8rem", marginBottom: 20 }}>
+          <div className="auth-success">
             Account created. Please log in.
           </div>
         )}
 
         {error && (
-          <div style={{ padding: "12px 16px", background: "var(--rejected-soft)", border: "1px solid var(--rejected)", color: "var(--rejected)", fontFamily: "var(--font-mono)", fontSize: "0.8rem", marginBottom: 20 }}>
+          <div className="auth-error">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div className="field">
-            <label>Email <span style={{ color: "var(--signal)" }}>*</span></label>
-            <input className="admin-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <form onSubmit={handleSubmit}>
+          <div className="auth-field">
+            <label>Email <span className="req">*</span></label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
           </div>
-          <div className="field">
-            <label>Password <span style={{ color: "var(--signal)" }}>*</span></label>
-            <input className="admin-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <div className="auth-field">
+            <label>Password <span className="req">*</span></label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            </div>
           </div>
-          <button type="submit" className="btn btn-signal" disabled={loading || !signInLoaded} style={{ width: "100%" }}>
+          <button type="submit" className="auth-btn" disabled={loading || !signInLoaded}>
+            {loading && <span className="auth-btn-spinner" />}
             {loading ? "Logging in…" : "Log In"}
           </button>
         </form>
 
-        <p style={{ marginTop: 20, fontSize: "0.88rem", color: "var(--ink-3)", textAlign: "center" }}>
-          Don&apos;t have an account? <Link href="/client/signup" style={{ color: "var(--signal)" }}>Sign up</Link>
-        </p>
+        <div className="auth-footer">
+          Don&apos;t have an account? <Link href="/client/signup">Sign up</Link>
+        </div>
       </div>
-    </div>
+    </AuthLayout>
   )
 }

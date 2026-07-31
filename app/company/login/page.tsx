@@ -43,36 +43,44 @@ export default function CompanyLoginPage() {
   }
 
   return (
-    <AuthLayout>
-      <div style={{ width: "100%", maxWidth: 420 }}>
-        <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.8rem", color: "var(--ink)", fontWeight: 500, marginBottom: 8 }}>Company Login</h1>
-          <p style={{ fontSize: "0.92rem", color: "var(--ink-3)" }}>Access your company dashboard to manage jobs.</p>
+    <AuthLayout
+      brandTitle="Welcome back to your <em>company dashboard.</em>"
+      brandDesc="Manage jobs, review applications, and hire the best creative talent in the network."
+    >
+      <div className="auth-form-card">
+        <div className="auth-form-header">
+          <h1>Company Login</h1>
+          <p>Access your company dashboard to manage jobs.</p>
         </div>
 
         {error && (
-          <div style={{ padding: "12px 16px", background: "var(--rejected-soft)", border: "1px solid var(--rejected)", color: "var(--rejected)", fontFamily: "var(--font-mono)", fontSize: "0.8rem", marginBottom: 20 }}>
+          <div className="auth-error">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div className="field">
-            <label>Email <span style={{ color: "var(--signal)" }}>*</span></label>
-            <input className="admin-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <form onSubmit={handleSubmit}>
+          <div className="auth-field">
+            <label>Email <span className="req">*</span></label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
           </div>
-          <div className="field">
-            <label>Password <span style={{ color: "var(--signal)" }}>*</span></label>
-            <input className="admin-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <div className="auth-field">
+            <label>Password <span className="req">*</span></label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+            </div>
           </div>
-          <button type="submit" className="btn btn-signal" disabled={loading} style={{ width: "100%" }}>
+          <button type="submit" className="auth-btn" disabled={loading || !signInLoaded}>
+            {loading && <span className="auth-btn-spinner" />}
             {loading ? "Signing in…" : "Sign In"}
           </button>
         </form>
 
-        <p style={{ marginTop: 20, fontSize: "0.88rem", color: "var(--ink-3)", textAlign: "center" }}>
-          Don't have an account? <Link href="/company/signup" style={{ color: "var(--signal)" }}>Register</Link>
-        </p>
+        <div className="auth-footer">
+          Don&apos;t have an account? <Link href="/company/signup">Register</Link>
+        </div>
       </div>
     </AuthLayout>
   )

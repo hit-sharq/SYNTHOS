@@ -20,6 +20,7 @@ export default function CompanySignupPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [agreed, setAgreed] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -31,26 +32,28 @@ export default function CompanySignupPage() {
 
       const result = await signUp.create({
         emailAddress: email,
-        password,
+        password: password,
       })
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
 
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
 
+      const payload = {
+        name: name,
+        email: email,
+        phone: phone,
+        website: website,
+        industry: industry,
+        location: location,
+        slug: slug,
+        clerkId: result.createdUserId,
+      }
+
       const res = await fetch("/api/company/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          phone,
-          website,
-          industry,
-          location,
-          slug,
-          clerkId: result.createdUserId,
-        }),
+        body: JSON.stringify(payload),
       })
 
       if (!res.ok) {
@@ -67,66 +70,91 @@ export default function CompanySignupPage() {
   }
 
   return (
-    <AuthLayout>
-      <div style={{ width: "100%", maxWidth: 520 }}>
-        <div style={{ marginBottom: 32 }}>
-          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.8rem", color: "var(--ink)", fontWeight: 500, marginBottom: 8 }}>Register Your Company</h1>
-          <p style={{ fontSize: "0.92rem", color: "var(--ink-3)" }}>Create an account to post jobs and hire Kenyan talent.</p>
+    <AuthLayout
+      brandTitle="Build your team with the best creative talent."
+      brandDesc="Join the network of verified companies posting curated roles. Hire writers, producers, directors, and creatives who deliver."
+    >
+      <div className="auth-form-card">
+        <div className="auth-form-header">
+          <h1>Register Your Company</h1>
+          <p>Create an account to post jobs and hire Kenyan talent.</p>
         </div>
 
         {error && (
-          <div style={{ padding: "12px 16px", background: "var(--rejected-soft)", border: "1px solid var(--rejected)", color: "var(--rejected)", fontFamily: "var(--font-mono)", fontSize: "0.8rem", marginBottom: 20 }}>
+          <div className="auth-error">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        <form onSubmit={handleSubmit}>
           <div className="form-grid-2">
-            <div className="field">
-              <label>Company Name <span style={{ color: "var(--signal)" }}>*</span></label>
-              <input className="admin-input" value={name} onChange={(e) => setName(e.target.value)} required />
+            <div className="auth-field">
+              <label>Company Name <span className="req">*</span></label>
+              <div className="auth-input-wrap">
+                <input className="auth-input" value={name} onChange={(e) => setName(e.target.value)} required />
+              </div>
             </div>
-            <div className="field">
+            <div className="auth-field">
               <label>Industry</label>
-              <input className="admin-input" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. Technology, Finance" />
+              <div className="auth-input-wrap">
+                <input className="auth-input" value={industry} onChange={(e) => setIndustry(e.target.value)} placeholder="e.g. Technology, Finance" />
+              </div>
             </div>
           </div>
 
           <div className="form-grid-2">
-            <div className="field">
-              <label>Email <span style={{ color: "var(--signal)" }}>*</span></label>
-              <input className="admin-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <div className="auth-field">
+              <label>Email <span className="req">*</span></label>
+              <div className="auth-input-wrap">
+                <input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              </div>
             </div>
-            <div className="field">
+            <div className="auth-field">
               <label>Phone</label>
-              <input className="admin-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+254 700 000000" />
+              <div className="auth-input-wrap">
+                <input className="auth-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+254 700 000000" />
+              </div>
             </div>
           </div>
 
           <div className="form-grid-2">
-            <div className="field">
+            <div className="auth-field">
               <label>Website</label>
-              <input className="admin-input" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://company.co.ke" />
+              <div className="auth-input-wrap">
+                <input className="auth-input" type="url" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://company.co.ke" />
+              </div>
             </div>
-            <div className="field">
+            <div className="auth-field">
               <label>Location</label>
-              <input className="admin-input" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Nairobi, Kenya" />
+              <div className="auth-input-wrap">
+                <input className="auth-input" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Nairobi, Kenya" />
+              </div>
             </div>
           </div>
 
-          <div className="field">
-            <label>Password <span style={{ color: "var(--signal)" }}>*</span></label>
-            <input className="admin-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+          <div className="auth-field">
+            <label>Password <span className="req">*</span></label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+            </div>
           </div>
 
-          <button type="submit" className="btn btn-signal" disabled={loading} style={{ width: "100%" }}>
+          <div className="auth-terms">
+            <input type="checkbox" id="terms" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} required />
+            <label htmlFor="terms" style={{ marginBottom: 0, textTransform: "none", letterSpacing: 0, fontSize: "0.82rem", color: "var(--ink-3)" }}>
+              I agree to the <Link href="/" style={{ color: "var(--signal)" }}>Terms</Link> and <Link href="/" style={{ color: "var(--signal)" }}>Privacy Policy</Link>.
+            </label>
+          </div>
+
+          <button type="submit" className="auth-btn" disabled={loading || !agreed}>
+            {loading && <span className="auth-btn-spinner" />}
             {loading ? "Creating account…" : "Create Company Account"}
           </button>
         </form>
 
-        <p style={{ marginTop: 20, fontSize: "0.88rem", color: "var(--ink-3)", textAlign: "center" }}>
-          Already have an account? <Link href="/sign-in" style={{ color: "var(--signal)" }}>Sign in</Link>
-        </p>
+        <div className="auth-footer">
+          Already have an account? <Link href="/company/login">Sign in</Link>
+        </div>
       </div>
     </AuthLayout>
   )

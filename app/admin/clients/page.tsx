@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Plus, Trash2, Edit, Search, Users2, FileText } from "lucide-react"
 import { PageHead } from "@/components/app/Page"
 import { StatusPill, Empty, ErrorState } from "@/components/app/ui"
+import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { VoiceInput } from "@/components/app/VoiceInput"
 
 type Client = {

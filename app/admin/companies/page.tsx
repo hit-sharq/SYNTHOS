@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { prisma } from "@/lib/prisma"
 import { AdminShell } from "@/components/app/AdminShell"
 import { PageHead, PageWrap } from "@/components/app/Page"
+import { RevealOnScroll } from "@/components/app/useReveal"
 import Link from "next/link"
 
 export default async function AdminCompaniesPage() {
@@ -30,7 +31,8 @@ export default async function AdminCompaniesPage() {
             </thead>
             <tbody>
               {companies.map((company) => (
-                <tr key={company.id}>
+                <RevealOnScroll key={company.id}>
+                  <tr key={company.id}>
                   <td>
                     <div style={{ fontWeight: 600 }}>{company.name}</div>
                     <div className="tiny muted">{company.email}</div>
@@ -49,7 +51,8 @@ export default async function AdminCompaniesPage() {
                       <Link href={`/admin/companies/${company.id}`} className="btn btn-ghost btn-sm">View</Link>
                     </div>
                   </td>
-                </tr>
+                  </tr>
+                </RevealOnScroll>
               ))}
             </tbody>
           </table>

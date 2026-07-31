@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Plus, Trash2, Edit, Search, UserPlus } from "lucide-react"
 import { PageHead } from "@/components/app/Page"
 import { StatusPill, Empty, ErrorState } from "@/components/app/ui"
+import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { VoiceInput } from "@/components/app/VoiceInput"
 
 type Talent = {
@@ -66,9 +67,7 @@ export default function TalentPage() {
     try {
       const payload = {
         ...form,
-        skills: form.skills.split(",").map((s) => s.trim()).filter(Boolean),
-        experience: parseInt(form.experience) || 0,
-        rating: parseFloat(form.rating) || 0,
+        skills: form.skills.split(",").map((t) => t.trim()).filter(Boolean),
       }
       const url = editId ? `/api/talent/${editId}` : "/api/talent"
       const res = await fetch(url, { method: editId ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
@@ -88,7 +87,7 @@ export default function TalentPage() {
   }
 
   const remove = async (id: string) => {
-    if (!confirm("Remove this talent from the database?")) return
+    if (!confirm("Remove this talent?")) return
     setActionError(null)
     try {
       const res = await fetch(`/api/talent/${id}`, { method: "DELETE" })
@@ -104,9 +103,8 @@ export default function TalentPage() {
 
   const startEdit = (t: Talent) => {
     setForm({
-      name: t.name, email: t.email, skills: t.skills.join(", "),
-      experience: String(t.experience), rating: String(t.rating), availability: t.availability,
-      rate: t.rate, portfolio: t.portfolio || "", notes: t.notes || ""
+      name: t.name, email: t.email, skills: t.skills.join(", "), experience: String(t.experience), rating: String(t.rating),
+      availability: t.availability, rate: t.rate, portfolio: t.portfolio || "", notes: t.notes || ""
     })
     setEditId(t.id)
     setEditing(true)
@@ -158,24 +156,18 @@ export default function TalentPage() {
                   <label>Rate</label>
                   <input className="admin-input" value={form.rate} onChange={(e) => setForm({ ...form, rate: e.target.value })} placeholder="$500/day" />
                 </div>
-              </div>
-              <div className="form-grid-3">
                 <div className="field">
                   <label>Experience (years)</label>
                   <input className="admin-input" type="number" value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} />
                 </div>
-                <div className="field">
-                  <label>Rating (0-5)</label>
-                  <input className="admin-input" type="number" step="0.1" min="0" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
-                </div>
-                <div className="field">
-                  <label>Portfolio URL</label>
-                  <input className="admin-input" value={form.portfolio} onChange={(e) => setForm({ ...form, portfolio: e.target.value })} placeholder="https://..." />
-                </div>
               </div>
               <div className="field">
                 <label>Skills (comma-separated)</label>
-                <input className="admin-input" value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} placeholder="copywriting, strategy, design, film" />
+                <input className="admin-input" value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} placeholder="copywriting, strategy, design" />
+              </div>
+              <div className="field">
+                <label>Portfolio URL</label>
+                <input className="admin-input" value={form.portfolio} onChange={(e) => setForm({ ...form, portfolio: e.target.value })} placeholder="https://..." />
               </div>
               <div className="field">
                 <label>Notes</label>
@@ -194,7 +186,7 @@ export default function TalentPage() {
         <div style={{ padding: "14px 18px", borderBottom: "1px solid var(--line)", display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
           <div style={{ position: "relative", flex: "1 1 240px" }}>
             <Search size={16} style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", color: "var(--ink-3)" }} />
-            <input className="admin-input" placeholder="Search talents…" value={search} onChange={(e) => setSearch(e.target.value)} style={{ paddingLeft: 36, width: "100%" }} />
+            <input className="admin-input" placeholder="Search talent…" value={search} onChange={(e) => setSearch(e.target.value)} style={{ paddingLeft: 36, width: "100%" }} />
           </div>
           <select className="admin-input" value={filterAvail} onChange={(e) => setFilterAvail(e.target.value)} style={{ width: "auto" }}>
             <option value="all">All availability</option>
@@ -211,6 +203,7 @@ export default function TalentPage() {
           <Empty title="No talent found" hint={talents.length === 0 ? "Add your first creative talent to get started." : "Try adjusting your search or filters."} />
         </div>
       ) : (
+        <StaggerContainer>
           <div className="admin-table-wrap">
             <table className="admin-table responsive-table">
               <thead>
@@ -226,38 +219,41 @@ export default function TalentPage() {
               </thead>
               <tbody>
                 {filtered.map((t) => (
-                  <tr key={t.id}>
-                    <td data-label="Name">
-                      <div style={{ fontWeight: 600, color: "#1b1a17" }}>{t.name}</div>
-                      <div style={{ fontSize: "0.78rem", color: "#8e8e93" }}>{t.email}</div>
-                    </td>
-                    <td data-label="Skills">
-                      <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
-                        {t.skills.slice(0, 3).map((s) => (
-                          <span key={s} style={{ fontSize: "0.7rem", padding: "2px 8px", background: "var(--surface-2)", border: "1px solid var(--line)", color: "var(--ink-2)" }}>{s}</span>
-                        ))}
-                        {t.skills.length > 3 && <span style={{ fontSize: "0.7rem", padding: "2px 8px", color: "var(--ink-3)" }}>+{t.skills.length - 3}</span>}
-                      </div>
-                    </td>
-                    <td data-label="Experience">{t.experience}y</td>
-                    <td data-label="Rating">
-                      <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>{t.rating.toFixed(1)}</span>
-                    </td>
-                    <td data-label="Rate" style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>{t.rate}</td>
-                    <td data-label="Availability">
-                      <StatusPill status={t.availability === "available" ? "active" : t.availability === "busy" ? "review" : "draft"} />
-                    </td>
-                    <td data-label="Actions">
-                      <div style={{ display: "flex", gap: 6 }}>
-                        <button className="admin-icon-btn" title="Edit" onClick={() => startEdit(t)}><Edit size={14} /></button>
-                        <button className="admin-icon-btn admin-icon-btn-danger" title="Remove" onClick={() => remove(t.id)}><Trash2 size={14} /></button>
-                      </div>
-                    </td>
-                  </tr>
+                  <RevealOnScroll key={t.id}>
+                    <tr key={t.id}>
+                      <td data-label="Name">
+                        <div style={{ fontWeight: 600, color: "#1b1a17" }}>{t.name}</div>
+                        <div style={{ fontSize: "0.78rem", color: "#8e8e93" }}>{t.email}</div>
+                      </td>
+                      <td data-label="Skills">
+                        <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+                          {t.skills.slice(0, 3).map((s) => (
+                            <span key={s} style={{ fontSize: "0.7rem", padding: "2px 8px", background: "var(--surface-2)", border: "1px solid var(--line)", color: "var(--ink-2)" }}>{s}</span>
+                          ))}
+                          {t.skills.length > 3 && <span style={{ fontSize: "0.7rem", padding: "2px 8px", color: "var(--ink-3)" }}>+{t.skills.length - 3}</span>}
+                        </div>
+                      </td>
+                      <td data-label="Experience">{t.experience}y</td>
+                      <td data-label="Rating">
+                        <span style={{ fontFamily: "var(--font-mono)", fontWeight: 600 }}>{t.rating.toFixed(1)}</span>
+                      </td>
+                      <td data-label="Rate" style={{ fontFamily: "var(--font-mono)", fontSize: "0.85rem" }}>{t.rate}</td>
+                      <td data-label="Availability">
+                        <StatusPill status={t.availability === "available" ? "active" : t.availability === "busy" ? "review" : "draft"} />
+                      </td>
+                      <td data-label="Actions">
+                        <div style={{ display: "flex", gap: 6 }}>
+                          <button className="admin-icon-btn" title="Edit" onClick={() => startEdit(t)}><Edit size={14} /></button>
+                          <button className="admin-icon-btn admin-icon-btn-danger" title="Remove" onClick={() => remove(t.id)}><Trash2 size={14} /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  </RevealOnScroll>
                 ))}
               </tbody>
             </table>
           </div>
+        </StaggerContainer>
       )}
       </div>
     </div>

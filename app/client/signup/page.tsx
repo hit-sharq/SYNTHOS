@@ -17,6 +17,7 @@ export default function ClientSignupPage() {
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [agreed, setAgreed] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -53,44 +54,64 @@ export default function ClientSignupPage() {
   }
 
   return (
-    <AuthLayout>
-      <div style={{ width: "100%", maxWidth: 420 }}>
-        <div style={{ marginBottom: 28 }}>
-          <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "1.8rem", color: "var(--ink)", fontWeight: 500, marginBottom: 8 }}>Client Access</h1>
-          <p style={{ fontSize: "0.92rem", color: "var(--ink-3)" }}>Create an account to view your projects.</p>
+    <AuthLayout
+      brandTitle="Your projects. <em>One place.</em>"
+      brandDesc="Get access to proposals, quotes, deliverables, and approval gates. Transparent, structured, and always in your control."
+    >
+      <div className="auth-form-card">
+        <div className="auth-form-header">
+          <h1>Client Access</h1>
+          <p>Create an account to view your projects.</p>
         </div>
 
         {error && (
-          <div style={{ padding: "12px 16px", background: "var(--rejected-soft)", border: "1px solid var(--rejected)", color: "var(--rejected)", fontFamily: "var(--font-mono)", fontSize: "0.8rem", marginBottom: 20 }}>
+          <div className="auth-error">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div className="field">
-            <label>Full Name <span style={{ color: "var(--signal)" }}>*</span></label>
-            <input className="admin-input" value={name} onChange={(e) => setName(e.target.value)} required />
+        <form onSubmit={handleSubmit}>
+          <div className="auth-field">
+            <label>Full Name <span className="req">*</span></label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" value={name} onChange={(e) => setName(e.target.value)} required />
+            </div>
           </div>
-          <div className="field">
-            <label>Email <span style={{ color: "var(--signal)" }}>*</span></label>
-            <input className="admin-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <div className="auth-field">
+            <label>Email <span className="req">*</span></label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            </div>
           </div>
-          <div className="field">
+          <div className="auth-field">
             <label>Company</label>
-            <input className="admin-input" value={company} onChange={(e) => setCompany(e.target.value)} />
+            <div className="auth-input-wrap">
+              <input className="auth-input" value={company} onChange={(e) => setCompany(e.target.value)} />
+            </div>
           </div>
-          <div className="field">
-            <label>Password <span style={{ color: "var(--signal)" }}>*</span></label>
-            <input className="admin-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+          <div className="auth-field">
+            <label>Password <span className="req">*</span></label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} />
+            </div>
           </div>
-          <button type="submit" className="btn btn-signal" disabled={loading} style={{ width: "100%" }}>
+
+          <div className="auth-terms">
+            <input type="checkbox" id="terms" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} required />
+            <label htmlFor="terms" style={{ marginBottom: 0, textTransform: "none", letterSpacing: 0, fontSize: "0.82rem", color: "var(--ink-3)" }}>
+              I agree to the <Link href="/" style={{ color: "var(--signal)" }}>Terms of Service</Link> and <Link href="/" style={{ color: "var(--signal)" }}>Privacy Policy</Link>.
+            </label>
+          </div>
+
+          <button type="submit" className="auth-btn" disabled={loading || !agreed}>
+            {loading && <span className="auth-btn-spinner" />}
             {loading ? "Creating account…" : "Create Account"}
           </button>
         </form>
 
-        <p style={{ marginTop: 20, fontSize: "0.88rem", color: "var(--ink-3)", textAlign: "center" }}>
-          Already have an account? <Link href="/sign-in" style={{ color: "var(--signal)" }}>Sign in</Link>
-        </p>
+        <div className="auth-footer">
+          Already have an account? <Link href="/sign-in">Sign in</Link>
+        </div>
       </div>
     </AuthLayout>
   )

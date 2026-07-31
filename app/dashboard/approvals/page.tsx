@@ -6,6 +6,7 @@ import { getProjects } from "@/lib/data-server"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import { AttrTag, StatusPill, Empty, ErrorState } from "@/components/app/ui"
 import { ApprovalActionCard } from "@/components/app/ApprovalActionCard"
+import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 
 type ApprovalItem = {
   projectId: string
@@ -70,24 +71,36 @@ export default function ApprovalsPage() {
         desc="Everything that needs human judgment. AI assists; humans decide."
         actions={<span className="tag-human"><span className="dot dot-human" /> {awaiting} awaiting your decision</span>}
       />
-      <div className="hai-banner">
-        <span className="tag-ai"><span className="dot dot-ai" /> AI assists</span>
-        <span className="tag-human"><span className="dot dot-human" /> Humans decide</span>
-        <p className="tiny muted">The system accelerates the work. Your review and sign-off is what sends anything to a client.</p>
-      </div>
+      <RevealOnScroll>
+        <div className="hai-banner">
+          <span className="tag-ai"><span className="dot dot-ai" /> AI assists</span>
+          <span className="tag-human"><span className="dot dot-human" /> Humans decide</span>
+          <p className="tiny muted">The system accelerates the work. Your review and sign-off is what sends anything to a client.</p>
+        </div>
+      </RevealOnScroll>
 
       {error ? (
-        <ErrorState title="Could not load approvals" message={error} onRetry={load} />
+        <RevealOnScroll>
+          <ErrorState title="Could not load approvals" message={error} onRetry={load} />
+        </RevealOnScroll>
       ) : loading ? (
-        <div style={{ padding: 40, textAlign: "center" }}><p className="muted tiny">Loading…</p></div>
+        <RevealOnScroll>
+          <div style={{ padding: 40, textAlign: "center" }}><p className="muted tiny">Loading…</p></div>
+        </RevealOnScroll>
       ) : items.length === 0 ? (
-        <Empty title="Nothing awaiting approval" hint="Items appear here when proposals, quotes, or flagged risks need a human decision." />
+        <RevealOnScroll>
+          <Empty title="Nothing awaiting approval" hint="Items appear here when proposals, quotes, or flagged risks need a human decision." />
+        </RevealOnScroll>
       ) : (
-        <div className="feat-list" style={{ marginTop: 20 }}>
-          {items.map((it) => (
-            <ApprovalActionCard key={it.projectId + it.kind + (it.approvalId || "")} item={it} onUpdated={load} />
-          ))}
-        </div>
+        <StaggerContainer>
+          <div className="feat-list" style={{ marginTop: 20 }}>
+            {items.map((it) => (
+              <RevealOnScroll key={it.projectId + it.kind + (it.approvalId || "")}>
+                <ApprovalActionCard item={it} onUpdated={load} />
+              </RevealOnScroll>
+            ))}
+          </div>
+        </StaggerContainer>
       )}
     </PageWrap>
   )

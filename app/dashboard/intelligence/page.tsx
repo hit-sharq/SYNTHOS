@@ -4,6 +4,7 @@ import Link from "next/link"
 import { getProjects } from "@/lib/data-server"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import { Confidence, Empty } from "@/components/app/ui"
+import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 
 function countInsights(p: any) {
   if (!p.understanding) return 0
@@ -18,25 +19,31 @@ export default async function IntelligencePage() {
     <PageWrap>
       <PageHead eyebrow="Intelligence" title="AI Intelligence" desc="Structured understanding extracted from every brief, call and transcript. Review and correct before it drives the work." />
       {ready.length === 0 ? (
-        <Empty title="No understanding generated yet" hint="Complete a brief and client call to let the AI extract intelligence." />
+        <RevealOnScroll>
+          <Empty title="No understanding generated yet" hint="Complete a brief and client call to let the AI extract intelligence." />
+        </RevealOnScroll>
       ) : (
-        <div className="feat-grid">
-          {ready.map((p) => (
-            <Link key={p.id} href={`/dashboard/projects/${p.id}`} className="feat-card">
-              <div className="row between" style={{ marginBottom: 10 }}>
-                <span className="feat-tag">Understanding</span>
-                <Confidence value={p.understanding!.confidence} />
-              </div>
-              <h3>{p.name}</h3>
-              <p className="tiny" style={{ marginTop: 6 }}>{p.client}</p>
-              <div className="row gap-2 wrap" style={{ marginTop: 14 }}>
-                <span className="chip">{countInsights(p)} insights</span>
-                <span className="chip" style={{ color: "var(--ai-ink)", background: "var(--ai-soft)" }}>AI-drafted</span>
-                <span className="chip" style={{ color: "var(--human-ink)", background: "var(--human-soft)" }}>Needs review</span>
-              </div>
-            </Link>
-          ))}
-        </div>
+        <StaggerContainer>
+          <div className="feat-grid">
+            {ready.map((p) => (
+              <RevealOnScroll key={p.id}>
+                <Link href={`/dashboard/projects/${p.id}`} className="feat-card">
+                  <div className="row between" style={{ marginBottom: 10 }}>
+                    <span className="feat-tag">Understanding</span>
+                    <Confidence value={p.understanding!.confidence} />
+                  </div>
+                  <h3>{p.name}</h3>
+                  <p className="tiny" style={{ marginTop: 6 }}>{p.client}</p>
+                  <div className="row gap-2 wrap" style={{ marginTop: 14 }}>
+                    <span className="chip">{countInsights(p)} insights</span>
+                    <span className="chip" style={{ color: "var(--ai-ink)", background: "var(--ai-soft)" }}>AI-drafted</span>
+                    <span className="chip" style={{ color: "var(--human-ink)", background: "var(--human-soft)" }}>Needs review</span>
+                  </div>
+                </Link>
+              </RevealOnScroll>
+            ))}
+          </div>
+        </StaggerContainer>
       )}
     </PageWrap>
   )
