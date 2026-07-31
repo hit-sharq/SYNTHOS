@@ -16,8 +16,18 @@ export async function POST(req: Request) {
     const existingUser = await prisma.user.findFirst({ where: { email: normalizedEmail } })
     const existingCompany = await prisma.company.findFirst({ where: { email: normalizedEmail } })
 
-    if (existingUser || existingCompany) {
-      return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 })
+    if (existingUser) {
+      if (existingUser.role === "talent") {
+        return NextResponse.json({ error: "This email is already registered as a Talent. Talents and Companies use separate accounts. Please sign in with your Talent account, or use a different email to register your company." }, { status: 409 })
+      }
+      if (existingUser.role === "admin") {
+        return NextResponse.json({ error: "This email is already registered as an Admin account. Admin accounts cannot be used for Company registration." }, { status: 409 })
+      }
+      return NextResponse.json({ error: "An account with this email already exists. Please sign in instead." }, { status: 409 })
+    }
+
+    if (existingCompany) {
+      return NextResponse.json({ error: "A company is already registered with this email. Each company email can only be used once." }, { status: 409 })
     }
 
     const company = await prisma.company.create({

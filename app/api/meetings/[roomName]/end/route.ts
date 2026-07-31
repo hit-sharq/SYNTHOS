@@ -48,7 +48,7 @@ export async function POST(req: Request, { params }: { params: { roomName: strin
     }
 
     const b = project.brief
-    const clientEmail = b.contact || project.clientRef?.email || "client@example.com"
+    const clientEmail = b.contact || project.clientRef?.email || ""
     const clientName = b.clientName || project.clientRef?.name || "Client"
 
     // 1. Update/create ClientCall

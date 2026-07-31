@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { useSignUp, useClerk } from "@clerk/nextjs"
+import { useState, useEffect } from "react"
+import { useSignUp, useClerk, useUser } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AuthLayout } from "@/components/app/AuthLayout"
@@ -9,6 +9,7 @@ import { AuthLayout } from "@/components/app/AuthLayout"
 export default function CompanySignupPage() {
   const { signUp, isLoaded: signUpLoaded } = useSignUp()
   const { setActive } = useClerk()
+  const { user, isLoaded: userLoaded } = useUser()
   const router = useRouter()
 
   const [name, setName] = useState("")
@@ -21,6 +22,18 @@ export default function CompanySignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [agreed, setAgreed] = useState(false)
+
+  useEffect(() => {
+    if (!userLoaded || !user) return
+    const role = (user as any).publicMetadata?.role
+    if (role === "company" || role === "client") {
+      router.push("/company/jobs")
+    } else if (role === "talent") {
+      setError("You are already signed in as a Talent. Company and Talent accounts are separate. Please sign out first if you want to register a company, or use a different browser or incognito window.")
+    } else if (role === "admin") {
+      setError("You are already signed in as an Admin. Admin accounts cannot register companies. Please sign out or use a different browser.")
+    }
+  }, [user, userLoaded, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -142,7 +155,7 @@ export default function CompanySignupPage() {
           <div className="auth-terms">
             <input type="checkbox" id="terms" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} required />
             <label htmlFor="terms" style={{ marginBottom: 0, textTransform: "none", letterSpacing: 0, fontSize: "0.82rem", color: "var(--ink-3)" }}>
-              I agree to the <Link href="/" style={{ color: "var(--signal)" }}>Terms</Link> and <Link href="/" style={{ color: "var(--signal)" }}>Privacy Policy</Link>.
+              I agree to the <Link href="/terms" style={{ color: "var(--signal)" }}>Terms</Link> and <Link href="/privacy" style={{ color: "var(--signal)" }}>Privacy Policy</Link>.
             </label>
           </div>
 

@@ -1,0 +1,175 @@
+/* =====================================================================
+   Synthos — Legal Pages Styles
+   Terms, Privacy, and other static policy pages
+   ===================================================================== */
+
+.legal-wrap {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.legal-hero {
+  padding: 64px 0 48px;
+  border-bottom: 2px solid var(--ink);
+  margin-bottom: 40px;
+}
+
+.legal-hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--signal);
+  margin-bottom: 16px;
+}
+
+.legal-hero h1 {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.legal-hero p {
+  font-size: 1rem;
+  color: var(--ink-2);
+  line-height: 1.65;
+  max-width: 680px;
+}
+
+.legal-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.legal-card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 28px;
+  transition: border-color var(--tr), background var(--tr), transform var(--tr);
+}
+
+.legal-card:hover {
+  border-color: var(--line-s);
+  background: var(--surface-2);
+  transform: translateY(-2px);
+}
+
+.legal-card-num {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 400;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--signal);
+  margin-bottom: 12px;
+}
+
+.legal-card h2 {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 10px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.legal-card p {
+  color: var(--ink-2);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.legal-card a {
+  color: var(--signal);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color var(--tr);
+}
+
+.legal-card a:hover {
+  color: var(--signal-ink);
+  text-decoration: underline;
+}
+
+.legal-card-full {
+  grid-column: 1 / -1;
+}
+
+.legal-footer {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.legal-footer-meta {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.legal-footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.legal-footer-links a {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--signal);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.legal-footer-links a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 860px) {
+  .legal-grid {
+    grid-template-columns: 1fr;
+  }
+  .legal-hero {
+    padding: 40px 0 32px;
+  }
+  .legal-card {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 480px) {
+  .legal-hero h1 {
+    font-size: 1.7rem;
+  }
+  .legal-hero p {
+    font-size: 0.92rem;
+  }
+  .legal-card {
+    padding: 18px;
+  }
+  .legal-card h2 {
+    font-size: 1rem;
+  }
+  .legal-card p {
+    font-size: 0.85rem;
+  }
+  .legal-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

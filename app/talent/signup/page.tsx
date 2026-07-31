@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { AuthLayout } from "@/components/app/AuthLayout"
 
-export default function ClientSignupPage() {
+export default function TalentSignupPage() {
   const { signUp, isLoaded: signUpLoaded } = useSignUp()
   const { setActive } = useClerk()
   const { user, isLoaded: userLoaded } = useUser()
@@ -14,7 +14,10 @@ export default function ClientSignupPage() {
 
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
-  const [company, setCompany] = useState("")
+  const [skills, setSkills] = useState("")
+  const [experience, setExperience] = useState("")
+  const [rate, setRate] = useState("")
+  const [portfolio, setPortfolio] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -23,12 +26,10 @@ export default function ClientSignupPage() {
   useEffect(() => {
     if (!userLoaded || !user) return
     const role = (user as any).publicMetadata?.role
-    if (role === "client" || role === "company") {
-      router.push("/client/dashboard")
-    } else if (role === "talent") {
-      setError("You are already signed in as a Talent. Client and Talent accounts are separate. Please sign out first if you want to create a Client account, or use a different browser or incognito window.")
-    } else if (role === "admin") {
-      setError("You are already signed in as an Admin. Admin accounts cannot create Client accounts. Please sign out or use a different browser.")
+    if (role === "talent") {
+      router.push("/dashboard/talent")
+    } else if (role) {
+      setError(`You are already signed in as a ${role === "client" ? "Client" : role === "company" ? "Company" : role}. Please sign out first if you want to create a Talent account. Use a different browser or incognito window, or contact support if you need to change your role.`)
     }
   }, [user, userLoaded, router])
 
@@ -47,18 +48,26 @@ export default function ClientSignupPage() {
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
 
-      const res = await fetch("/api/client/signup", {
+      const res = await fetch("/api/talent/claim", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, company, clerkId: result.createdUserId }),
+        body: JSON.stringify({
+          email,
+          name,
+          skills: skills.split(",").map(s => s.trim()).filter(Boolean),
+          experience: parseInt(experience) || 0,
+          rate,
+          portfolio,
+          clerkId: result.createdUserId,
+        }),
       })
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))
-        throw new Error(data.error || "Failed to create client account")
+        throw new Error(data.error || "Failed to create talent account")
       }
 
-      router.push("/client/login?registered=1")
+      router.push("/talents/profile")
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong")
     } finally {
@@ -68,13 +77,13 @@ export default function ClientSignupPage() {
 
   return (
     <AuthLayout
-      brandTitle="Your projects. <em>One place.</em>"
-      brandDesc="Get access to proposals, quotes, deliverables, and approval gates. Transparent, structured, and always in your control."
+      brandTitle="Showcase your <em>creative talent.</em>"
+      brandDesc="Join the creator network. Build your profile, set your rate, and get matched with projects that fit your skills."
     >
       <div className="auth-form-card">
         <div className="auth-form-header">
-          <h1>Client Access</h1>
-          <p>Create an account to view your projects.</p>
+          <h1>Creator Sign Up</h1>
+          <p>Create your talent profile and start collaborating.</p>
         </div>
 
         {error && (
@@ -87,19 +96,39 @@ export default function ClientSignupPage() {
           <div className="auth-field">
             <label>Full Name <span className="req">*</span></label>
             <div className="auth-input-wrap">
-              <input className="auth-input" value={name} onChange={(e) => setName(e.target.value)} required />
+              <input className="auth-input" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Your full name" />
             </div>
           </div>
           <div className="auth-field">
             <label>Email <span className="req">*</span></label>
             <div className="auth-input-wrap">
-              <input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+              <input className="auth-input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="you@email.com" />
             </div>
           </div>
           <div className="auth-field">
-            <label>Company</label>
+            <label>Skills <span className="req">*</span></label>
             <div className="auth-input-wrap">
-              <input className="auth-input" value={company} onChange={(e) => setCompany(e.target.value)} />
+              <input className="auth-input" value={skills} onChange={(e) => setSkills(e.target.value)} required placeholder="writing, strategy, design (comma separated)" />
+            </div>
+          </div>
+          <div className="form-grid-2">
+            <div className="auth-field">
+              <label>Experience (years)</label>
+              <div className="auth-input-wrap">
+                <input className="auth-input" type="number" value={experience} onChange={(e) => setExperience(e.target.value)} placeholder="3" min="0" />
+              </div>
+            </div>
+            <div className="auth-field">
+              <label>Rate</label>
+              <div className="auth-input-wrap">
+                <input className="auth-input" value={rate} onChange={(e) => setRate(e.target.value)} placeholder="$500/day" />
+              </div>
+            </div>
+          </div>
+          <div className="auth-field">
+            <label>Portfolio URL</label>
+            <div className="auth-input-wrap">
+              <input className="auth-input" type="url" value={portfolio} onChange={(e) => setPortfolio(e.target.value)} placeholder="https://yourportfolio.com" />
             </div>
           </div>
           <div className="auth-field">
@@ -118,7 +147,7 @@ export default function ClientSignupPage() {
 
           <button type="submit" className="auth-btn" disabled={loading || !agreed}>
             {loading && <span className="auth-btn-spinner" />}
-            {loading ? "Creating account…" : "Create Account"}
+            {loading ? "Creating account…" : "Create Talent Account"}
           </button>
         </form>
 

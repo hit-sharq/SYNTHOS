@@ -21,7 +21,10 @@ export async function POST(req: Request) {
         const talent = await prisma.talent.findUnique({ where: { userId: existing.id } })
         return NextResponse.json({ userId: existing.id, talentId: talent?.id }, { status: 200 })
       }
-      return NextResponse.json({ error: "An account with this email already exists with a different role." }, { status: 409 })
+      if (existing.role === "client") {
+        return NextResponse.json({ error: "This email is already registered as a Client. Client and Talent accounts are separate. Please sign in with your Client account, or use a different email to create a Talent account." }, { status: 409 })
+      }
+      return NextResponse.json({ error: "An account with this email already exists with a different role. Please use a different email or contact support." }, { status: 409 })
     }
 
     const user = await prisma.user.create({

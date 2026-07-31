@@ -40,7 +40,7 @@ export default function Footer() {
 
         <div className="foot-col">
           <h5>For Creators</h5>
-          <Link href="/join">Join</Link>
+          <Link href="/talent/signup">Join</Link>
           <Link href="/jobs">Open Gigs</Link>
           <Link href="/sign-in">Talent Login</Link>
         </div>
@@ -55,8 +55,8 @@ export default function Footer() {
 
         <div className="foot-col">
           <h5>Legal</h5>
-          <Link href="/">Privacy</Link>
-          <Link href="/">Terms</Link>
+          <Link href="/privacy">Privacy</Link>
+          <Link href="/terms">Terms</Link>
         </div>
       </div>
       <div className="container foot-base">
