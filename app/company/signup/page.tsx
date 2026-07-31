@@ -22,6 +22,9 @@ export default function CompanySignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [agreed, setAgreed] = useState(false)
+  const [pendingVerification, setPendingVerification] = useState(false)
+  const [verificationCode, setVerificationCode] = useState("")
+  const [verifying, setVerifying] = useState(false)
 
   useEffect(() => {
     if (!userLoaded || !user) return
@@ -43,12 +46,33 @@ export default function CompanySignupPage() {
     try {
       if (!signUpLoaded) throw new Error("Sign up not loaded")
 
-      const result = await signUp.create({
+      await signUp.create({
         emailAddress: email,
         password: password,
       })
 
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
+      setPendingVerification(true)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Something went wrong")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setVerifying(true)
+
+    try {
+      if (!signUp) throw new Error("Sign up not loaded")
+
+      const result = await signUp.attemptEmailAddressVerification({
+        code: verificationCode,
+      })
+
+      await setActive({ session: result.createdSessionId })
 
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
 
@@ -78,7 +102,7 @@ export default function CompanySignupPage() {
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong")
     } finally {
-      setLoading(false)
+      setVerifying(false)
     }
   }
 
@@ -164,6 +188,27 @@ export default function CompanySignupPage() {
             {loading ? "Creating account…" : "Create Company Account"}
           </button>
         </form>
+
+        {pendingVerification && (
+          <form onSubmit={handleVerify} style={{ marginTop: 24, paddingTop: 24, borderTop: "1px solid var(--line)" }}>
+            <div className="auth-form-header">
+              <h1>Verify Your Email</h1>
+              <p>We've sent a verification code to {email}. Enter it below to complete your registration.</p>
+            </div>
+
+            <div className="auth-field">
+              <label>Verification Code <span className="req">*</span></label>
+              <div className="auth-input-wrap">
+                <input className="auth-input" value={verificationCode} onChange={(e) => setVerificationCode(e.target.value)} required placeholder="123456" autoFocus />
+              </div>
+            </div>
+
+            <button type="submit" className="auth-btn" disabled={verifying}>
+              {verifying && <span className="auth-btn-spinner" />}
+              {verifying ? "Verifying…" : "Verify Email"}
+            </button>
+          </form>
+        )}
 
         <div className="auth-footer">
           Already have an account? <Link href="/company/login">Sign in</Link>
