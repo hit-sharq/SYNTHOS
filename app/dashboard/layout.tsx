@@ -55,13 +55,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     return <AdminShell>{children}</AdminShell>
   }
 
-  if (user.role === Role.talent) {
-    return <AdminShell>{children}</AdminShell>
-  }
-
   if (user.role === Role.client) {
     redirect("/client/dashboard")
   }
 
-  redirect("/")
+  redirect("/dashboard/talent")
 }
