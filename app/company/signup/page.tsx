@@ -84,13 +84,13 @@ export default function CompanySignupPage() {
 
   return (
     <AuthLayout
-      brandTitle="Build your team with the best creative talent."
-      brandDesc="Join the network of verified companies posting curated roles. Hire writers, producers, directors, and creatives who deliver."
+      brandTitle="Post jobs.<br/>Hire <em>verified talent.</em>"
+      brandDesc="Register your company to post curated roles, review applications, and hire creative professionals from the Synthos talent marketplace."
     >
       <div className="auth-form-card">
         <div className="auth-form-header">
           <h1>Register Your Company</h1>
-          <p>Create an account to post jobs and hire Kenyan talent.</p>
+          <p>Create an account to post jobs and hire talent.</p>
         </div>
 
         {error && (

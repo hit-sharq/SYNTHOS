@@ -123,7 +123,7 @@ export default function Header() {
           <Link href="/" className={`topnav-link ${pathname === "/" ? "active" : ""}`} onClick={() => setOpen(false)}>Home</Link>
           <Link href="/talents" className={`topnav-link ${pathname === "/talents" ? "active" : ""}`} onClick={() => setOpen(false)}>Talent</Link>
           <Link href="/jobs" className={`topnav-link ${pathname === "/jobs" ? "active" : ""}`} onClick={() => setOpen(false)}>Jobs</Link>
-          <Link href="/company/signup" className={`topnav-link ${pathname.startsWith("/company") ? "active" : ""}`} onClick={() => setOpen(false)}>Companies</Link>
+          <Link href="/companies" className={`topnav-link ${pathname === "/companies" || pathname.startsWith("/companies") ? "active" : ""}`} onClick={() => setOpen(false)}>Companies</Link>
           {!isSignedIn && (
             <Link href="/talent/signup" className={`topnav-link ${pathname === "/talent/signup" ? "active" : ""}`} onClick={() => setOpen(false)}>Join</Link>
           )}

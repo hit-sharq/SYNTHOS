@@ -68,13 +68,13 @@ export default function ClientSignupPage() {
 
   return (
     <AuthLayout
-      brandTitle="Your projects. <em>One place.</em>"
-      brandDesc="Get access to proposals, quotes, deliverables, and approval gates. Transparent, structured, and always in your control."
+      brandTitle="Hire talent.<br/><em>One place.</em>"
+      brandDesc="Create an account to manage your projects, review proposals and quotes, and track creative delivery — or browse the talent marketplace."
     >
       <div className="auth-form-card">
         <div className="auth-form-header">
           <h1>Client Access</h1>
-          <p>Create an account to view your projects.</p>
+          <p>Create an account to hire talent and manage projects.</p>
         </div>
 
         {error && (

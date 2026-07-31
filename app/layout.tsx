@@ -10,14 +10,14 @@ import Footer from "@/components/app/Footer"
 export const metadata: Metadata = {
   metadataBase: new URL("https://synthos.co.ke"),
   title: {
-    default: "Synthos — Creative Intelligence & Project Automation",
+    default: "Synthos — Kenya's Creative Job Board & Talent Marketplace",
     template: "%s · Synthos",
   },
   description:
-    "Synthos is the operating system for creative intelligence. Turn client conversations and briefs into structured project intelligence, proposals, and human-approved deliverables.",
+    "Kenya's marketplace for creative talent and verified employers. Post jobs, find work, and run projects with AI-assisted precision.",
   openGraph: {
-    title: "Synthos — Creative Intelligence & Project Automation",
-    description: "AI accelerates the work. Humans provide the judgment.",
+    title: "Synthos — Kenya's Creative Job Board & Talent Marketplace",
+    description: "Post jobs, find creative work, and hire verified talent in Kenya.",
     url: "https://synthos.co.ke",
     type: "website",
   },

@@ -77,13 +77,13 @@ export default function TalentSignupPage() {
 
   return (
     <AuthLayout
-      brandTitle="Showcase your <em>creative talent.</em>"
-      brandDesc="Join the creator network. Build your profile, set your rate, and get matched with projects that fit your skills."
+      brandTitle="Join Kenya's creative <em>talent marketplace.</em>"
+      brandDesc="Create an account to showcase your skills, set your rate, and apply to curated opportunities from verified employers."
     >
       <div className="auth-form-card">
         <div className="auth-form-header">
           <h1>Creator Sign Up</h1>
-          <p>Create your talent profile and start collaborating.</p>
+          <p>Create your talent profile and start applying to jobs.</p>
         </div>
 
         {error && (

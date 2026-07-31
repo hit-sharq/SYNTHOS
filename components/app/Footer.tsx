@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="foot-brand">
           <BrandMark />
           <p className="foot-tag">
-            The operating system for creative intelligence. AI accelerates the work — humans provide the judgment.
+            Kenya's creative job board and talent marketplace. Verified employers, curated roles, and AI-assisted project delivery.
           </p>
           <p className="foot-hai">
             <span className="chip" style={{ color: "var(--ai-ink)", background: "var(--ai-soft)" }}><span className="dot dot-ai" /> AI assists</span>
@@ -22,7 +22,7 @@ export default function Footer() {
           <Link href="/about">Overview</Link>
           <Link href="/intake">Start Project</Link>
           <Link href="/talents">Talent</Link>
-          <Link href="/company/signup">Companies</Link>
+          <Link href="/companies">Companies</Link>
         </div>
 
         <div className="foot-col">
