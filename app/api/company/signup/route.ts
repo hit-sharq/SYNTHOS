@@ -11,9 +11,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Name, email, and Clerk ID are required." }, { status: 400 })
     }
 
-    const existing = await prisma.company.findFirst({ where: { email } })
-    if (existing) {
-      return NextResponse.json({ error: "Company with this email already exists." }, { status: 409 })
+    const normalizedEmail = email.trim().toLowerCase()
+
+    const existingUser = await prisma.user.findFirst({ where: { email: normalizedEmail } })
+    const existingCompany = await prisma.company.findFirst({ where: { email: normalizedEmail } })
+
+    if (existingUser || existingCompany) {
+      return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 })
     }
 
     const company = await prisma.company.create({

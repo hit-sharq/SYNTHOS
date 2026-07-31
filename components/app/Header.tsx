@@ -121,10 +121,9 @@ export default function Header() {
 
         <nav className={`topnav ${open ? "open" : ""}`} aria-label="Main navigation">
           <Link href="/" className={`topnav-link ${pathname === "/" ? "active" : ""}`} onClick={() => setOpen(false)}>Home</Link>
-          <Link href="/platform" className={`topnav-link ${pathname === "/platform" ? "active" : ""}`} onClick={() => setOpen(false)}>Platform</Link>
-          <Link href="/workflow" className={`topnav-link ${pathname.startsWith("/workflow") ? "active" : ""}`} onClick={() => setOpen(false)}>Workflow</Link>
           <Link href="/talents" className={`topnav-link ${pathname === "/talents" ? "active" : ""}`} onClick={() => setOpen(false)}>Talent</Link>
-          <Link href="/companies" className={`topnav-link ${pathname.startsWith("/company") ? "active" : ""}`} onClick={() => setOpen(false)}>Companies</Link>
+          <Link href="/jobs" className={`topnav-link ${pathname === "/jobs" ? "active" : ""}`} onClick={() => setOpen(false)}>Jobs</Link>
+          <Link href="/company/signup" className={`topnav-link ${pathname.startsWith("/company") ? "active" : ""}`} onClick={() => setOpen(false)}>Companies</Link>
           {!isSignedIn && (
             <Link href="/join" className={`topnav-link ${pathname === "/join" ? "active" : ""}`} onClick={() => setOpen(false)}>Join</Link>
           )}

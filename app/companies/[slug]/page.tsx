@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { prisma } from "@/lib/prisma"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
-import "./blog.css"
+import "@/components/app/blog.css"
 
 export default async function CompanyPage({ params }: { params: { slug: string } }) {
   const company = await prisma.company.findUnique({

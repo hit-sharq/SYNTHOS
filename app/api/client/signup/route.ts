@@ -11,11 +11,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Name, email, and Clerk ID are required." }, { status: 400 })
     }
 
-    const existing = await prisma.user.findFirst({
-      where: { email: email.trim().toLowerCase() },
-    })
+    const normalizedEmail = email.trim().toLowerCase()
 
-    if (existing) {
+    const existingUser = await prisma.user.findFirst({ where: { email: normalizedEmail } })
+    const existingCompany = await prisma.company.findFirst({ where: { email: normalizedEmail } })
+
+    if (existingUser || existingCompany) {
       return NextResponse.json({ error: "An account with this email already exists." }, { status: 409 })
     }
 

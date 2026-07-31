@@ -66,7 +66,7 @@
   font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 400;
-  color: var(--ink3);
+  color: var(--ink-3);
   transition: all var(--tr);
   white-space: nowrap;
   letter-spacing: 0.08em;
@@ -74,7 +74,7 @@
   text-decoration: none;
 }
 .topnav-link:hover { color: var(--ink); background: var(--surface-2); text-decoration: none; }
-.topnav-link.active { color: var(--sig); background: var(--surface-2); font-weight: 700; }
+.topnav-link.active { color: var(--signal); background: var(--surface-2); font-weight: 700; }
 
 /* ---- Notification Dropdown ---- */
 .iconbtn {
@@ -92,7 +92,7 @@
 .iconbtn-count {
   position: absolute; top: 2px; right: 2px;
   min-width: 14px; height: 14px; padding: 0 3px;
-  background: var(--sig);
+  background: var(--signal);
   color: #fff;
   font-family: var(--font-mono);
   font-size: 0.6rem; font-weight: 700;
@@ -137,7 +137,7 @@
 .notif-item--unread { background: var(--surface-2); }
 .notif-item--unread:hover { background: var(--surface-3); }
 .notif-mark-read {
-  background: transparent; border: none; color: var(--sig);
+  background: transparent; border: none; color: var(--signal);
   font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700;
   cursor: pointer; padding: 4px 8px;
   text-transform: uppercase; letter-spacing: 0.05em;
@@ -190,7 +190,7 @@
   .topbar-burger { width: 44px; height: 44px; }
 }
 
-:focus-visible { outline: 2px solid var(--sig); outline-offset: 2px; }
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }

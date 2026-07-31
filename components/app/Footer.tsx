@@ -20,9 +20,9 @@ export default function Footer() {
         <div className="foot-col">
           <h5>Platform</h5>
           <Link href="/about">Overview</Link>
-          <Link href="/workflow">Workflow</Link>
+          <Link href="/intake">Start Project</Link>
           <Link href="/talents">Talent</Link>
-          <Link href="/companies">Companies</Link>
+          <Link href="/company/signup">Companies</Link>
         </div>
 
         <div className="foot-col">

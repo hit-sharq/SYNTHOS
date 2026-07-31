@@ -21,23 +21,7 @@ export async function POST(req: Request) {
         const talent = await prisma.talent.findUnique({ where: { userId: existing.id } })
         return NextResponse.json({ userId: existing.id, talentId: talent?.id }, { status: 200 })
       }
-      await prisma.user.update({ where: { id: existing.id }, data: { role: Role.talent } })
-      const talent = await prisma.talent.upsert({
-        where: { userId: existing.id },
-        update: {},
-        create: {
-          userId: existing.id,
-          name: existing.name,
-          email: existing.email,
-          skills: [],
-          experience: 0,
-          rating: 0,
-          availability: "available",
-          rate: "",
-          notes: "",
-        },
-      })
-      return NextResponse.json({ userId: existing.id, talentId: talent.id }, { status: 200 })
+      return NextResponse.json({ error: "An account with this email already exists with a different role." }, { status: 409 })
     }
 
     const user = await prisma.user.create({
