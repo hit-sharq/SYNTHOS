@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { PageHead } from "@/components/app/Page"
 import { PostsManager } from "@/components/app/PostsManager"
 
+
 export default async function AdminBlogsPage() {
   const rawPosts = await prisma.post.findMany({
     where: { kind: "blog" },

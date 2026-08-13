@@ -9,14 +9,8 @@ export function AuthLayout({ children, brandTitle, brandDesc }: { children: Reac
       <header className="auth-header">
         <div className="auth-header-inner">
           <Link href="/" style={{ display: "inline-flex", alignItems: "center", gap: 10, textDecoration: "none", color: "inherit" }}>
-            <span style={{ display: "inline-flex", alignItems: "center" }}>
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none" style={{ color: "var(--ink)" }}>
-                <path d="M3 17 L9 6 L13 13 L19 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="19" cy="4" r="2.1" fill="currentColor" />
-              </svg>
-            </span>
             <span style={{ fontFamily: "var(--font-serif)", fontSize: "1.1rem", fontWeight: 500, letterSpacing: "-0.01em" }}>
-              Synthos
+              SYNTHOS
               <em style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", fontWeight: 400, fontStyle: "normal", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--ink-3)", marginLeft: 8 }}>Creative Intelligence</em>
             </span>
           </Link>

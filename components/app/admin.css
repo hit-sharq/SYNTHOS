@@ -43,19 +43,7 @@
 
 .admin-brand {
   display: inline-flex;
-  align-items: center;
-  gap: 10px;
   text-decoration: none;
-}
-
-.admin-brand-mark {
-  width: 32px;
-  height: 32px;
-  display: grid;
-  place-items: center;
-  border: 2px solid var(--ink);
-  background: var(--signal);
-  flex-shrink: 0;
 }
 
 .admin-brand-word {

@@ -47,16 +47,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <aside className={cn("admin-sidebar", sidebarOpen && "admin-sidebar--open")}>
         <div className="admin-sidebar-head">
           <Link href="/" className="admin-brand" onClick={() => setSidebarOpen(false)}>
-            <span className="admin-brand-mark" aria-hidden>
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <path d="M3 17 L9 6 L13 13 L19 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="19" cy="4" r="2.1" fill="currentColor" />
-              </svg>
-            </span>
-            <span className="admin-brand-word">
-              Synthos
-              <em>Unified Workspace</em>
-            </span>
+            <span className="admin-brand-word">Synthos <em>Unified Workspace</em></span>
           </Link>
           <button className="admin-sidebar-close" onClick={() => setSidebarOpen(false)} aria-label="Close menu">
             <X size={20} />

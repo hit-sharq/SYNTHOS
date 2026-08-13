@@ -86,18 +86,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <aside className={cn("dash-sidebar", collapsed && "dash-sidebar--collapsed", mobileOpen && "dash-sidebar--mobile-open")}>
         <div className="dash-sidebar-head">
           <Link href="/" className="dash-brand" onClick={() => setMobileOpen(false)}>
-            <span className="dash-brand-mark" aria-hidden>
-              <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-                <path d="M3 17 L9 6 L13 13 L19 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <circle cx="19" cy="4" r="2.1" fill="currentColor" />
-              </svg>
-            </span>
-             {!collapsed && (
-               <span className="dash-brand-word">
-                 Synthos
-                 <em>Creative Intelligence</em>
-               </span>
-             )}
+            <span className="dash-brand-word">Synthos <em>Creative Intelligence</em></span>
           </Link>
           <div className="dash-sidebar-actions">
             <button className="dash-collapse" onClick={() => setCollapsed((v) => !v)} aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}>
