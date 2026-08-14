@@ -31,10 +31,8 @@ export default function CompanySignupPage() {
     const role = (user as any).publicMetadata?.role
     if (role === "company" || role === "client") {
       router.push("/company/jobs")
-    } else if (role === "talent") {
-      setError("You are already signed in as a Talent. Company and Talent accounts are separate. Please sign out first if you want to register a company, or use a different browser or incognito window.")
-    } else if (role === "admin") {
-      setError("You are already signed in as an Admin. Admin accounts cannot register companies. Please sign out or use a different browser.")
+    } else if (role) {
+      setError("You are already signed in. Please sign out first if you want to register a company, or use a different browser or incognito window.")
     }
   }, [user, userLoaded, router])
 

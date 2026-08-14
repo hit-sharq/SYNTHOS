@@ -32,7 +32,7 @@ export default function TalentSignupPage() {
     if (role === "talent") {
       router.push("/dashboard/talent")
     } else if (role) {
-      setError(`You are already signed in as a ${role === "client" ? "Client" : role === "company" ? "Company" : role}. Please sign out first if you want to create a Talent account. Use a different browser or incognito window, or contact support if you need to change your role.`)
+      setError("You are already signed in. Please sign out first if you want to create a Talent account. Use a different browser or incognito window, or contact support if you need to change your role.")
     }
   }, [user, userLoaded, router])
 

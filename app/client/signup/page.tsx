@@ -28,10 +28,8 @@ export default function ClientSignupPage() {
     const role = (user as any).publicMetadata?.role
     if (role === "client" || role === "company") {
       router.push("/client/dashboard")
-    } else if (role === "talent") {
-      setError("You are already signed in as a Talent. Client and Talent accounts are separate. Please sign out first if you want to create a Client account, or use a different browser or incognito window.")
-    } else if (role === "admin") {
-      setError("You are already signed in as an Admin. Admin accounts cannot create Client accounts. Please sign out or use a different browser.")
+    } else if (role) {
+      setError("You are already signed in. Please sign out first if you want to create a Client account, or use a different browser or incognito window.")
     }
   }, [user, userLoaded, router])
 

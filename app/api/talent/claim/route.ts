@@ -10,20 +10,13 @@ export async function POST(req: Request) {
     const { clerkId, email, name, initials } = body || {}
 
     if (!email?.trim() || !clerkId) {
-      return NextResponse.json({ error: "Email and Clerk ID are required." }, { status: 400 })
+      return NextResponse.json({ error: "Email and account ID are required." }, { status: 400 })
     }
 
     const normalizedEmail = email.trim().toLowerCase()
     const existing = await prisma.user.findFirst({ where: { email: normalizedEmail } })
 
     if (existing) {
-      if (existing.role === Role.talent) {
-        const talent = await prisma.talent.findUnique({ where: { userId: existing.id } })
-        return NextResponse.json({ userId: existing.id, talentId: talent?.id }, { status: 200 })
-      }
-      if (existing.role === "client") {
-        return NextResponse.json({ error: "This email is already registered as a Client. Client and Talent accounts are separate. Please sign in with your Client account, or use a different email to create a Talent account." }, { status: 409 })
-      }
       return NextResponse.json({ error: "An account with this email already exists with a different role. Please use a different email or contact support." }, { status: 409 })
     }
 
