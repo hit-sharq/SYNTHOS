@@ -1,8 +1,13 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   try {
     const talent = await prisma.talent.findUnique({ where: { id: params.id } })
     if (!talent) return NextResponse.json({ error: "Talent not found" }, { status: 404 })
@@ -14,6 +19,9 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   try {
     const body = await req.json()
     const talent = await prisma.talent.update({
@@ -28,6 +36,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   try {
     await prisma.talent.delete({ where: { id: params.id } })
     return NextResponse.json({ ok: true })

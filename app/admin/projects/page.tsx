@@ -29,6 +29,7 @@ const TYPES = [
 export default function AdminProjectsPage() {
   const [projects, setProjects] = useState<Project[]>([])
   const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState("")
   const [editing, setEditing] = useState(false)
   const [form, setForm] = useState({ name: "", client: "", email: "", company: "", type: "Brand & Campaign" })
   const [saving, setSaving] = useState(false)
@@ -39,6 +40,12 @@ export default function AdminProjectsPage() {
   const [delivOpen, setDelivOpen] = useState<string | null>(null)
   const [delivForms, setDelivForms] = useState<Record<string, { name: string; url: string }>>({})
   const [workflowRunning, setWorkflowRunning] = useState<string | null>(null)
+
+  const filtered = projects.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.client.toLowerCase().includes(search.toLowerCase()) ||
+    p.type.toLowerCase().includes(search.toLowerCase())
+  )
 
   const load = async () => {
     setLoading(true)
@@ -296,10 +303,20 @@ export default function AdminProjectsPage() {
       )}
 
       <div className="admin-section">
-        <h3 className="admin-section-title">All Projects</h3>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <h3 className="admin-section-title" style={{ margin: 0 }}>All Projects</h3>
+          <input
+            className="admin-input"
+            type="text"
+            placeholder="Search projects..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{ maxWidth: 280 }}
+          />
+        </div>
         {loading ? (
           <p style={{ color: "#8e8e93", fontSize: "0.88rem" }}>Loading...</p>
-        ) : projects.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <div className="admin-table-empty">No projects yet</div>
         ) : (
           <div className="admin-table-wrap">
@@ -316,7 +333,7 @@ export default function AdminProjectsPage() {
                 </tr>
               </thead>
               <tbody>
-                {projects.map((p) => (
+                {filtered.map((p) => (
                   <tr key={p.id}>
                     <td data-label="Project">
                       <span style={{ fontWeight: 600, color: "#1b1a17" }}>{p.name}</span>

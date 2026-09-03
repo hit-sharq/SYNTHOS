@@ -1,8 +1,13 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET(req: Request) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   const { searchParams } = new URL(req.url)
   const status = searchParams.get("status") || undefined
 
@@ -17,6 +22,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   const body = await req.json()
   const career = await prisma.career.create({
     data: {

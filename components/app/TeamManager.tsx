@@ -4,6 +4,7 @@ import { useState, useRef } from "react"
 import { Plus, Trash2, Edit, Upload } from "lucide-react"
 import Image from "next/image"
 import { VoiceInput } from "@/components/app/VoiceInput"
+import { logAuditAction } from "@/app/actions/audit"
 
 type TeamMember = {
   id: string
@@ -71,7 +72,15 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
     }
     const url = editId ? `/api/team/${editId}` : "/api/team"
     const method = editId ? "PATCH" : "POST"
-    await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+    const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+    const data = await res.json()
+    await logAuditAction({
+      action: editId ? "team.update" : "team.create",
+      targetType: "TeamMember",
+      targetId: editId || data.id,
+      targetName: form.name,
+      changes: { name: form.name, email: form.email, availability: form.availability },
+    })
     setEditing(false)
     setEditId(null)
     setForm({ name: "", email: "", skills: "", availability: "available", avatar: "", description: "", notes: "" })
@@ -82,6 +91,7 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
   const remove = async (id: string) => {
     if (!confirm("Remove this team member?")) return
     await fetch(`/api/team/${id}`, { method: "DELETE" })
+    await logAuditAction({ action: "team.delete", targetType: "TeamMember", targetId: id })
     load()
   }
 

@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { Plus, Trash2, Edit } from "lucide-react"
 import { VoiceInput } from "@/components/app/VoiceInput"
+import { logAuditAction } from "@/app/actions/audit"
 
 type Career = {
   id: string
@@ -71,18 +72,23 @@ export function CareersManager({ initialCareers }: { initialCareers: Career[] })
       requirements: form.requirements.split("\n").map((r) => r.trim()).filter(Boolean),
     }
     try {
+      let dataId = editId
       if (editId) {
         await fetch(`/api/careers/${editId}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         })
+        await logAuditAction({ action: "career.update", targetType: "Career", targetId: editId, targetName: form.title, changes: { title: form.title, status: form.status } })
       } else {
-        await fetch("/api/careers", {
+        const res = await fetch("/api/careers", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         })
+        const data = await res.json()
+        dataId = data.id
+        await logAuditAction({ action: "career.create", targetType: "Career", targetId: data.id, targetName: form.title, changes: { title: form.title, status: form.status } })
       }
       cancelEdit()
       load()
@@ -97,6 +103,7 @@ export function CareersManager({ initialCareers }: { initialCareers: Career[] })
   const remove = async (id: string) => {
     if (!confirm("Delete this career posting?")) return
     await fetch(`/api/careers/${id}`, { method: "DELETE" })
+    await logAuditAction({ action: "career.delete", targetType: "Career", targetId: id })
     load()
   }
 

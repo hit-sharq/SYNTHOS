@@ -1,14 +1,22 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   const career = await prisma.career.findUnique({ where: { id: params.id } })
   if (!career) return NextResponse.json({ error: "Not found" }, { status: 404 })
   return NextResponse.json(career)
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   const body = await req.json()
   const career = await prisma.career.update({
     where: { id: params.id },
@@ -30,6 +38,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   await prisma.career.delete({ where: { id: params.id } })
   return NextResponse.json({ ok: true })
 }

@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
+import { prisma } from "@/lib/prisma"
+import { logAudit } from "@/lib/audit"
 
 export async function POST(_req: Request, { params }: { params: { id: string } }) {
   try {
@@ -9,7 +11,6 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     const adminIds = process.env.ADMIN_USER_IDS?.split(",").map(id => id.trim()).filter(Boolean) || []
     if (!adminIds.includes(userId)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
 
-    const { prisma } = await import("@/lib/prisma")
     const job = await prisma.jobPosting.update({
       where: { id: params.id },
       data: {
@@ -17,6 +18,8 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
         approvedAt: new Date(),
       },
     })
+
+    await logAudit({ action: "job.approve", targetType: "JobPosting", targetId: params.id, targetName: job.title })
 
     return NextResponse.json({ job })
   } catch (error) {

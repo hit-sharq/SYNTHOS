@@ -1,6 +1,5 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
 
@@ -8,9 +7,16 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   const adminResult = await requireAdmin()
   if (adminResult.error) return adminResult.error
 
-  const post = await prisma.post.findUnique({ where: { id: params.id } })
-  if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 })
-  return NextResponse.json(post)
+  const company = await prisma.company.findUnique({
+    where: { id: params.id },
+    include: {
+      users: { select: { id: true, name: true, email: true } },
+      jobs: { orderBy: { createdAt: "desc" } },
+    },
+  })
+
+  if (!company) return NextResponse.json({ error: "Company not found" }, { status: 404 })
+  return NextResponse.json(company)
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
@@ -18,29 +24,29 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (adminResult.error) return adminResult.error
 
   const body = await req.json()
-  const post = await prisma.post.update({
+  const company = await prisma.company.update({
     where: { id: params.id },
     data: {
-      title: body.title,
+      name: body.name,
       slug: body.slug,
-      excerpt: body.excerpt,
-      content: body.content,
-      coverImage: body.coverImage,
-      kind: body.kind,
+      email: body.email,
+      phone: body.phone,
+      website: body.website,
+      industry: body.industry,
+      location: body.location,
+      description: body.description,
+      logo: body.logo,
+      verified: body.verified,
       status: body.status,
-      publishedAt: body.publishedAt ? new Date(body.publishedAt) : null,
-      authorId: body.authorId,
-      authorName: body.authorName,
-      tags: body.tags,
     },
   })
-  return NextResponse.json(post)
+  return NextResponse.json(company)
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
   const adminResult = await requireAdmin()
   if (adminResult.error) return adminResult.error
 
-  await prisma.post.delete({ where: { id: params.id } })
+  await prisma.company.delete({ where: { id: params.id } })
   return NextResponse.json({ ok: true })
 }

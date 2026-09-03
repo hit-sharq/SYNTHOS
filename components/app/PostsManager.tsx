@@ -3,6 +3,7 @@
 import { useState, useRef } from "react"
 import { Plus, Trash2, Edit, Upload } from "lucide-react"
 import { VoiceInput } from "@/components/app/VoiceInput"
+import { logAuditAction } from "@/app/actions/audit"
 
 type Post = {
   id: string
@@ -93,12 +94,15 @@ export function PostsManager({ kind, initialPosts }: { kind: "blog" | "news"; in
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         })
+        await logAuditAction({ action: `${kind}.update`, targetType: "Post", targetId: editId, targetName: form.title, changes: { title: form.title, status: form.status } })
       } else {
-        await fetch("/api/posts", {
+        const res = await fetch("/api/posts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         })
+        const data = await res.json()
+        await logAuditAction({ action: `${kind}.create`, targetType: "Post", targetId: data.id, targetName: form.title, changes: { title: form.title, status: form.status } })
       }
       cancelEdit()
       load()
@@ -113,6 +117,7 @@ export function PostsManager({ kind, initialPosts }: { kind: "blog" | "news"; in
   const remove = async (id: string) => {
     if (!confirm("Delete this post?")) return
     await fetch(`/api/posts/${id}`, { method: "DELETE" })
+    await logAuditAction({ action: `${kind}.delete`, targetType: "Post", targetId: id })
     load()
   }
 

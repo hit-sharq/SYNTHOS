@@ -1,8 +1,13 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { requireAdmin } from "@/lib/api-auth"
 
 export async function GET() {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   try {
     const members = await prisma.teamMember.findMany({
       orderBy: { createdAt: "desc" },
@@ -15,6 +20,9 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
+  const adminResult = await requireAdmin()
+  if (adminResult.error) return adminResult.error
+
   try {
     const body = await req.json()
     const member = await prisma.teamMember.create({
