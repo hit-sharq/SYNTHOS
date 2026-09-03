@@ -2,33 +2,36 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Users, UserPlus, Briefcase, MessageSquare, Settings, Newspaper, FileText, ArrowLeft, Menu, X, FileSignature, Calculator, CheckCircle, Calendar, FileSearch } from "lucide-react"
+import {
+  LayoutDashboard,
+  FolderOpen,
+  Calendar,
+  FileText,
+  CheckSquare,
+  MessageSquare,
+  Menu,
+  X,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 import { NotificationBell } from "./NotificationBell"
 import "./admin.css"
 
-const ADMIN_NAV = [
-  { href: "/admin", label: "Overview", icon: LayoutDashboard },
-  { href: "/admin/audit-logs", label: "Audit Logs", icon: FileSearch },
-  { href: "/admin/projects", label: "Projects", icon: Briefcase },
-  { href: "/admin/talent", label: "Talent", icon: Users },
-  { href: "/admin/clients", label: "Clients", icon: Users },
-  { href: "/admin/companies", label: "Companies", icon: Briefcase },
-  { href: "/admin/jobs", label: "Job Postings", icon: Briefcase },
-  { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/team", label: "Team", icon: UserPlus },
-  { href: "/admin/careers", label: "Careers", icon: Briefcase },
-  { href: "/admin/messages", label: "Messages", icon: MessageSquare },
-  { href: "/admin/blogs", label: "Blogs", icon: FileText },
-  { href: "/admin/news", label: "News", icon: Newspaper },
-  { href: "/admin/contact-reports", label: "Contact Reports", icon: FileText },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
+const CLIENT_NAV = [
+  { href: "/client/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/client/dashboard", label: "Projects", icon: FolderOpen },
+  { href: "/client/dashboard/meetings", label: "Meetings", icon: Calendar },
+  { href: "/client/dashboard/tasks", label: "Tasks", icon: CheckSquare },
+  { href: "/client/dashboard/briefs", label: "Briefs", icon: FileText },
+  { href: "/client/dashboard/messages", label: "Messages", icon: MessageSquare },
 ]
 
-export function AdminShell({ children }: { children: React.ReactNode }) {
+export function ClientShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(false)
 
   return (
     <div className="admin-layout">
@@ -36,7 +39,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       <aside className={cn("admin-sidebar", sidebarOpen && "admin-sidebar--open")}>
         <div className="admin-sidebar-head">
           <Link href="/" className="admin-brand" onClick={() => setSidebarOpen(false)}>
-            <span className="admin-brand-word">Synthos <em>Unified Workspace</em></span>
+            <span className="admin-brand-word">Synthos <em>Client Portal</em></span>
           </Link>
           <button className="admin-sidebar-close" onClick={() => setSidebarOpen(false)} aria-label="Close menu">
             <X size={20} />
@@ -44,8 +47,8 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         </div>
 
         <nav className="admin-nav">
-          {ADMIN_NAV.map((item) => {
-            const active = pathname === item.href
+          {CLIENT_NAV.map((item) => {
+            const active = pathname === item.href || (item.href !== "/client/dashboard" && pathname.startsWith(item.href))
             const Icon = item.icon
             return (
               <Link key={item.href} href={item.href} className={cn("admin-nav-item", active && "admin-nav-item--active")} onClick={() => setSidebarOpen(false)}>
@@ -59,7 +62,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
         <div className="admin-sidebar-foot">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
             <Link href="/" className="admin-back" onClick={() => setSidebarOpen(false)}>
-              <ArrowLeft size={14} /> Back to Site
+              Back to Site
             </Link>
             <NotificationBell />
           </div>

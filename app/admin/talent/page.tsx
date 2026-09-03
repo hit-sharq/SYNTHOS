@@ -6,6 +6,7 @@ import { PageHead } from "@/components/app/Page"
 import { StatusPill, Empty, ErrorState } from "@/components/app/ui"
 import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { VoiceInput } from "@/components/app/VoiceInput"
+import { logAuditAction } from "@/app/actions/audit"
 
 type Talent = {
   id: string
@@ -75,6 +76,7 @@ export default function TalentPage() {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || `Failed to ${editId ? "update" : "add"} talent`)
       }
+      await logAuditAction({ action: editId ? "talent.update" : "talent.create", targetType: "Talent", targetId: editId || undefined, targetName: form.name, changes: { name: form.name, email: form.email, skills: payload.skills } })
       setEditId(null)
       setForm({ name: "", email: "", skills: "", experience: "0", rating: "0", availability: "available", rate: "", portfolio: "", notes: "" })
       setEditing(false)
@@ -95,6 +97,7 @@ export default function TalentPage() {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || "Failed to remove talent")
       }
+      await logAuditAction({ action: "talent.delete", targetType: "Talent", targetId: id })
       await load()
     } catch (e) {
       setActionError(e instanceof Error ? e.message : "Something went wrong")

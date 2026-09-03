@@ -1,26 +1,65 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Stage, ProjStatus, ReviewStatus } from "@prisma/client"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
+import { requireAuth, getUserEmail, getUserByEmail } from "@/lib/api-auth"
 
 export async function GET(req: Request) {
-  try {
-    const url = new URL(req.url)
-    const owner = url.searchParams.get("owner")
-    const projects = await prisma.project.findMany({
-      where: owner === "true" ? { ownerId: { not: null } } : undefined,
-      orderBy: { updatedAt: "desc" },
-      include: { brief: true, understanding: true, workshop: true, proposal: true, quote: true },
-    })
-    return NextResponse.json({ projects })
-  } catch (error) {
-    console.error("Failed to fetch projects:", error)
-    return NextResponse.json({ error: "Failed to load projects" }, { status: 500 })
+  const authResult = await requireAuth()
+  if (authResult.error) return authResult.error
+  const userId = authResult.userId!
+
+  const url = new URL(req.url)
+  const owner = url.searchParams.get("owner")
+  
+  const email = await getUserEmail(userId)
+  if (!email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await getUserByEmail(email)
+  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
+  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
+  const isAdmin = adminIds.includes(userId)
+
+  let where: any = {}
+  if (!isAdmin) {
+    if (user.role === "talent") {
+      where.ownerId = user.id
+    } else if (user.role === "client") {
+      const client = await prisma.client.findFirst({ where: { email } })
+      if (client) {
+        where.clientId = client.id
+      } else {
+        where.clientId = "none"
+      }
+    }
   }
+  if (owner === "true") where.ownerId = { not: null }
+
+  const projects = await prisma.project.findMany({
+    where,
+    orderBy: { updatedAt: "desc" },
+    include: { brief: true, understanding: true, workshop: true, proposal: true, quote: true },
+  })
+  return NextResponse.json({ projects })
 }
 
 export async function POST(req: Request) {
+  const authResult = await requireAuth()
+  if (authResult.error) return authResult.error
+  const userId = authResult.userId!
+
+  const email = await getUserEmail(userId)
+  if (!email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  const user = await getUserByEmail(email)
+  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
+  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
+  if (!adminIds.includes(userId) && user.role !== "talent") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  }
+
   try {
     const body = await req.json()
     const project = await prisma.project.create({

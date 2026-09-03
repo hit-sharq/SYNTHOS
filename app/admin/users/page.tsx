@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from "react"
 import { PageHead } from "@/components/app/Page"
+import { logAuditAction } from "@/app/actions/audit"
 
 const ROLES = [
   { value: "talent", label: "Talent" },
+  { value: "client", label: "Client" },
+  { value: "admin", label: "Admin" },
 ]
 
 type User = {
@@ -34,6 +37,7 @@ export default function AdminUsersPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ role: newRole }),
     })
+    await logAuditAction({ action: "user.role.update", targetType: "User", targetId: userId, changes: { role: newRole } })
     setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u))
   }
 

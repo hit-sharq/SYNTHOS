@@ -22,7 +22,16 @@ export async function GET() {
     const projects = await prisma.project.findMany({
       where: user.role === Role.talent ? { ownerId: user.id } : undefined,
       orderBy: { updatedAt: "desc" },
-      include: { brief: true, understanding: true, workshop: true, proposal: true, quote: true },
+      include: {
+        brief: true,
+        understanding: { include: { insights: true } },
+        workshop: { include: { insights: true } },
+        proposal: true,
+        quote: true,
+        call: true,
+        contactReport: true,
+        clientRef: true,
+      },
     })
 
     return NextResponse.json({ projects: user.role === Role.talent ? projects : [] })

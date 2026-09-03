@@ -1,4 +1,4 @@
-import { AdminShell } from "@/components/app/AdminShell"
+import { DashboardShell } from "@/components/app/DashboardShell"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
@@ -10,7 +10,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const adminIds = process.env.ADMIN_USER_IDS?.split(",").map(id => id.trim()).filter(Boolean) || []
   if (adminIds.includes(userId)) {
-    return <AdminShell>{children}</AdminShell>
+    return <DashboardShell role="admin">{children}</DashboardShell>
   }
 
   const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
@@ -52,12 +52,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
       },
     })
 
-    return <AdminShell>{children}</AdminShell>
+    return <DashboardShell role="talent">{children}</DashboardShell>
   }
 
   if (user.role === Role.client) {
     redirect("/client/dashboard")
   }
 
-  redirect("/dashboard/talent")
+  return <DashboardShell role="talent">{children}</DashboardShell>
 }

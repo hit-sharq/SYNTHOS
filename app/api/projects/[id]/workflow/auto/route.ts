@@ -1,9 +1,14 @@
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
+import { isProjectAccessible } from "@/lib/api-auth"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
+  const { userId } = await auth()
+  const authResult = await isProjectAccessible(params.id, userId || undefined)
+  if (!authResult.accessible) return authResult.error!
   try {
     const project = await prisma.project.findUnique({ where: { id: params.id } })
     if (!project) {

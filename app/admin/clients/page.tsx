@@ -6,6 +6,7 @@ import { PageHead } from "@/components/app/Page"
 import { StatusPill, Empty, ErrorState } from "@/components/app/ui"
 import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { VoiceInput } from "@/components/app/VoiceInput"
+import { logAuditAction } from "@/app/actions/audit"
 
 type Client = {
   id: string
@@ -81,6 +82,7 @@ export default function ClientsPage() {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || `Failed to ${editId ? "update" : "add"} client`)
       }
+      await logAuditAction({ action: editId ? "client.update" : "client.create", targetType: "Client", targetId: editId || undefined, targetName: form.name, changes: { name: form.name, email: form.email, company: form.company } })
       setEditId(null)
       setForm({ name: "", company: "", email: "", phone: "", industry: "", status: "lead", source: "", value: "", lastContact: "", nextAction: "", tags: "", notes: "", dossier: "" })
       setEditing(false)
@@ -101,6 +103,7 @@ export default function ClientsPage() {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || "Failed to remove client")
       }
+      await logAuditAction({ action: "client.delete", targetType: "Client", targetId: id })
       await load()
     } catch (e) {
       setActionError(e instanceof Error ? e.message : "Something went wrong")

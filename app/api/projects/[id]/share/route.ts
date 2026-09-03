@@ -1,10 +1,15 @@
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
+import { isProjectAccessible } from "@/lib/api-auth"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
+  const { userId } = await auth()
+  const authResult = await isProjectAccessible(params.id, userId || undefined)
+  if (!authResult.accessible) return authResult.error!
   try {
     const body = await req.json().catch(() => ({}))
     const action = body?.action as string | undefined

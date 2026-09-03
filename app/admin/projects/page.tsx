@@ -5,6 +5,7 @@ import { Plus, Trash2, Edit, ExternalLink, Share2, Paperclip, Play, FileText } f
 import { PageHead } from "@/components/app/Page"
 import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { Empty, ErrorState } from "@/components/app/ui"
+import { logAuditAction } from "@/app/actions/audit"
 
 type Project = {
   id: string
@@ -69,6 +70,13 @@ export default function AdminProjectsPage() {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || `Failed to ${editId ? "update" : "create"} project`)
       }
+      await logAuditAction({
+        action: editId ? "project.update" : "project.create",
+        targetType: "Project",
+        targetId: editId || undefined,
+        targetName: form.name,
+        changes: { name: form.name, client: form.client, type: form.type },
+      })
       setEditId(null)
       setForm({ name: "", client: "", email: "", company: "", type: "Brand & Campaign" })
       setEditing(false)
@@ -95,6 +103,7 @@ export default function AdminProjectsPage() {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || "Failed to remove project")
       }
+      await logAuditAction({ action: "project.delete", targetType: "Project", targetId: id })
       await load()
     } catch (e) {
       setActionError(e instanceof Error ? e.message : "Something went wrong")
@@ -116,6 +125,7 @@ export default function AdminProjectsPage() {
       }
       const data = await res.json()
       setShareUrls((prev) => ({ ...prev, [id]: data.publicUrl }))
+      await logAuditAction({ action: "project.share", targetType: "Project", targetId: id })
     } catch (e) {
       setActionError(e instanceof Error ? e.message : "Something went wrong")
     } finally {
@@ -185,6 +195,7 @@ export default function AdminProjectsPage() {
         const data = await res.json().catch(() => ({}))
         throw new Error(data.error || "Failed to run workflow")
       }
+      await logAuditAction({ action: "project.workflow.run", targetType: "Project", targetId: projectId })
       await load()
     } catch (e) {
       setActionError(e instanceof Error ? e.message : "Something went wrong")

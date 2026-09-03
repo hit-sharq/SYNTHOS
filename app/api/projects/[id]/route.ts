@@ -1,11 +1,18 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Stage, ProjStatus } from "@prisma/client"
 import { sendNotification } from "@/lib/notifications"
+import { isProjectAccessible } from "@/lib/api-auth"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const project = await prisma.project.findUnique({
+  const { userId } = await auth()
+  const authResult = await isProjectAccessible(params.id, userId || undefined)
+  if (!authResult.accessible) return authResult.error!
+  const project = authResult.project!
+
+  const full = await prisma.project.findUnique({
     where: { id: params.id },
     include: {
       brief: true, call: true, transcript: true,
@@ -18,11 +25,14 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       productionMeeting: true,
     },
   })
-  if (!project) return NextResponse.json({ error: "Not found" }, { status: 404 })
-  return NextResponse.json(project)
+  if (!full) return NextResponse.json({ error: "Not found" }, { status: 404 })
+  return NextResponse.json(full)
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+  const { userId } = await auth()
+  const authResult = await isProjectAccessible(params.id, userId || undefined)
+  if (!authResult.accessible) return authResult.error!
   try {
     await prisma.project.delete({ where: { id: params.id } })
     return NextResponse.json({ ok: true })
@@ -33,6 +43,9 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+  const { userId } = await auth()
+  const authResult = await isProjectAccessible(params.id, userId || undefined)
+  if (!authResult.accessible) return authResult.error!
   const body = await req.json()
   const data: any = { ...body }
 
@@ -96,6 +109,9 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 }
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
+  const { userId } = await auth()
+  const authResult = await isProjectAccessible(params.id, userId || undefined)
+  if (!authResult.accessible) return authResult.error!
   const body = await req.json()
   if (body.stage) {
     const updated = await prisma.project.update({
