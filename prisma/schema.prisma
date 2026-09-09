@@ -48,6 +48,16 @@ model User {
   talentProfile Talent?
   jobApplications JobApplication[]
   projectJobApplications ProjectJobApplication[]
+  feedPosts FeedPost[]
+  reactions Reaction[]
+  comments Comment[]
+  endorsementsGiven Endorsement[] @relation("EndorsementsGiven")
+  endorsementsReceived Endorsement[] @relation("EndorsementsReceived")
+  connectionsSent Connection[] @relation("ConnectionFollower")
+  connectionsReceived Connection[] @relation("ConnectionFollowed")
+  presence Presence?
+  workplaceMemberships WorkplaceMember[]
+  workplacesAdmin Workplace[]
 }
 
 model Project {
@@ -88,6 +98,7 @@ model Project {
   invoices     Invoice[]
   job          ProjectJob?
   tasks        Task[]
+  feedPosts    FeedPost[]
 
   @@index([stage])
   @@index([status])
@@ -734,4 +745,141 @@ model SiteSetting {
   updatedAt   DateTime @updatedAt
 
   @@index([key])
+}
+
+model FeedPost {
+  id          String   @id @default(cuid())
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  content     String
+  media       String?
+  mediaType   String?  // image | video | document | null
+  postType    String   @default("status") // status | deduction | project_update
+  privacy     String   @default("public") // public | connections | workplace
+  projectId   String?  // optional link to a project
+  project     Project? @relation(fields: [projectId], references: [id])
+  workplaceId String?  // optional link to a workplace
+  workplace   Workplace? @relation(fields: [workplaceId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  reactions   Reaction[]
+  comments    Comment[]
+
+  @@index([authorId])
+  @@index([projectId])
+  @@index([workplaceId])
+  @@index([createdAt])
+}
+
+model Connection {
+  id          String   @id @default(cuid())
+  followerId  String
+  follower    User     @relation("ConnectionFollower", fields: [followerId], references: [id])
+  followedId  String
+  followed    User     @relation("ConnectionFollowed", fields: [followedId], references: [id])
+  status      String   @default("pending") // pending | accepted | declined
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([followerId, followedId])
+  @@index([followerId])
+  @@index([followedId])
+}
+
+model Reaction {
+  id          String   @id @default(cuid())
+  postId      String
+  post        FeedPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  type        String   @default("like") // like | celebrate | support | insightful | congrats
+  createdAt   DateTime @default(now())
+
+  @@unique([postId, userId, type])
+  @@index([postId])
+  @@index([userId])
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  postId      String
+  post        FeedPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  body        String
+  parentId    String?
+  parent      Comment? @relation("CommentThread", fields: [parentId], references: [id])
+  replies     Comment[] @relation("CommentThread")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([postId])
+  @@index([userId])
+  @@index([parentId])
+}
+
+model Endorsement {
+  id          String   @id @default(cuid())
+  endorserId  String
+  endorser    User     @relation("EndorsementsGiven", fields: [endorserId], references: [id])
+  endorsedId  String
+  endorsed    User     @relation("EndorsementsReceived", fields: [endorsedId], references: [id])
+  skill       String
+  createdAt   DateTime @default(now())
+
+  @@unique([endorserId, endorsedId, skill])
+  @@index([endorsedId])
+}
+
+model Presence {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id])
+  status      String   @default("offline") // online | offline | away | do_not_disturb
+  lastActive  DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([status])
+  @@index([lastActive])
+}
+
+model Workplace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description   String?
+  avatar        String?
+  adminId       String?
+  admin         User?    @relation(fields: [adminId], references: [id])
+  isPrivate     Boolean  @default(false)
+  inviteLink    String?  @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  members       WorkplaceMember[]
+  posts         FeedPost[]
+
+  @@index([slug])
+  @@index([isPrivate])
+}
+
+model WorkplaceMember {
+  id          String   @id @default(cuid())
+  workplaceId String
+  workplace   Workplace @relation(fields: [workplaceId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  role        String   @default("member") // admin | moderator | member
+  joinedAt    DateTime @default(now())
+
+  @@unique([workplaceId, userId])
+  @@index([userId])
+}
+
+enum PresenceStatus {
+  online
+  offline
+  away
+  do_not_disturb
 }

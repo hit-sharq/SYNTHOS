@@ -4,6 +4,7 @@ import "./globals.css"
 import "@/components/app/animations.css"
 import { StoreProvider } from "@/lib/store"
 import { ClerkProvider } from "@clerk/nextjs"
+import { ReactQueryProvider } from "@/components/app/ReactQueryProvider"
 import Header from "@/components/app/Header"
 import Footer from "@/components/app/Footer"
 
@@ -39,9 +40,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </head>
         <body>
           <StoreProvider>
-            <Header />
-            <main>{children}</main>
-            <Footer />
+            <ReactQueryProvider>
+              <Header />
+              <main>{children}</main>
+              <Footer />
+            </ReactQueryProvider>
           </StoreProvider>
         </body>
       </html>
