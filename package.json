@@ -9,6 +9,8 @@
     "lint": "next lint",
     "test": "vitest run",
     "test:watch": "vitest",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
     "db:push": "prisma db push",
     "postinstall": "prisma generate"
   },
@@ -29,6 +31,7 @@
     "zustand": "^5.0.10"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
     "@types/node": "^20.19.24",

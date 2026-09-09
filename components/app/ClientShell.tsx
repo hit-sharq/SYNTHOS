@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import {
   LayoutDashboard,
@@ -11,6 +11,7 @@ import {
   FileText,
   CheckSquare,
   MessageSquare,
+  Users,
   Menu,
   X,
   ChevronLeft,
@@ -21,6 +22,7 @@ import "./admin.css"
 
 const CLIENT_NAV = [
   { href: "/client/dashboard", label: "Overview", icon: LayoutDashboard },
+  { href: "/client/dashboard/creatives", label: "Browse Creatives", icon: Users },
   { href: "/client/dashboard", label: "Projects", icon: FolderOpen },
   { href: "/client/dashboard/meetings", label: "Meetings", icon: Calendar },
   { href: "/client/dashboard/tasks", label: "Tasks", icon: CheckSquare },

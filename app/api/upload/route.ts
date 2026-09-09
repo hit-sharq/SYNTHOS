@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
+import { auth } from "@clerk/nextjs/server"
 import { v2 as cloudinary } from "cloudinary"
 
 cloudinary.config({
@@ -8,14 +9,37 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
+const ALLOWED_TYPES = [
+  "image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml",
+  "application/pdf", "application/zip", "application/json",
+  "text/plain", "application/msword",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+  "video/mp4", "video/quicktime", "audio/mpeg", "audio/wav",
+]
+
+const MAX_FILE_SIZE = 50 * 1024 * 1024
+
 export async function POST(req: Request) {
   try {
+    const { userId } = await auth()
+    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
     const formData = await req.formData()
     const file = formData.get("file") as File | null
     const folder = (formData.get("folder") as string | null) || "synthos"
 
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 })
+    }
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      return NextResponse.json({ error: `File type "${file.type}" is not allowed` }, { status: 400 })
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      return NextResponse.json({ error: "File exceeds 50MB limit" }, { status: 400 })
     }
 
     const bytes = await file.arrayBuffer()

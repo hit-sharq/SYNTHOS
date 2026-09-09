@@ -36,6 +36,10 @@ export function NotificationBell() {
 
   useEffect(() => {
     load()
+    const interval = setInterval(() => {
+      load()
+    }, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const markAsRead = async (id: string) => {
