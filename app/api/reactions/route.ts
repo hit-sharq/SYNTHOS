@@ -21,6 +21,10 @@ export async function POST(req: Request) {
 
   const body = await req.json()
   const { postId, type = "like" } = body
+  const validTypes = ["like", "celebrate", "support", "insightful", "congrats"]
+  if (!validTypes.includes(type)) {
+    return NextResponse.json({ error: "Invalid reaction type" }, { status: 400 })
+  }
 
   const post = await prisma.feedPost.findUnique({ where: { id: postId }, select: { authorId: true } })
   if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 })

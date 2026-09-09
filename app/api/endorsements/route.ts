@@ -33,28 +33,27 @@ export async function POST(req: Request) {
   })
 
   if (existing) {
-    if (existing.endorserId === user.id) {
-      return NextResponse.json({ alreadyEndorsed: true })
-    }
-    return NextResponse.json(existing)
+    return NextResponse.json({ alreadyEndorsed: true })
+  }
+
+  const target = await prisma.user.findUnique({ where: { id: targetUserId } })
+  if (!target) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 })
   }
 
   const endorsement = await prisma.endorsement.create({
     data: { endorserId: user.id, endorsedId: targetUserId, skill },
   })
 
-  const target = await prisma.user.findUnique({ where: { id: targetUserId }, select: { name: true } })
-  if (target) {
-    await prisma.notification.create({
-      data: {
-        userId: targetUserId,
-        title: "New endorsement",
-        message: `${user.name} endorsed your skill in ${skill}`,
-        kind: "message",
-        refId: endorsement.id,
-      },
-    })
-  }
+  await prisma.notification.create({
+    data: {
+      userId: targetUserId,
+      title: "New endorsement",
+      message: `${user.name} endorsed your skill in ${skill}`,
+      kind: "message",
+      refId: endorsement.id,
+    },
+  })
 
   return NextResponse.json(endorsement, { status: 201 })
 }

@@ -20,6 +20,10 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   const body = await req.json()
   const { status: newStatus } = body
+  const validStatuses = ["pending", "accepted", "declined"]
+  if (!validStatuses.includes(newStatus)) {
+    return NextResponse.json({ error: "Invalid status" }, { status: 400 })
+  }
 
   const connection = await prisma.connection.findUnique({
     where: { id: params.id },

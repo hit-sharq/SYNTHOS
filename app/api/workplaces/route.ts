@@ -32,11 +32,11 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json()
-  const { name, description } = body
+  const { name, description, slug } = body
   if (!name) return NextResponse.json({ error: "name required" }, { status: 400 })
 
   const workplace = await prisma.workplace.create({
-    data: { name, description: description || "" },
+    data: { name, slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 50), description: description || "" },
   })
 
   return NextResponse.json(workplace, { status: 201 })

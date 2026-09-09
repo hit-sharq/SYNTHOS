@@ -52,8 +52,10 @@ export async function GET(req: Request) {
   } else {
     workplaceWhere = {
       workplaceId: null,
-      authorId: { in: Array.from(connectionIds) },
-      privacy: { in: ["public", "connections"] },
+      OR: [
+        { authorId: user.id },
+        { authorId: { in: Array.from(connectionIds) }, privacy: { in: ["public", "connections"] } },
+      ],
     }
   }
 
@@ -106,6 +108,26 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const body = await req.json()
+  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
+  const isAdmin = adminIds.includes(user.id)
+
+  if (body.workplaceId) {
+    const membership = await prisma.workplaceMember.findFirst({
+      where: { workplaceId: body.workplaceId, userId: user.id },
+    })
+    if (!membership && !isAdmin) {
+      return NextResponse.json({ error: "Not a workplace member" }, { status: 403 })
+    }
+  }
+
+  if (body.projectId) {
+    const project = await prisma.project.findUnique({ where: { id: body.projectId } })
+    if (!project) return NextResponse.json({ error: "Project not found" }, { status: 404 })
+    if (project.ownerId !== user.id && project.clientId !== user.id && !isAdmin) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    }
+  }
+
   const post = await prisma.feedPost.create({
     data: {
       authorId: user.id,
