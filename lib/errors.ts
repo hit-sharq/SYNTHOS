@@ -8,7 +8,7 @@ export const Errors = {
   access: {
     forbidden: "You do not have permission to perform this action.",
     notFound: "The requested resource was not found.",
-    adminOnly: "Administrator access is required.",
+    adminOnly: "Access restricted.",
     roleRestricted: "This action is restricted to your account type.",
   },
   validation: {
