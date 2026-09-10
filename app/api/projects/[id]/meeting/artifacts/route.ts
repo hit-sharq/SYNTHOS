@@ -1,6 +1,6 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -8,12 +8,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const { artifact, meetingSource, transcript } = body
 
     if (!artifact?.url) {
-      return NextResponse.json({ error: "Artifact URL is required" }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
     }
 
     const call = await prisma.clientCall.findUnique({ where: { projectId: params.id } })
     if (!call) {
-      return NextResponse.json({ error: "Meeting not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.meetingNotFound }, { status: 404 })
     }
 
     const artifacts = (call.artifacts as any[]) || []
@@ -37,6 +37,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ success: true, call: updated })
   } catch (error) {
     console.error("Meeting artifact error:", error)
-    return NextResponse.json({ error: "Failed to save artifact" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

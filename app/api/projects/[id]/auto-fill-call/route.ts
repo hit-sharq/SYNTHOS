@@ -5,6 +5,7 @@ import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
 import { callScheduledEmail } from "@/lib/email-templates"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   try {
@@ -14,7 +15,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     })
 
     if (!project || !project.brief) {
-      return NextResponse.json({ error: "Project or brief not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     }
 
     const b = project.brief
@@ -44,7 +45,7 @@ Return ONLY a JSON object:
       const cleaned = raw.replace(/```json\n?/g, "").replace(/```/g, "").trim()
       parsed = JSON.parse(cleaned)
     } catch {
-      return NextResponse.json({ error: "AI returned invalid JSON", raw }, { status: 500 })
+      return NextResponse.json({ error: Errors.actions.proposalGenerationFailed, raw }, { status: 500 })
     }
 
     const participants = Array.isArray(parsed.participants) ? parsed.participants : ["Producer", "Strategist", project.client]
@@ -104,6 +105,6 @@ Return ONLY a JSON object:
     return NextResponse.json(call)
   } catch (error) {
     console.error("Auto-fill call error:", error)
-    return NextResponse.json({ error: "Failed to auto-fill call" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

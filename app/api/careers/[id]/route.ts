@@ -1,15 +1,15 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
+import { Errors } from "@/lib/errors"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const adminResult = await requireAdmin()
   if (adminResult.error) return adminResult.error
 
   const career = await prisma.career.findUnique({ where: { id: params.id } })
-  if (!career) return NextResponse.json({ error: "Not found" }, { status: 404 })
+  if (!career) return NextResponse.json({ error: Errors.resources.templateNotFound }, { status: 404 })
   return NextResponse.json(career)
 }
 

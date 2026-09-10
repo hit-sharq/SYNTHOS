@@ -1,6 +1,6 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function GET(_req: Request, { params }: { params: { type: string; id: string } }) {
   const project = await prisma.project.findUnique({
@@ -9,7 +9,7 @@ export async function GET(_req: Request, { params }: { params: { type: string; i
   })
 
   if (!project) {
-    return NextResponse.json({ error: "Project not found" }, { status: 404 })
+    return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
@@ -20,7 +20,7 @@ export async function GET(_req: Request, { params }: { params: { type: string; i
     const res = await fetch(templatePath)
     html = await res.text()
   } catch {
-    return NextResponse.json({ error: "Template not found" }, { status: 404 })
+    return NextResponse.json({ error: Errors.resources.templateNotFound }, { status: 404 })
   }
 
   if (params.type === "presentation") {

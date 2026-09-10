@@ -1,8 +1,8 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
+import { Errors } from "@/lib/errors"
 
 export async function GET() {
   const adminResult = await requireAdmin()
@@ -15,7 +15,7 @@ export async function GET() {
     return NextResponse.json(members)
   } catch (error) {
     console.error("Failed to fetch team members:", error)
-    return NextResponse.json({ error: "Failed to load team members" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }
 
@@ -41,6 +41,6 @@ export async function POST(req: Request) {
     return NextResponse.json(member, { status: 201 })
   } catch (error) {
     console.error("Failed to create team member:", error)
-    return NextResponse.json({ error: "Failed to add team member" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

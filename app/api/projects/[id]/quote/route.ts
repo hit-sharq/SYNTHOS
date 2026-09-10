@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
+import { Errors } from "@/lib/errors"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const q = await prisma.quote.findUnique({ where: { projectId: params.id } })
@@ -12,7 +13,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   
   if (body.action === "sendToClient") {
     const q = await prisma.quote.findUnique({ where: { projectId: params.id } })
-    if (!q) return NextResponse.json({ error: "Quote not found" }, { status: 404 })
+    if (!q) return NextResponse.json({ error: Errors.resources.quoteNotFound }, { status: 404 })
     
     const publicToken = crypto.randomUUID()
     const updated = await prisma.quote.update({
@@ -29,7 +30,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
   if (body.action === "convertFromProposal") {
     const proposal = await prisma.proposal.findUnique({ where: { projectId: params.id } })
-    if (!proposal) return NextResponse.json({ error: "Proposal not found" }, { status: 404 })
+    if (!proposal) return NextResponse.json({ error: Errors.resources.proposalNotFound }, { status: 404 })
     
     const investmentNum = parseInt(proposal.investment.replace(/[^0-9]/g, "")) || 85000
     const serviceCount = Math.max(3, Math.min(5, (proposal.scope?.length || 3)))

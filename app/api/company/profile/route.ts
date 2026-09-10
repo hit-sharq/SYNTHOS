@@ -1,22 +1,22 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function GET() {
   try {
     const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
     const user = await prisma.user.findUnique({ where: { id: userId } })
-    if (!user?.companyId) return NextResponse.json({ error: "No company linked" }, { status: 403 })
+    if (!user?.companyId) return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
 
     const company = await prisma.company.findUnique({
       where: { id: user.companyId },
       include: { users: { select: { id: true, name: true, email: true } } },
     })
 
-    if (!company) return NextResponse.json({ error: "Company not found" }, { status: 404 })
+    if (!company) return NextResponse.json({ error: Errors.resources.companyNotFound }, { status: 404 })
 
     return NextResponse.json({
       id: company.id,
@@ -43,10 +43,10 @@ export async function GET() {
 export async function PATCH(req: Request) {
   try {
     const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
     const user = await prisma.user.findUnique({ where: { id: userId } })
-    if (!user?.companyId) return NextResponse.json({ error: "No company linked" }, { status: 403 })
+    if (!user?.companyId) return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
 
     const body = await req.json()
     const company = await prisma.company.update({
@@ -77,6 +77,6 @@ export async function PATCH(req: Request) {
     })
   } catch (error) {
     console.error("Failed to update company profile:", error)
-    return NextResponse.json({ error: "Failed to update profile" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

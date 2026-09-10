@@ -1,7 +1,6 @@
-export const dynamic = 'force-dynamic'
-
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function GET() {
   try {
@@ -27,7 +26,7 @@ export async function GET() {
     })) })
   } catch (error) {
     console.error("Failed to fetch jobs:", error)
-    return NextResponse.json({ error: "Failed to load jobs" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }
 
@@ -80,6 +79,6 @@ export async function POST(req: Request) {
     } }, { status: 201 })
   } catch (error) {
     console.error("Failed to create job:", error)
-    return NextResponse.json({ error: "Failed to create job" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

@@ -1,8 +1,7 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
-import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request) {
   try {
@@ -10,14 +9,14 @@ export async function POST(req: Request) {
     const { clerkId, email, name, initials } = body || {}
 
     if (!email?.trim() || !clerkId) {
-      return NextResponse.json({ error: "Email and account ID are required." }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
     }
 
     const normalizedEmail = email.trim().toLowerCase()
     const existing = await prisma.user.findFirst({ where: { email: normalizedEmail } })
 
     if (existing) {
-      return NextResponse.json({ error: "An account with this email already exists with a different role. Please use a different email or contact support." }, { status: 409 })
+      return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
     }
 
     const user = await prisma.user.create({
@@ -46,6 +45,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ userId: user.id, talentId: talent.id }, { status: 201 })
   } catch (error) {
     console.error("Failed to claim talent profile:", error)
-    return NextResponse.json({ error: "Failed to create talent profile" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

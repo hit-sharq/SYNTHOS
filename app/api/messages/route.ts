@@ -1,8 +1,8 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
+import { Errors } from "@/lib/errors"
 
 export async function GET() {
   const adminResult = await requireAdmin()
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
   if (adminResult.error) return adminResult.error
 
   const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const message = await prisma.message.create({

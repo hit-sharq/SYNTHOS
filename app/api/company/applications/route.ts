@@ -1,15 +1,15 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function GET() {
   try {
     const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
     const user = await prisma.user.findUnique({ where: { id: userId } })
-    if (!user?.companyId) return NextResponse.json({ error: "No company linked" }, { status: 403 })
+    if (!user?.companyId) return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
 
     const applications = await prisma.jobApplication.findMany({
       where: { job: { companyId: user.companyId } },
@@ -33,6 +33,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error("Failed to fetch company applications:", error)
-    return NextResponse.json({ error: "Failed to load applications" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

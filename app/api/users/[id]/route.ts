@@ -1,14 +1,14 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  if (!adminIds.includes(userId)) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  if (!adminIds.includes(userId)) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
   const body = await req.json()
   const user = await prisma.user.update({

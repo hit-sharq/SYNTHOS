@@ -4,6 +4,8 @@ import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
 import { adminProjectApprovedEmail, projectApprovedClientEmail } from "@/lib/email-templates"
 import { STAGES, type StageId } from "@/lib/types"
+import { generateWithGemini } from "@/lib/ai"
+import { Errors } from "@/lib/errors"
 
 const CONTACT_REPORT_PROMPT = (project: any, call: any) => `You are a creative intelligence AI. Generate a contact report for a client call.
 
@@ -139,7 +141,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
             const cleaned = raw.replace(/```json\n?/g, "").replace(/```/g, "").trim()
             parsed = JSON.parse(cleaned)
           } catch {
-            return NextResponse.json({ error: "AI returned invalid JSON", raw }, { status: 500 })
+            return NextResponse.json({ error: Errors.actions.proposalGenerationFailed, raw }, { status: 500 })
           }
 
           await prisma.contactReport.create({
@@ -176,7 +178,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
             const cleaned = raw.replace(/```json\n?/g, "").replace(/```/g, "").trim()
             parsed = JSON.parse(cleaned)
           } catch {
-            return NextResponse.json({ error: "AI returned invalid JSON", raw }, { status: 500 })
+            return NextResponse.json({ error: Errors.actions.proposalGenerationFailed, raw }, { status: 500 })
           }
 
           await prisma.proposal.create({
@@ -211,7 +213,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
             const cleaned = raw.replace(/```json\n?/g, "").replace(/```/g, "").trim()
             parsed = JSON.parse(cleaned)
           } catch {
-            return NextResponse.json({ error: "AI returned invalid JSON", raw }, { status: 500 })
+            return NextResponse.json({ error: Errors.actions.proposalGenerationFailed, raw }, { status: 500 })
           }
 
           await prisma.quote.create({

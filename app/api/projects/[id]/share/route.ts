@@ -1,10 +1,9 @@
-export const dynamic = 'force-dynamic'
-
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { isProjectAccessible } from "@/lib/api-auth"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const { userId } = await auth()
@@ -15,12 +14,12 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     const action = body?.action as string | undefined
 
     if (action !== "generate" && action !== "regenerate") {
-      return NextResponse.json({ error: "Invalid action. Use 'generate' or 'regenerate'." }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.invalidStatus }, { status: 400 })
     }
 
     const project = await prisma.project.findUnique({ where: { id: params.id } })
     if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     }
 
     const publicToken = crypto.randomUUID()
@@ -50,6 +49,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     })
   } catch (error) {
     console.error("Failed to generate share link:", error)
-    return NextResponse.json({ error: "Failed to generate share link" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

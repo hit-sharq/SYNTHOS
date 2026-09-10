@@ -1,20 +1,21 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request) {
   try {
     const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
     const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user || !user.companyId) {
-      return NextResponse.json({ error: "Only verified companies can post jobs" }, { status: 403 })
+      return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
     }
 
     const company = await prisma.company.findUnique({ where: { id: user.companyId } })
     if (!company || company.status !== "active") {
-      return NextResponse.json({ error: "Company must be active to post jobs" }, { status: 403 })
+      return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
     }
 
     const startOfMonth = new Date()
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
 
     const FREE_LIMIT = company.verified ? Infinity : 1
     if (jobsThisMonth >= FREE_LIMIT) {
-      return NextResponse.json({ error: company.verified ? "Monthly limit reached" : "Free tier limit reached. Verify your company for unlimited posts." }, { status: 403 })
+      return NextResponse.json({ error: Errors.actions.limitReached }, { status: 403 })
     }
 
     const body = await req.json()
@@ -76,6 +77,6 @@ export async function POST(req: Request) {
     } }, { status: 201 })
   } catch (error) {
     console.error("Failed to post job:", error)
-    return NextResponse.json({ error: "Failed to post job" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

@@ -1,13 +1,13 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
+import { Errors } from "@/lib/errors"
 
 export async function GET() {
   try {
     const { userId } = await auth()
-    if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
     const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
       headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
@@ -52,6 +52,6 @@ export async function GET() {
     })
   } catch (error) {
     console.error("Failed to fetch talent applications:", error)
-    return NextResponse.json({ error: "Failed to load applications" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

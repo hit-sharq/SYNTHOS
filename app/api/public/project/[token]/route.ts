@@ -1,7 +1,6 @@
-export const dynamic = 'force-dynamic'
-
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function GET(_req: Request, { params }: { params: { token: string } }) {
   try {
@@ -23,7 +22,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     })
 
     if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     }
 
     const lastConversation = project.conversations?.[0]
@@ -135,6 +134,6 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     })
   } catch (error) {
     console.error("Failed to fetch public project:", error)
-    return NextResponse.json({ error: "Failed to load project" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

@@ -4,6 +4,7 @@ import { Role } from "@prisma/client"
 import { generateWithGemini } from "@/lib/ai"
 import { sendNotification } from "@/lib/notifications"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request) {
   try {
@@ -11,7 +12,7 @@ export async function POST(req: Request) {
     const { name, company, email, phone, type, title, objective, audience, direction, budget, timeline, context } = body
 
     if (!name || !email || !title) {
-      return NextResponse.json({ error: "Name, email, and project title are required." }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
     }
 
     const slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}-${Date.now().toString(36)}`
@@ -148,6 +149,6 @@ Return ONLY a JSON object (no markdown, no code fences):
     return NextResponse.json({ success: true, projectId: project.id, clientId: client.id }, { status: 201 })
   } catch (error) {
     console.error("Intake error:", error)
-    return NextResponse.json({ error: "Failed to process intake" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
 import { proposalApprovedEmail, quoteApprovedEmail, adminProjectApprovedEmail } from "@/lib/email-templates"
+import { Errors } from "@/lib/errors"
 
 export async function GET(_req: Request, { params }: { params: { token: string } }) {
   const proposal = await prisma.proposal.findUnique({ where: { publicToken: params.token } })
@@ -15,7 +16,7 @@ export async function GET(_req: Request, { params }: { params: { token: string }
     return NextResponse.json({ type: "quote", data: quote })
   }
 
-  return NextResponse.json({ error: "Not found" }, { status: 404 })
+  return NextResponse.json({ error: Errors.access.notFound }, { status: 404 })
 }
 
 export async function POST(req: Request, { params }: { params: { token: string } }) {
@@ -26,7 +27,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
     const suggestions = body?.suggestions as { budget?: string; timeline?: string; scope?: string } | undefined
 
     if (action !== "approve" && action !== "reject") {
-      return NextResponse.json({ error: "Invalid action" }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.invalidStatus }, { status: 400 })
     }
 
     const proposal = await prisma.proposal.findUnique({ where: { publicToken: params.token } })
@@ -264,9 +265,9 @@ export async function POST(req: Request, { params }: { params: { token: string }
       return NextResponse.json({ type: "quote", data: updated })
     }
 
-    return NextResponse.json({ error: "Not found" }, { status: 404 })
+    return NextResponse.json({ error: Errors.access.notFound }, { status: 404 })
   } catch (error) {
     console.error("Approval error:", error)
-    return NextResponse.json({ error: "Failed to process approval" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

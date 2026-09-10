@@ -1,10 +1,10 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Stage, ProjStatus, ReviewStatus } from "@prisma/client"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
 import { requireAuth, getUserEmail, getUserByEmail } from "@/lib/api-auth"
+import { Errors } from "@/lib/errors"
 
 export async function GET(req: Request) {
   const authResult = await requireAuth()
@@ -15,9 +15,9 @@ export async function GET(req: Request) {
   const owner = url.searchParams.get("owner")
   
   const email = await getUserEmail(userId)
-  if (!email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!email) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
   const user = await getUserByEmail(email)
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  if (!user) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
   const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
   const isAdmin = adminIds.includes(userId)
@@ -51,13 +51,13 @@ export async function POST(req: Request) {
   const userId = authResult.userId!
 
   const email = await getUserEmail(userId)
-  if (!email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!email) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
   const user = await getUserByEmail(email)
-  if (!user) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  if (!user) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
   const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
   if (!adminIds.includes(userId) && user.role !== "talent") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 
   try {
@@ -120,6 +120,6 @@ export async function POST(req: Request) {
     return NextResponse.json(project, { status: 201 })
   } catch (error) {
     console.error("Failed to create project:", error)
-    return NextResponse.json({ error: "Failed to create project" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

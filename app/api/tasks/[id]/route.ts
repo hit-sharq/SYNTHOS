@@ -2,7 +2,8 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
-import { Role, logAudit } from "@prisma/client"
+import { Role } from "@prisma/client"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -19,14 +20,14 @@ async function getCurrentUserId() {
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const existing = await prisma.task.findUnique({ where: { id: params.id } })
-  if (!existing) return NextResponse.json({ error: "Task not found" }, { status: 404 })
+  if (!existing) return NextResponse.json({ error: Errors.resources.taskNotFound }, { status: 404 })
 
   if (user.role === Role.talent && existing.assigneeId !== user.id) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 
   const updates: any = {}

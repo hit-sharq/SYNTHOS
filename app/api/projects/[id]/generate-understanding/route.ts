@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { generateWithGemini } from "@/lib/ai"
+import { Errors } from "@/lib/errors"
 
 export async function POST(_req: Request, { params }: { params: { id: string } }) {
   const project = await prisma.project.findUnique({
@@ -8,7 +9,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     include: { brief: true, call: true, transcript: true },
   })
   if (!project || !project.brief) {
-    return NextResponse.json({ error: "Project or brief not found" }, { status: 404 })
+    return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
   }
 
   const b = project.brief
@@ -49,7 +50,7 @@ Generate 3-5 insights per group. Make them specific and actionable.`
     const cleaned = raw.replace(/```json\n?/g, "").replace(/```/g, "").trim()
     parsed = JSON.parse(cleaned)
   } catch {
-    return NextResponse.json({ error: "AI returned invalid JSON", raw }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.proposalGenerationFailed, raw }, { status: 500 })
   }
 
   const insightData = ((parsed.insights || []) as any[]).map((i: any) => ({

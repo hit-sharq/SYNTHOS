@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 import { generateWithGemini } from "@/lib/ai"
 import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
@@ -35,7 +36,7 @@ export async function POST(req: Request, { params }: { params: { roomName: strin
     const { projectId, notes, transcript, meetingSource, artifacts } = body
 
     if (!projectId) {
-      return NextResponse.json({ error: "projectId is required" }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
     }
 
     const project = await prisma.project.findUnique({
@@ -44,7 +45,7 @@ export async function POST(req: Request, { params }: { params: { roomName: strin
     })
 
     if (!project || !project.brief) {
-      return NextResponse.json({ error: "Project or brief not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     }
 
     const b = project.brief
@@ -310,6 +311,6 @@ Return ONLY a JSON object:
     })
   } catch (error) {
     console.error("Meeting end error:", error)
-    return NextResponse.json({ error: "Failed to process meeting" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.meetingCaptureFailed }, { status: 500 })
   }
 }

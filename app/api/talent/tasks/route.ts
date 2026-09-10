@@ -1,8 +1,8 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -51,14 +51,14 @@ export async function GET() {
     })
   } catch (error) {
     console.error("Failed to fetch tasks:", error)
-    return NextResponse.json({ error: "Failed to load tasks" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }
 
 export async function POST(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-  if (user.role !== Role.talent) return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
+  if (user.role !== Role.talent) return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
 
   const body = await req.json()
   const task = await prisma.task.create({

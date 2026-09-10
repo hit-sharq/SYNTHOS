@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   try {
@@ -9,7 +10,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     })
 
     if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     }
 
     return NextResponse.json({
@@ -19,7 +20,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     })
   } catch (error) {
     console.error("Failed to fetch deliverables:", error)
-    return NextResponse.json({ error: "Failed to load deliverables" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }
 
@@ -29,12 +30,12 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const { deliverables } = body || {}
 
     if (!Array.isArray(deliverables)) {
-      return NextResponse.json({ error: "Deliverables must be an array" }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.invalidFormat }, { status: 400 })
     }
 
     const project = await prisma.project.findUnique({ where: { id: params.id } })
     if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     }
 
     const updated = await prisma.project.update({
@@ -46,6 +47,6 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     return NextResponse.json(updated)
   } catch (error) {
     console.error("Failed to update deliverables:", error)
-    return NextResponse.json({ error: "Failed to update deliverables" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

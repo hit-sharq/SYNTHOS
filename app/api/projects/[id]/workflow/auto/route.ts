@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
 import { isProjectAccessible } from "@/lib/api-auth"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const { userId } = await auth()
@@ -12,7 +13,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   try {
     const project = await prisma.project.findUnique({ where: { id: params.id } })
     if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     }
 
     const result = await runAutoWorkflow(params.id)
@@ -30,6 +31,6 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ success: true, result })
   } catch (error) {
     console.error("Manual workflow trigger error:", error)
-    return NextResponse.json({ error: "Failed to trigger workflow" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

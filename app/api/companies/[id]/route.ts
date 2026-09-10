@@ -1,7 +1,7 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
+import { Errors } from "@/lib/errors"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const adminResult = await requireAdmin()
@@ -15,7 +15,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
     },
   })
 
-  if (!company) return NextResponse.json({ error: "Company not found" }, { status: 404 })
+  if (!company) return NextResponse.json({ error: Errors.resources.companyNotFound }, { status: 404 })
   return NextResponse.json(company)
 }
 

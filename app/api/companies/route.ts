@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
+import { Errors } from "@/lib/errors"
 
 export const dynamic = 'force-dynamic'
 
@@ -39,7 +40,7 @@ export async function GET() {
     return NextResponse.json(data)
   } catch (error) {
     console.error("Failed to load companies:", error)
-    return NextResponse.json({ error: "Failed to load companies" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }
 
@@ -67,6 +68,6 @@ export async function POST(req: Request) {
     return NextResponse.json(company, { status: 201 })
   } catch (error) {
     console.error("Failed to create company:", error)
-    return NextResponse.json({ error: "Failed to create company" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

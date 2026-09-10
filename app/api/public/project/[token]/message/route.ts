@@ -1,9 +1,8 @@
-export const dynamic = 'force-dynamic'
-
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request, { params }: { params: { token: string } }) {
   try {
@@ -11,7 +10,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
     const { name, email, subject, message: msg } = body || {}
 
     if (!name?.trim() || !email?.trim() || !msg?.trim()) {
-      return NextResponse.json({ error: "Name, email, and message are required." }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
     }
 
     const project = await prisma.project.findUnique({
@@ -20,7 +19,7 @@ export async function POST(req: Request, { params }: { params: { token: string }
     })
 
     if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 })
+      return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     }
 
     const conversation = await prisma.conversation.create({
@@ -82,6 +81,6 @@ export async function POST(req: Request, { params }: { params: { token: string }
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Failed to send message:", error)
-    return NextResponse.json({ error: "Failed to send message" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }

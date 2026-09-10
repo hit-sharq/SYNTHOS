@@ -1,26 +1,26 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request) {
   const { userId } = await auth()
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
   try {
     const body = await req.json()
     const { projectId, mode, projectName, clientName, company, clientEmail, source, transcript } = body
 
     if (!transcript || !transcript.trim()) {
-      return NextResponse.json({ error: "Transcript is required" }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
     }
 
     let targetProjectId = projectId
 
     if (mode === "new" || !projectId) {
       if (!projectName || !clientName) {
-        return NextResponse.json({ error: "Project name and client name are required for new project" }, { status: 400 })
+        return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
       }
 
       const slug = `${projectName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "")}-${Date.now().toString(36)}`
@@ -82,7 +82,7 @@ export async function POST(req: Request) {
     }
 
     if (!targetProjectId) {
-      return NextResponse.json({ error: "Project ID is required" }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
     }
 
     const today = new Date().toISOString().split("T")[0]
@@ -124,6 +124,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true, projectId: targetProjectId, call })
   } catch (error) {
     console.error("External meeting capture error:", error)
-    return NextResponse.json({ error: "Failed to capture meeting" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.meetingCaptureFailed }, { status: 500 })
   }
 }

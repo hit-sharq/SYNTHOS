@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
+import { Errors } from "@/lib/errors"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const p = await prisma.proposal.findUnique({ where: { projectId: params.id } })
@@ -12,7 +13,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   
   if (body.action === "sendToClient") {
     const p = await prisma.proposal.findUnique({ where: { projectId: params.id } })
-    if (!p) return NextResponse.json({ error: "Proposal not found" }, { status: 404 })
+    if (!p) return NextResponse.json({ error: Errors.resources.proposalNotFound }, { status: 404 })
     
     const publicToken = crypto.randomUUID()
     const updated = await prisma.proposal.update({

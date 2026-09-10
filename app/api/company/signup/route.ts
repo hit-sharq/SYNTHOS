@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
+import { Errors } from "@/lib/errors"
 
 export async function POST(req: Request) {
   try {
@@ -8,7 +9,7 @@ export async function POST(req: Request) {
     const { name, email, phone, website, industry, location, slug, clerkId } = body
 
     if (!name || !email || !clerkId) {
-      return NextResponse.json({ error: "Name, email, and account ID are required." }, { status: 400 })
+      return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
     }
 
     const normalizedEmail = email.trim().toLowerCase()
@@ -17,11 +18,11 @@ export async function POST(req: Request) {
     const existingCompany = await prisma.company.findFirst({ where: { email: normalizedEmail } })
 
     if (existingUser) {
-      return NextResponse.json({ error: "An account with this email already exists. Please sign in instead." }, { status: 409 })
+      return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
     }
 
     if (existingCompany) {
-      return NextResponse.json({ error: "A company is already registered with this email. Each company email can only be used once." }, { status: 409 })
+      return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
     }
 
     const company = await prisma.company.create({
@@ -51,6 +52,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ id: company.id, name: company.name, email: company.email, status: company.status }, { status: 201 })
   } catch (error) {
     console.error("Company signup error:", error)
-    return NextResponse.json({ error: "Failed to create company" }, { status: 500 })
+    return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })
   }
 }
