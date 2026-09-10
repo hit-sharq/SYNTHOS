@@ -1,10 +1,10 @@
-import { ClientShell } from "@/components/app/ClientShell"
+import { CompanyShell } from "@/components/app/CompanyShell"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { redirect } from "next/navigation"
 
-export default async function ClientDashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function CompanyDashboardLayout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
@@ -18,9 +18,9 @@ export default async function ClientDashboardLayout({ children }: { children: Re
   const user = await prisma.user.findUnique({ where: { email } })
   if (!user) redirect("/")
 
-  if (user.role !== Role.client) {
-    redirect("/dashboard/overview")
+  if (user.role !== Role.client || !user.companyId) {
+    redirect("/client/dashboard")
   }
 
-  return <ClientShell>{children}</ClientShell>
+  return <CompanyShell>{children}</CompanyShell>
 }

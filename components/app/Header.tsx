@@ -118,10 +118,10 @@ export default function Header() {
           <Link href="/talents" className={`topnav-link ${pathname === "/talents" ? "active" : ""}`} onClick={() => setOpen(false)}>Talent</Link>
           <Link href="/jobs" className={`topnav-link ${pathname === "/jobs" ? "active" : ""}`} onClick={() => setOpen(false)}>Jobs</Link>
           <Link href="/companies" className={`topnav-link ${pathname === "/companies" || pathname.startsWith("/companies") ? "active" : ""}`} onClick={() => setOpen(false)}>Companies</Link>
-          {!isSignedIn && (
-            <Link href="/talent/signup" className={`topnav-link ${pathname === "/talent/signup" ? "active" : ""}`} onClick={() => setOpen(false)}>Join</Link>
-          )}
-           {isSignedIn && isAdmin && (
+           {!isSignedIn && (
+             <Link href="/talent/signup" className={`topnav-link ${pathname === "/talent/signup" ? "active" : ""}`} onClick={() => setOpen(false)}>Join</Link>
+           )}
+            {isSignedIn && isAdmin && (
             <>
               <Link
                 href="/dashboard/overview"
@@ -138,6 +138,15 @@ export default function Header() {
                 Admin
               </Link>
             </>
+          )}
+          {isSignedIn && userRole === "talent" && (
+            <Link
+              href="/dashboard/talent"
+              className={`topnav-link ${pathname === "/dashboard/talent" || pathname.startsWith("/dashboard/talent") ? "active" : ""}`}
+              onClick={() => setOpen(false)}
+            >
+              Dashboard
+            </Link>
           )}
           {isSignedIn && userRole === "client" && companyId && (
             <>
