@@ -110,6 +110,9 @@ export default function Header() {
     <header className="topbar">
       <div className="topbar-inner">
         <div className="topbar-left">
+          <button className={`topbar-burger ${open ? "open" : ""}`} onClick={() => setOpen((v) => !v)} aria-label="Menu">
+            <span /><span /><span />
+          </button>
           <BrandMark />
         </div>
 
@@ -206,9 +209,6 @@ export default function Header() {
           ) : (
             <Link href="/sign-in" className="btn btn-signal btn-sm">Get Started</Link>
           )}
-          <button className={`topbar-burger ${open ? "open" : ""}`} onClick={() => setOpen((v) => !v)} aria-label="Menu">
-            <span /><span /><span />
-          </button>
         </div>
       </div>
     </header>
