@@ -127,7 +127,7 @@ export default function Header() {
             {isSignedIn && isAdmin && (
             <>
               <Link
-                href="/dashboard/overview"
+                href="/dashboard"
                 className={`topnav-link ${pathname === "/dashboard/overview" || pathname.startsWith("/dashboard") ? "active" : ""}`}
                 onClick={() => setOpen(false)}
               >
@@ -144,22 +144,21 @@ export default function Header() {
           )}
           {isSignedIn && userRole === "talent" && (
             <Link
-              href="/dashboard/talent"
+              href="/dashboard"
               className={`topnav-link ${pathname === "/dashboard/talent" || pathname.startsWith("/dashboard/talent") ? "active" : ""}`}
               onClick={() => setOpen(false)}
             >
               Dashboard
             </Link>
           )}
-          {isSignedIn && userRole === "client" && companyId && (
-            <>
-              <Link href="/company/dashboard" className={`topnav-link ${pathname === "/company/dashboard" ? "active" : ""}`} onClick={() => setOpen(false)}>Dashboard</Link>
-              <Link href="/company/jobs" className={`topnav-link ${pathname === "/company/jobs" ? "active" : ""}`} onClick={() => setOpen(false)}>My Jobs</Link>
-              <Link href="/company/jobs/new" className={`topnav-link ${pathname === "/company/jobs/new" ? "active" : ""}`} onClick={() => setOpen(false)}>Post Job</Link>
-            </>
-          )}
-          {isSignedIn && userRole === "client" && !companyId && (
-            <Link href="/client/dashboard" className={`topnav-link ${pathname === "/client/dashboard" ? "active" : ""}`} onClick={() => setOpen(false)}>Client Dashboard</Link>
+          {isSignedIn && userRole === "client" && (
+            <Link
+              href="/dashboard"
+              className={`topnav-link ${pathname.startsWith("/company/dashboard") || pathname.startsWith("/client/dashboard") ? "active" : ""}`}
+              onClick={() => setOpen(false)}
+            >
+              Dashboard
+            </Link>
           )}
         </nav>
 
