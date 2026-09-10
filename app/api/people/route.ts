@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -17,7 +18,7 @@ async function getCurrentUserId() {
 
 export async function GET() {
   const currentUser = await getCurrentUserId()
-  if (!currentUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!currentUser) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const users = await prisma.user.findMany({
     where: { id: { not: currentUser.id } },

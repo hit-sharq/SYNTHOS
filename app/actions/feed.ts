@@ -3,19 +3,20 @@
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { logAudit } from "@/lib/audit"
+import { Errors } from "@/lib/errors"
 
 export async function createPost(input: { content: string }) {
   const { userId } = await auth()
-  if (!userId) throw new Error("Unauthorized")
+  if (!userId) throw new Error(Errors.auth.unauthorized)
 
   const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
     headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
   }).then(r => r.json()).catch(() => null)
   const email = clerkUser?.email_addresses?.[0]?.email_address || null
-  if (!email) throw new Error("Unauthorized")
+  if (!email) throw new Error(Errors.auth.unauthorized)
 
   const user = await prisma.user.findUnique({ where: { email }, select: { id: true } })
-  if (!user) throw new Error("Unauthorized")
+  if (!user) throw new Error(Errors.auth.unauthorized)
 
   const post = await prisma.feedPost.create({
     data: {

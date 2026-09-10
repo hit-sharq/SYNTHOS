@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -24,16 +25,16 @@ export async function GET() {
 
 export async function POST(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
   if (!adminIds.includes(user.id)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    return NextResponse.json({ error: Errors.access.adminOnly }, { status: 403 })
   }
 
   const body = await req.json()
   const { name, description, slug } = body
-  if (!name) return NextResponse.json({ error: "name required" }, { status: 400 })
+  if (!name) return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
 
   const workplace = await prisma.workplace.create({
     data: { name, slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 50), description: description || "" },

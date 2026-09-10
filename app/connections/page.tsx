@@ -2,10 +2,11 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { ProfileCard } from "@/components/ProfileCard"
+import { Errors } from "@/lib/errors"
 
 async function fetchUsers() {
   const res = await fetch("/api/people")
-  if (!res.ok) throw new Error("Failed to fetch users")
+  if (!res.ok) throw new Error(Errors.actions.operationFailed)
   return res.json()
 }
 

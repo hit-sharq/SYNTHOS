@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -17,15 +18,15 @@ async function getCurrentUserId() {
 
 export async function POST(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const { userId: targetUserId, skill } = body
   if (!targetUserId || !skill) {
-    return NextResponse.json({ error: "userId and skill required" }, { status: 400 })
+    return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
   }
   if (targetUserId === user.id) {
-    return NextResponse.json({ error: "Cannot endorse yourself" }, { status: 400 })
+    return NextResponse.json({ error: Errors.actions.cannotEndorseSelf }, { status: 400 })
   }
 
   const existing = await prisma.endorsement.findUnique({
@@ -38,7 +39,7 @@ export async function POST(req: Request) {
 
   const target = await prisma.user.findUnique({ where: { id: targetUserId } })
   if (!target) {
-    return NextResponse.json({ error: "User not found" }, { status: 404 })
+    return NextResponse.json({ error: Errors.resources.userNotFound }, { status: 404 })
   }
 
   const endorsement = await prisma.endorsement.create({

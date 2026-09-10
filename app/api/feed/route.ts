@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUser() {
   const { userId } = await auth()
@@ -17,7 +18,7 @@ async function getCurrentUser() {
 
 export async function GET(req: Request) {
   const user = await getCurrentUser()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const url = new URL(req.url)
   const limit = Number(url.searchParams.get("limit") || 20)
@@ -47,7 +48,7 @@ export async function GET(req: Request) {
     const membership = await prisma.workplaceMember.findFirst({
       where: { workplaceId, userId: user.id },
     })
-    if (!membership) return NextResponse.json({ error: "Not a member" }, { status: 403 })
+    if (!membership) return NextResponse.json({ error: Errors.actions.membershipRequired }, { status: 403 })
     workplaceWhere = { workplaceId }
   } else {
     workplaceWhere = {
@@ -105,7 +106,7 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const user = await getCurrentUser()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
@@ -116,15 +117,15 @@ export async function POST(req: Request) {
       where: { workplaceId: body.workplaceId, userId: user.id },
     })
     if (!membership && !isAdmin) {
-      return NextResponse.json({ error: "Not a workplace member" }, { status: 403 })
+      return NextResponse.json({ error: Errors.actions.workplaceMemberRequired }, { status: 403 })
     }
   }
 
   if (body.projectId) {
     const project = await prisma.project.findUnique({ where: { id: body.projectId } })
-    if (!project) return NextResponse.json({ error: "Project not found" }, { status: 404 })
+    if (!project) return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
     if (project.ownerId !== user.id && project.clientId !== user.id && !isAdmin) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+      return NextResponse.json({ error: Errors.actions.projectAccessDenied }, { status: 403 })
     }
   }
 

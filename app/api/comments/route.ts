@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -17,7 +18,7 @@ async function getCurrentUserId() {
 
 export async function GET(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const url = new URL(req.url)
   const postId = url.searchParams.get("postId")
@@ -54,11 +55,11 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const { postId, body: text, parentId } = body
-  if (!postId || !text) return NextResponse.json({ error: "postId and body required" }, { status: 400 })
+  if (!postId || !text) return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
 
   const comment = await prisma.comment.create({
     data: {

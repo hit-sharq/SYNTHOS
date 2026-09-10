@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -17,17 +18,17 @@ async function getCurrentUserId() {
 
 export async function POST(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const { postId, type = "like" } = body
   const validTypes = ["like", "celebrate", "support", "insightful", "congrats"]
   if (!validTypes.includes(type)) {
-    return NextResponse.json({ error: "Invalid reaction type" }, { status: 400 })
+    return NextResponse.json({ error: Errors.validation.invalidType }, { status: 400 })
   }
 
   const post = await prisma.feedPost.findUnique({ where: { id: postId }, select: { authorId: true } })
-  if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 })
+  if (!post) return NextResponse.json({ error: Errors.resources.postNotFound }, { status: 404 })
 
   await prisma.reaction.upsert({
     where: { postId_userId_type: { postId, userId: user.id, type } },
@@ -52,7 +53,7 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const { postId, type = "like" } = body

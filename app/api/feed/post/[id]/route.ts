@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUser() {
   const { userId } = await auth()
@@ -17,14 +18,14 @@ async function getCurrentUser() {
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
   const user = await getCurrentUser()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const post = await prisma.feedPost.findUnique({ where: { id: params.id }, select: { authorId: true } })
-  if (!post) return NextResponse.json({ error: "Post not found" }, { status: 404 })
+  if (!post) return NextResponse.json({ error: Errors.resources.postNotFound }, { status: 404 })
 
   const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
   if (post.authorId !== user.id && !adminIds.includes(user.id)) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+    return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 
   await prisma.feedPost.delete({ where: { id: params.id } })

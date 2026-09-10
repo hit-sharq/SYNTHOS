@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -17,10 +18,14 @@ async function getCurrentUserId() {
 
 export async function POST(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const { status, lastSeen } = body
+  const validStatuses = ["online", "offline", "away", "do_not_disturb"]
+  if (status && !validStatuses.includes(status)) {
+    return NextResponse.json({ error: Errors.validation.invalidStatus }, { status: 400 })
+  }
 
   const presence = await prisma.presence.upsert({
     where: { userId: user.id },

@@ -3,10 +3,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { PostComposer } from "@/components/PostComposer"
 import { PostCard } from "@/components/PostCard"
+import { Errors } from "@/lib/errors"
 
 async function fetchFeed() {
   const res = await fetch("/api/feed")
-  if (!res.ok) throw new Error("Failed to fetch feed")
+  if (!res.ok) throw new Error(Errors.actions.operationFailed)
   return res.json()
 }
 
@@ -16,7 +17,7 @@ async function createPost(content: string) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ content }),
   })
-  if (!res.ok) throw new Error("Failed to create post")
+  if (!res.ok) throw new Error(Errors.actions.operationFailed)
   return res.json()
 }
 
@@ -36,7 +37,7 @@ export default function FeedPage() {
   }
 
   if (isLoading) return <div className="max-w-2xl mx-auto p-4">Loading feed...</div>
-  if (error) return <div className="max-w-2xl mx-auto p-4">Failed to load feed</div>
+  if (error) return <div className="max-w-2xl mx-auto p-4">{Errors.actions.operationFailed}</div>
 
   const posts = data?.posts || []
 

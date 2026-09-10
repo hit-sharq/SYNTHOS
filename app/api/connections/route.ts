@@ -1,7 +1,7 @@
-export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -17,7 +17,7 @@ async function getCurrentUserId() {
 
 export async function GET(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const url = new URL(req.url)
   const status = url.searchParams.get("status") || "accepted"
@@ -65,12 +65,12 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const user = await getCurrentUserId()
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
   const { followedId } = body
-  if (!followedId) return NextResponse.json({ error: "followedId required" }, { status: 400 })
-  if (followedId === user.id) return NextResponse.json({ error: "Cannot follow yourself" }, { status: 400 })
+  if (!followedId) return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
+  if (followedId === user.id) return NextResponse.json({ error: Errors.actions.cannotFollowSelf }, { status: 400 })
 
   const existing = await prisma.connection.findUnique({
     where: { followerId_followedId: { followerId: user.id, followedId } },
