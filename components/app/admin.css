@@ -326,9 +326,9 @@
 }
 
 .admin-badge-attention {
-  background: #fce8e6;
-  color: #c62828;
-  border-color: #c62828;
+  background: var(--rejected-soft);
+  color: var(--rejected);
+  border-color: var(--rejected);
 }
 
 .admin-badge-complete {
@@ -450,13 +450,13 @@
 
 .admin-btn-danger {
   background: transparent;
-  color: #c44;
+  color: var(--rejected);
   border-color: transparent;
 }
 
 .admin-btn-danger:hover {
-  background: #fff0f0;
-  border-color: #c44;
+  background: var(--rejected-soft);
+  border-color: var(--rejected);
 }
 
 .admin-icon-btn {
@@ -479,14 +479,14 @@
 }
 
 .admin-icon-btn-danger {
-  color: #c44;
+  color: var(--rejected);
   border-color: transparent;
 }
 
 .admin-icon-btn-danger:hover {
-  background: #fff0f0;
-  color: #c44;
-  border-color: #c44;
+  background: var(--rejected-soft);
+  color: var(--rejected);
+  border-color: var(--rejected);
 }
 
 /* ---- Grid utilities ---- */

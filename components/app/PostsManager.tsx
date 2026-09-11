@@ -157,11 +157,11 @@ export function PostsManager({ kind, initialPosts }: { kind: "blog" | "news"; in
                   <Upload size={16} /> {uploading ? "Uploading..." : form.coverImage ? "Change image" : "Upload image"}
                 </button>
                 {form.coverImage && (
-                  <span className="tiny" style={{ color: "#2e7d32" }}>✓ Uploaded</span>
+                   <span className="tiny" style={{ color: "var(--approved)" }}>✓ Uploaded</span>
                 )}
               </div>
               {form.coverImage && (
-                <div style={{ marginTop: 10, borderRadius: 8, overflow: "hidden", border: "1px solid #e5e5e7", maxWidth: 200 }}>
+                <div style={{ marginTop: 10, borderRadius: 8, overflow: "hidden", border: "1px solid var(--line)", maxWidth: 200 }}>
                   <img src={form.coverImage} alt="Cover preview" style={{ width: "100%", height: 120, objectFit: "cover", display: "block" }} />
                 </div>
               )}
@@ -196,10 +196,10 @@ export function PostsManager({ kind, initialPosts }: { kind: "blog" | "news"; in
       )}
 
       {loading ? (
-        <p style={{ color: "#8e8e93", fontSize: "0.88rem" }}>Loading...</p>
+        <p style={{ color: "var(--ink-3)", fontSize: "0.88rem" }}>Loading...</p>
       ) : posts.length === 0 ? (
         <div className="admin-section" style={{ padding: 30, textAlign: "center" }}>
-          <p style={{ color: "#8e8e93", fontSize: "0.88rem" }}>No {kind} posts yet. Create your first one above.</p>
+                <p style={{ color: "var(--ink-3)", fontSize: "0.88rem" }}>No {kind} posts yet. Create your first one above.</p>
         </div>
       ) : (
         <div className="admin-table-wrap">
@@ -217,8 +217,8 @@ export function PostsManager({ kind, initialPosts }: { kind: "blog" | "news"; in
               {posts.map((post) => (
                 <tr key={post.id}>
                   <td data-label="Title">
-                    <div style={{ fontWeight: 600, color: "#1b1a17" }}>{post.title}</div>
-                    {post.excerpt && <div style={{ fontSize: "0.78rem", color: "#8e8e93", marginTop: 2 }}>{post.excerpt.slice(0, 80)}...</div>}
+                    <div style={{ fontWeight: 600, color: "var(--ink)" }}>{post.title}</div>
+                    {post.excerpt && <div style={{ fontSize: "0.78rem", color: "var(--ink-3)", marginTop: 2 }}>{post.excerpt.slice(0, 80)}...</div>}
                   </td>
                   <td data-label="Status">
                     <span className={`admin-badge admin-badge-${post.status}`}>{post.status}</span>

@@ -43,6 +43,10 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     applyTheme(theme)
+    const meta = document.querySelector('meta[name="theme-color"]') as HTMLMetaElement | null
+    if (meta) {
+      meta.setAttribute('content', theme === 'dark' ? '#0e0e0e' : '#ffffff')
+    }
   }, [theme])
 
   useEffect(() => {

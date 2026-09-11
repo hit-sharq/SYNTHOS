@@ -165,7 +165,7 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
 
       {members.length === 0 ? (
         <div className="admin-section" style={{ padding: 30, textAlign: "center" }}>
-          <p style={{ color: "#8e8e93", fontSize: "0.88rem" }}>No team members yet. Add your first team member above.</p>
+          <p style={{ color: "var(--ink-3)", fontSize: "0.88rem" }}>No team members yet. Add your first team member above.</p>
         </div>
       ) : (
         <div className="admin-table-wrap">
@@ -192,7 +192,7 @@ export function TeamManager({ initialMembers }: { initialMembers: TeamMember[] }
                     )}
                   </td>
                   <td data-label="Name">
-                    <span style={{ fontWeight: 600, color: "#1b1a17" }}>{m.name}</span>
+                    <span style={{ fontWeight: 600, color: "var(--ink)" }}>{m.name}</span>
                   </td>
                   <td data-label="Email" className="admin-table-muted">{m.email}</td>
                   <td data-label="Availability">

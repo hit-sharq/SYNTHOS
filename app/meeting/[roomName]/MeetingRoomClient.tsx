@@ -195,7 +195,7 @@ export default function MeetingRoomClient({ roomName, project }: { roomName: str
                   {artifacts.length > 0 && (
                     <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
                       {artifacts.map((artifact, i) => (
-                        <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", background: "#fff", border: "1px solid var(--line)", borderRadius: 6 }}>
+                        <div key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "8px 10px", background: "var(--surface)", border: "1px solid var(--line)", borderRadius: 6 }}>
                           <FileText size={14} style={{ color: "var(--ink-3)", flexShrink: 0 }} />
                           <div style={{ flex: 1, minWidth: 0 }}>
                             <p style={{ fontSize: "0.82rem", fontWeight: 500, color: "var(--ink)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{artifact.name}</p>

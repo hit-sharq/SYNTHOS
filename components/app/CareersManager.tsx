@@ -180,10 +180,10 @@ export function CareersManager({ initialCareers }: { initialCareers: Career[] })
       )}
 
       {loading ? (
-        <p style={{ color: "#8e8e93", fontSize: "0.88rem" }}>Loading...</p>
+        <p style={{ color: "var(--ink-3)", fontSize: "0.88rem" }}>Loading...</p>
       ) : careers.length === 0 ? (
         <div className="admin-section" style={{ padding: 30, textAlign: "center" }}>
-          <p style={{ color: "#8e8e93", fontSize: "0.88rem" }}>No career postings yet. Create your first one above.</p>
+          <p style={{ color: "var(--ink-3)", fontSize: "0.88rem" }}>No career postings yet. Create your first one above.</p>
         </div>
       ) : (
         <div className="admin-table-wrap">
@@ -202,7 +202,7 @@ export function CareersManager({ initialCareers }: { initialCareers: Career[] })
               {careers.map((career) => (
                 <tr key={career.id}>
                   <td data-label="Title">
-                    <div style={{ fontWeight: 600, color: "#1b1a17" }}>{career.title}</div>
+                    <div style={{ fontWeight: 600, color: "var(--ink)" }}>{career.title}</div>
                     <div style={{ fontSize: "0.78rem", color: "#8e8e93", marginTop: 2 }}>{career.description.slice(0, 80)}...</div>
                   </td>
                   <td data-label="Type" className="admin-table-muted">{career.type}</td>

@@ -582,7 +582,7 @@ export default function PublicApprovePage() {
                       style={{
                         padding: "10px 20px",
                         background: submitting || !rejectReason.trim() ? "var(--ink-3)" : "var(--rejected)",
-                        color: "#fff",
+                color: "var(--bg)",
                         border: "2px solid var(--rejected)",
                         fontFamily: "var(--font-mono)",
                         fontSize: "0.78rem",

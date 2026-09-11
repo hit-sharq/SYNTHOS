@@ -38,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
             rel="stylesheet"
           />
+          <meta name="theme-color" content="#ffffff" />
           <script
             dangerouslySetInnerHTML={{
               __html: `try{const t=localStorage.getItem('synthos-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');else if(t==='light')document.documentElement.setAttribute('data-theme','light');else{if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.setAttribute('data-theme','light');}}catch(e){}`,

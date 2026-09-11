@@ -104,28 +104,28 @@
 }
 .pipeline::-webkit-scrollbar { height: 2px; }
 .pipeline::-webkit-scrollbar-track { background: var(--bg-sunken); }
-.pipeline::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+.pipeline::-webkit-scrollbar-thumb { background: var(--ink-muted); }
 .pipeline-stage {
   flex: 0 0 180px; display: flex; flex-direction: column; align-items: center;
   text-align: center; padding: 24px 14px; position: relative; cursor: default;
-  border-right: 1px solid rgba(255,255,255,0.1); border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-right: 1px solid var(--line); border-bottom: 1px solid var(--line);
   transition: background var(--tr);
 }
 .pipeline-stage:hover { background: rgba(255,255,255,0.04); }
 .pipeline-stage:last-child { border-right: none; }
 .pipeline-num {
   font-family: var(--font-mono); font-size: 0.63rem; letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.4); text-transform: uppercase; margin-bottom: 10px;
+  color: var(--pipeline-text); text-transform: uppercase; margin-bottom: 10px;
 }
 .pipeline-icon {
-  width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.2);
+  border: 1px solid var(--line);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-serif); font-size: 1.1rem; font-weight: 500;
-  color: rgba(255,255,255,0.7); margin-bottom: 12px; transition: all var(--tr);
+  color: var(--pipeline-text-strong); margin-bottom: 12px; transition: all var(--tr);
 }
-.pipeline-stage:hover .pipeline-icon { border-color: rgba(255,255,255,0.4); color: #fff; }
-.pipeline-name { font-family: var(--font-serif); font-size: 0.85rem; font-weight: 500; color: #fff; margin-bottom: 4px; }
-.pipeline-desc { font-size: 0.78rem; color: #888; line-height: 1.5; }
+.pipeline-stage:hover .pipeline-icon { border-color: var(--line-strong); color: var(--pipeline-text-strong); }
+.pipeline-name { font-family: var(--font-serif); font-size: 0.85rem; font-weight: 500; color: var(--pipeline-text-strong); margin-bottom: 4px; }
+.pipeline-desc { font-size: 0.78rem; color: var(--pipeline-text); line-height: 1.5; }
 
 /* Light pipeline (same as current .pipeline/.pstage) */
 .pstage {
