@@ -138,7 +138,7 @@ const VoiceInput = forwardRef<HTMLTextAreaElement | HTMLInputElement, VoiceInput
           ● Listening... speak now
         </p>
       )}
-      {error && <p style={{ fontSize: "0.72rem", color: "#c62828", marginTop: 4, gridColumn: "1 / -1" }}>{error}</p>}
+      {error && <p style={{ fontSize: "0.72rem", color: "var(--rejected)", marginTop: 4, gridColumn: "1 / -1" }}>{error}</p>}
     </div>
   )
 })

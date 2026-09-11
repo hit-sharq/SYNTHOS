@@ -3,6 +3,7 @@ import type React from "react"
 import "./globals.css"
 import "@/components/app/animations.css"
 import { StoreProvider } from "@/lib/store"
+import { ThemeProvider } from "@/lib/theme"
 import { ClerkProvider } from "@clerk/nextjs"
 import { ReactQueryProvider } from "@/components/app/ReactQueryProvider"
 import Header from "@/components/app/Header"
@@ -37,15 +38,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
             rel="stylesheet"
           />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `try{const t=localStorage.getItem('synthos-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');else if(t==='light')document.documentElement.setAttribute('data-theme','light');else{if(window.matchMedia('(prefers-color-scheme:dark)').matches)document.documentElement.setAttribute('data-theme','dark');else document.documentElement.setAttribute('data-theme','light');}}catch(e){}`,
+            }}
+          />
         </head>
         <body>
-          <StoreProvider>
-            <ReactQueryProvider>
-              <Header />
-              <main>{children}</main>
-              <Footer />
-            </ReactQueryProvider>
-          </StoreProvider>
+          <ThemeProvider>
+            <StoreProvider>
+              <ReactQueryProvider>
+                <Header />
+                <main>{children}</main>
+                <Footer />
+              </ReactQueryProvider>
+            </StoreProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

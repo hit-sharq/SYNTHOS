@@ -168,7 +168,7 @@ export default function ContactPage() {
                 </div>
 
                 {error && (
-                  <p style={{ fontSize: "0.82rem", color: "#c62828", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                  <p style={{ fontSize: "0.82rem", color: "var(--rejected)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
                     {error}
                   </p>
                 )}

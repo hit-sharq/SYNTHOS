@@ -72,7 +72,7 @@ export default function Home() {
           <div className="container">
             <span className="eyebrow section-label">Opportunities</span>
             <h2 className="section-title">Hire talent. Find work.<br/>Build your team.</h2>
-            <p className="lede" style={{ color: "#888", maxWidth: 720, margin: "0 auto 48px" }}>
+            <p className="lede" style={{ color: "var(--ink-3)", maxWidth: 720, margin: "0 auto 48px" }}>
               Verified companies post curated roles. Talents showcase skills, experience, and availability. A transparent marketplace for creative professionals.
             </p>
 
@@ -84,7 +84,7 @@ export default function Home() {
                   </div>
                   <h3>For Companies</h3>
                   <p>Post jobs, review applications, and hire verified creative talent. Full control over your hiring pipeline.</p>
-                  <Link href="/company/signup" className="btn btn-ghost btn-sm" style={{ marginTop: 16, color: "#fff", borderColor: "rgba(255,255,255,0.3)" }}>Post a Job →</Link>
+                  <Link href="/company/signup" className="btn btn-ghost btn-sm" style={{ marginTop: 16, color: "var(--ink)", borderColor: "var(--line-strong)" }}>Post a Job →</Link>
                 </div>
                 <div className="triple-card">
                   <div className="triple-icon">
@@ -92,7 +92,7 @@ export default function Home() {
                   </div>
                   <h3>For Talents</h3>
                   <p>Showcase your portfolio, set your rate, and apply to curated opportunities from verified companies.</p>
-                  <Link href="/talents" className="btn btn-ghost btn-sm" style={{ marginTop: 16, color: "#fff", borderColor: "rgba(255,255,255,0.3)" }}>Browse Gigs →</Link>
+                  <Link href="/talents" className="btn btn-ghost btn-sm" style={{ marginTop: 16, color: "var(--ink)", borderColor: "var(--line-strong)" }}>Browse Gigs →</Link>
                 </div>
                 <div className="triple-card">
                   <div className="triple-icon">
@@ -100,7 +100,7 @@ export default function Home() {
                   </div>
                   <h3>Public Board</h3>
                   <p>All approved jobs are visible on the public board. Search by type, location, and budget. No account required to browse.</p>
-                  <Link href="/jobs" className="btn btn-ghost btn-sm" style={{ marginTop: 16, color: "#fff", borderColor: "rgba(255,255,255,0.3)" }}>View Open Gigs →</Link>
+                  <Link href="/jobs" className="btn btn-ghost btn-sm" style={{ marginTop: 16, color: "var(--ink)", borderColor: "var(--line-strong)" }}>View Open Gigs →</Link>
                 </div>
               </div>
             </StaggerContainer>
@@ -160,7 +160,7 @@ export default function Home() {
           <div className="container">
             <span className="eyebrow section-label">Project Delivery</span>
             <h2 className="section-title">From brief to greenlight —<br/>ten stages, zero wasted motion.</h2>
-            <p className="lede" style={{ color: "#888", maxWidth: 720, margin: "0 auto 48px" }}>
+            <p className="lede" style={{ color: "var(--ink-3)", maxWidth: 720, margin: "0 auto 48px" }}>
               For clients who need speed without chaos. AI handles understanding and drafting in parallel. Humans review, refine, and approve at every gate — so you ship on time, every time.
             </p>
 
@@ -252,7 +252,7 @@ export default function Home() {
           <div className="container">
             <span className="eyebrow section-label">People</span>
             <h2 className="section-title">The humans behind<br/>the intelligence.</h2>
-            <p className="lede" style={{ color: "#888", maxWidth: 720, margin: "0 auto 48px" }}>
+            <p className="lede" style={{ color: "var(--ink-3)", maxWidth: 720, margin: "0 auto 48px" }}>
               Writers, producers, account managers, and technologists. The team that makes AI-assisted creative work feel human.
             </p>
 

@@ -186,7 +186,7 @@ export default function ExternalMeetingForm({ projects, selectedId }: { projects
 
         <VoiceInput label="Paste full transcript or AI agent capture" value={transcript} onChange={(v) => setTranscript(v)} wide textarea rows={12} />
 
-        {error && <p style={{ color: "#c62828", fontSize: "0.82rem", fontFamily: "var(--font-mono)" }}>{error}</p>}
+        {error && <p style={{ color: "var(--rejected)", fontSize: "0.82rem", fontFamily: "var(--font-mono)" }}>{error}</p>}
 
         <button className="btn btn-signal" onClick={save} disabled={saving || !transcript.trim()} style={{ alignSelf: "flex-start" }}>
           {saving ? "Saving…" : "Save meeting →"}

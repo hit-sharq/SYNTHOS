@@ -103,7 +103,7 @@
   border-top: 2px solid var(--ink); border-left: 2px solid var(--ink);
 }
 .pipeline::-webkit-scrollbar { height: 2px; }
-.pipeline::-webkit-scrollbar-track { background: #1a1a1a; }
+.pipeline::-webkit-scrollbar-track { background: var(--bg-sunken); }
 .pipeline::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
 .pipeline-stage {
   flex: 0 0 180px; display: flex; flex-direction: column; align-items: center;
@@ -364,23 +364,34 @@
 
 /* ---- Dark mode section ---- */
 .dk {
-  background: var(--ink);
-  color: #fff;
+  background: #0e0e0e;
+  color: #f0f0f0;
 }
-.dk h1, .dk h2, .dk h3 { color: #fff; }
+.dk h1, .dk h2, .dk h3 { color: #f0f0f0; }
 .dk .muted { color: #888; }
 .dk .line { background: rgba(255,255,255,0.1); }
 .dk .card { border-color: rgba(255,255,255,0.12); background: rgba(255,255,255,0.03); }
 .dk .card:hover { border-color: rgba(255,255,255,0.28); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
-.dk .pname { color: #fff; }
-.dk .pdesc { color: #888; }
-.dk .pnum { color: rgba(255,255,255,0.35); }
-.dk .picon { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); }
-.dk .pstage:hover .picon { border-color: rgba(255,255,255,0.4); color: #fff; }
+.dk .pipeline { border-color: rgba(255,255,255,0.1); }
+.dk .pipeline-stage { border-color: rgba(255,255,255,0.1); }
+.dk .pipeline-num { color: rgba(255,255,255,0.35); }
+.dk .pipeline-icon { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); }
+.dk .pipeline-stage:hover .pipeline-icon { border-color: rgba(255,255,255,0.4); color: #fff; }
+.dk .pipeline-name { color: #fff; }
+.dk .pipeline-desc { color: #888; }
+.dk .pipeline-stat { border-color: rgba(255,255,255,0.1); }
+.dk .pipeline-stat-val { color: #fff; }
+.dk .pipeline-stat-lbl { color: rgba(255,255,255,0.6); }
 .dk .st-v { color: #fff; }
 .dk .st-l { color: rgba(255,255,255,0.6); }
 .dk .stats { border-color: rgba(255,255,255,0.15); }
 .dk .st { border-color: rgba(255,255,255,0.1); }
+.dk .triple-grid { border-color: rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); }
+.dk .triple-card { background: transparent; border-color: rgba(255,255,255,0.08); }
+.dk .triple-card:hover { background: rgba(255,255,255,0.04); }
+.dk .triple-icon { border-color: rgba(255,255,255,0.2); }
+.dk .triple-card h3 { color: #fff; }
+.dk .triple-card p { color: rgba(255,255,255,0.6); }
 
 /* ---- Buttons ---- */
 .btn-signal {

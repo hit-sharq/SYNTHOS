@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useUser, UserButton } from "@clerk/nextjs"
 import { Bell, X, Check } from "lucide-react"
+import ThemeToggle from "./ThemeToggle"
 
 import "./header.css"
 
@@ -167,6 +168,7 @@ export default function Header() {
             <div style={{ width: 32, height: 32, background: "var(--surface-2)", borderRadius: "50%" }} />
           ) : isSignedIn ? (
             <>
+              <ThemeToggle />
               <div ref={notifRef} style={{ position: "relative" }}>
                 <button className="iconbtn" aria-label="Notifications" title="Notifications" onClick={() => setNotifOpen((v) => !v)}>
                   <Bell size={18} strokeWidth={1.8} />

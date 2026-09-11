@@ -23,8 +23,8 @@
   left: 0;
   bottom: 0;
   width: 260px;
-  background: #0f172a;
-  border-right: 1px solid #1e293b;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
   display: flex;
   flex-direction: column;
   z-index: 40;
@@ -34,7 +34,7 @@
 
 .company-sidebar-head {
   padding: 20px 18px;
-  border-bottom: 1px solid #1e293b;
+  border-bottom: 1px solid var(--sidebar-border);
   display: flex;
   align-items: center;
   justify-content: space-between;

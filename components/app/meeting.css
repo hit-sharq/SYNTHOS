@@ -1,12 +1,12 @@
 .meeting-layout {
   display: flex;
   height: calc(100vh - 56px);
-  background: #0a0a0a;
+  background: var(--meeting-bg);
 }
 
 .meeting-video {
   flex: 1;
-  background: #000;
+  background: var(--meeting-video-bg);
 }
 
 .meeting-sidebar {

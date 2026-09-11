@@ -198,7 +198,7 @@ export default function IntakePage() {
               </div>
               <div className="field"><label>Background Intelligence</label><VoiceInput value={form.context} onChange={(v) => setForm({ ...form, context: v })} placeholder="Anything else we should know?" rows={3} style={{ width: "100%" }} /></div>
 
-              {error && <p style={{ color: "#c62828", fontSize: "0.82rem", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>{error}</p>}
+              {error && <p style={{ color: "var(--rejected)", fontSize: "0.82rem", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>{error}</p>}
 
               <button type="submit" className="btn btn-signal" disabled={status === "loading"} style={{ alignSelf: "flex-start" }}>
                 {status === "loading" ? "Processing…" : "Launch Blueprint →"}
