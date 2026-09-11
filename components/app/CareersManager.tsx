@@ -203,7 +203,7 @@ export function CareersManager({ initialCareers }: { initialCareers: Career[] })
                 <tr key={career.id}>
                   <td data-label="Title">
                     <div style={{ fontWeight: 600, color: "var(--ink)" }}>{career.title}</div>
-                    <div style={{ fontSize: "0.78rem", color: "#8e8e93", marginTop: 2 }}>{career.description.slice(0, 80)}...</div>
+                    <div style={{ fontSize: "0.78rem", color: "var(--ink-3)", marginTop: 2 }}>{career.description.slice(0, 80)}...</div>
                   </td>
                   <td data-label="Type" className="admin-table-muted">{career.type}</td>
                   <td data-label="Location" className="admin-table-muted">{career.location || "—"}</td>

@@ -492,7 +492,7 @@ export default function PublicApprovePage() {
               style={{
                 padding: "14px 28px",
                 background: submitting ? "var(--ink-3)" : "var(--approved)",
-                color: "#fff",
+                color: "var(--bg)",
                 border: "2px solid var(--approved)",
                 fontFamily: "var(--font-mono)",
                 fontSize: "0.82rem",

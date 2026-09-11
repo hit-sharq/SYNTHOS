@@ -372,9 +372,9 @@
 
 .auth-success {
   padding: 12px 16px;
-  background: #e6f4ea;
-  border: 1px solid #2f6b53;
-  color: #2f6b53;
+  background: var(--human-soft);
+  border: 1px solid var(--human);
+  color: var(--human-ink);
   font-family: var(--font-mono);
   font-size: 0.8rem;
   margin-bottom: 20px;

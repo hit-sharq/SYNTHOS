@@ -73,7 +73,7 @@ export function NotificationBell() {
               height: 16,
               borderRadius: "50%",
               background: "var(--signal)",
-              color: "#fff",
+              color: "var(--bg)",
               fontSize: "0.65rem",
               fontWeight: 700,
               display: "flex",

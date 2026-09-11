@@ -186,7 +186,7 @@ export default function ContactPage() {
                     width: "100%",
                     padding: "14px 24px",
                     background: status === "loading" ? "var(--ink-3)" : "var(--signal)",
-                    color: "#fff",
+                    color: "var(--bg)",
                     border: "2px solid var(--signal)",
                     fontFamily: "var(--font-mono)",
                     fontSize: "0.82rem",
