@@ -36,7 +36,7 @@ export async function GET() {
     const usersWithConnection = await Promise.all(
       users.map(async (user) => {
         if (user.id === currentUser.id) {
-          return { ...user, connectionStatus: null }
+          return { ...user, connectionStatus: null, level: user.level, levelXP: user.levelXP }
         }
 
         const connection = await prisma.connection.findFirst({
@@ -49,7 +49,7 @@ export async function GET() {
           select: { status: true },
         })
 
-        return { ...user, connectionStatus: connection?.status || null }
+        return { ...user, connectionStatus: connection?.status || null, level: user.level, levelXP: user.levelXP }
       })
     )
 

@@ -1,10 +1,13 @@
 "use client"
 
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { cn } from "@/lib/utils"
 
 export function ProfileCard({
   user,
   connectionStatus,
+  level,
+  levelXP,
 }: {
   user: {
     id: string
@@ -14,6 +17,8 @@ export function ProfileCard({
     presence?: { status: string; lastActive: string | null } | null
   }
   connectionStatus?: string | null
+  level?: number
+  levelXP?: number
 }) {
   const queryClient = useQueryClient()
   const displayName = user.name || user.initials || "Anonymous"
@@ -25,6 +30,24 @@ export function ProfileCard({
       case "away": return "bg-yellow-500"
       default: return "bg-gray-400"
     }
+  }
+
+  const getTierColor = (lvl?: number) => {
+    if (!lvl) return null
+    if (lvl >= 5) return "bg-blue-500"
+    if (lvl >= 4) return "bg-amber-500"
+    if (lvl >= 3) return "bg-green-500"
+    if (lvl >= 2) return "bg-blue-400"
+    return "bg-gray-400"
+  }
+
+  const tierTitle = (lvl?: number) => {
+    if (!lvl) return null
+    if (lvl >= 5) return "Elite"
+    if (lvl >= 4) return "Featured"
+    if (lvl >= 3) return "Established"
+    if (lvl >= 2) return "Rising"
+    return "New"
   }
 
   const connectMutation = useMutation({
@@ -55,9 +78,20 @@ export function ProfileCard({
             )}`}
           />
         )}
+        {level && level > 1 && (
+          <div
+            className={`absolute -top-1 -left-1 w-5 h-5 rounded-full ${cn(getTierColor(level), "text-white text-[8px] font-bold flex items-center justify-center")}`}
+            title={`${tierTitle(level)} — Level ${level}`}
+          >
+            {level}
+          </div>
+        )}
       </div>
       <h3 className="font-semibold">{displayName}</h3>
       <p className="text-xs text-muted-foreground">{user.role}</p>
+      {level && level > 1 && (
+        <p className="text-[10px] text-muted-foreground mt-0.5">{tierTitle(level)}</p>
+      )}
       {user.presence?.lastActive && (
         <p className="text-xs text-muted-foreground mt-1">
           Last seen {new Date(user.presence.lastActive).toLocaleString()}
