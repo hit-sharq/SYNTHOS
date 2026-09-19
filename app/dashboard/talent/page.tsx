@@ -357,6 +357,9 @@ export default function TalentDashboardPage() {
                   <span className="tiny">Applications sent</span>
                   <span className="mono tiny" style={{ color: "var(--ink)", fontWeight: 600 }}>{applications.length}</span>
                 </div>
+                <Link href="/profile" className="btn btn-ghost btn-sm" style={{ justifyContent: "center", marginTop: 4 }}>
+                  View Creator Profile
+                </Link>
                 <div style={{ borderTop: "1px solid var(--line)", paddingTop: 12, marginTop: 4 }}>
                   <p className="tiny muted">Keep your profile up to date to attract the best opportunities.</p>
                 </div>
