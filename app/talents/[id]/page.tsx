@@ -15,6 +15,22 @@ async function fetchTalentProfile(id: string) {
   return res.json()
 }
 
+async function followTalent(id: string, follow: boolean) {
+  const res = await fetch(`/api/follow/${id}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+  })
+  if (!res.ok) throw new Error("Failed")
+  return res.json()
+}
+
+async function fetchFollowStatus(id: string) {
+  const res = await fetch(`/api/follow/${id}`)
+  if (!res.ok) return null
+  return res.json()
+}
+
 const TIER_COLORS: Record<string, string> = {
   New: "#888888",
   Rising: "#4a90d9",
@@ -36,6 +52,8 @@ export default function TalentProfilePage() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [followState, setFollowState] = useState<{ followed: boolean; followerCount: number; followingCount: number } | null>(null)
+  const [following, setFollowing] = useState(false)
 
   useEffect(() => {
     if (!id) {
@@ -49,8 +67,28 @@ export default function TalentProfilePage() {
     fetchTalentProfile(id as string)
       .then(setData)
       .catch((err: any) => setError(err instanceof Error ? err.message : String(err)))
-      .finally(() => setLoading(false))
+      .finally(() => {
+        setLoading(false)
+        if (id) {
+          fetchFollowStatus(id as string).then(setFollowState).catch(() => {})
+        }
+      })
   }, [id])
+
+  const handleFollow = async () => {
+    if (!id || !followState) return
+    setFollowing(true)
+    try {
+      const result = await followTalent(id as string, !followState.followed)
+      setFollowState(prev => prev ? {
+        ...prev,
+        followed: result.followed,
+        followerCount: prev.followerCount + (result.followed ? 1 : -1),
+      } : result)
+    } finally {
+      setFollowing(false)
+    }
+  }
 
   if (loading) {
     return <PageWrap><div style={{ padding: 40, textAlign: "center" }}><p className="muted tiny">Loading…</p></div></PageWrap>
@@ -104,8 +142,21 @@ export default function TalentProfilePage() {
                   <span className={`w-2 h-2 rounded-full ${talent.availability === "available" ? "bg-green-500" : talent.availability === "busy" ? "bg-yellow-500" : "bg-gray-400"}`} />
                   <span style={{ color: "var(--ink-2)" }}>{talent.availability}</span>
                 </span>
+                <span className="tiny" style={{ color: "var(--ink-3)" }}>
+                  <strong style={{ color: "var(--ink)" }}>{followState?.followerCount || 0}</strong> followers
+                </span>
               </div>
             </div>
+            {id && (
+              <button
+                className="btn btn-primary btn-sm"
+                onClick={handleFollow}
+                disabled={following}
+                style={{ flexShrink: 0 }}
+              >
+                {followState?.followed ? "Following" : "Follow"}
+              </button>
+            )}
           </div>
         </div>
 
