@@ -40,7 +40,8 @@ const ADMIN_NAV = [
 
 const TALENT_NAV = [
   { href: "/dashboard/talent", label: "My Workspace", icon: User },
-  { href: "/dashboard/talent/profile", label: "Profile & Portfolio", icon: User },
+  { href: "/profile", label: "Profile", icon: User },
+  { href: "/dashboard/talent/profile", label: "Talent Profile", icon: User },
   { href: "/dashboard/talent/tasks", label: "Tasks", icon: CheckCircle },
   { href: "/dashboard/talent/deadlines", label: "Deadlines", icon: Calendar },
   { href: "/dashboard/talent/meetings", label: "Meetings", icon: Calendar },
