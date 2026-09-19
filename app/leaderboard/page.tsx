@@ -1,22 +1,33 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery } from "@tanstack/react-query"
+import Link from "next/link"
 import { PageHead, PageWrap } from "@/components/app/Page"
+import LevelBadge from "@/components/app/LevelBadge"
 
-async function fetchAllChallenges() {
-  const res = await fetch("/api/challenges")
+async function fetchLeaderboard() {
+  const res = await fetch("/api/leaderboard")
   if (!res.ok) throw new Error("Failed")
   return res.json()
+}
+
+const TIER_META: Record<string, { emoji: string; label: string }> = {
+  New: { emoji: "🌱", label: "Just getting started" },
+  Rising: { emoji: "📈", label: "Building momentum" },
+  Established: { emoji: "🔥", label: "Known in the community" },
+  Featured: { emoji: "⭐", label: "Hand-picked talent" },
+  Elite: { emoji: "👑", label: "Top of the mountain" },
 }
 
 export default function LeaderboardPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["leaderboard"],
-    queryFn: fetchAllChallenges,
+    queryFn: fetchLeaderboard,
   })
 
-  const challenges = data?.challenges || []
+  const tiers = data?.tiers || []
+  const top = data?.top || []
 
   return (
     <PageWrap>
@@ -26,52 +37,92 @@ export default function LeaderboardPage() {
         desc="The most accomplished creators on Synthos, ranked by level and XP."
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-        {isLoading && Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="panel p-5"><p className="muted">Loading...</p></div>
-        ))}
-        {error && <p style={{ color: "var(--rejected)" }}>Failed</p>}
+      {isLoading && <div className="panel p-5 mt-6"><p className="muted">Loading leaderboard…</p></div>}
+      {error && <p style={{ color: "var(--rejected)" }}>Failed to load</p>}
 
-        {challenges.slice(0, 3).map((c: any, i: number) => (
-          <div key={c.id} className="panel p-5" style={{ borderRadius: 0, textAlign: "center" }}>
-            <div style={{
-              width: 64, height: 64, display: "grid", placeItems: "center",
-              borderRadius: "50%", margin: "0 auto 16px",
-              background: i === 0 ? "var(--signal)" : i === 1 ? "var(--ink-3)" : "var(--approved)",
-              color: "#fff", fontSize: "1.4rem", fontWeight: 700, fontFamily: "var(--font-mono)",
-            }}>
-              {i + 1}
-            </div>
-            <h3 style={{ fontFamily: "var(--font-serif)", color: "var(--ink)", marginBottom: 4 }}>
-              {c.title}
-            </h3>
-            <p className="tiny muted">{c._count?.submissions || 0} submissions</p>
+      <div className="stack gap-8 mt-6">
+        {/* Tier breakdown */}
+        <section>
+          <h2 className="section-title">Tiers</h2>
+          <div className="stack gap-2">
+            {tiers.map((t: any) => (
+              <div key={t.tier} className="panel" style={{ padding: "16px 20px", borderRadius: 0 }}>
+                <div className="row gap-4 items-center">
+                  <div
+                    style={{
+                      width: 40, height: 40, display: "grid", placeItems: "center",
+                      borderRadius: "50%", fontFamily: "var(--font-mono)",
+                      fontWeight: 700, fontSize: "0.82rem", color: "#fff",
+                      background: t.badgeColor, flexShrink: 0,
+                    }}
+                  >
+                    {t.level}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontWeight: 600, color: "var(--ink)", margin: 0 }}>{t.title}</p>
+                    <p className="tiny mono" style={{ color: "var(--ink-3)", margin: 0 }}>{t.xpRequired} XP required</p>
+                  </div>
+                  <span style={{ fontSize: "0.82rem", color: "var(--ink-2)" }}>
+                    {TIER_META[t.title]?.emoji} {TIER_META[t.title]?.label}
+                  </span>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </section>
 
-      <div className="panel mt-8" style={{ borderRadius: 0, overflow: "hidden" }}>
-        <div style={{ padding: "16px 20px", borderBottom: "1px solid var(--line)" }}>
-          <h2 style={{ fontFamily: "var(--font-serif)", color: "var(--ink)" }}>Active Challenges</h2>
+        {/* Top creators */}
+        <section>
+          <h2 className="section-title">Top creators</h2>
+          <div className="stack gap-2">
+            {top.map((u: any, i: number) => (
+              <div
+                key={u.id}
+                className="panel"
+                style={{ padding: "12px 20px", borderRadius: 0, display: "flex", alignItems: "center", gap: 16 }}
+              >
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)", color: "var(--ink-3)",
+                    width: 32, fontSize: "0.82rem", fontWeight: 700,
+                  }}
+                >
+                  #{i + 1}
+                </span>
+                <div
+                  style={{
+                    width: 36, height: 36, display: "grid", placeItems: "center",
+                    borderRadius: "50%", background: "var(--surface-2)",
+                    color: "var(--ink)", fontFamily: "var(--font-mono)",
+                    fontWeight: 700, fontSize: "0.78rem", flexShrink: 0,
+                  }}
+                >
+                  {u.initials}
+                </div>
+                <div style={{ flex: 1 }}>
+                  <p style={{ fontWeight: 600, color: "var(--ink)", margin: 0, fontSize: "0.92rem" }}>{u.name}</p>
+                  <LevelBadge level={u.level} levelXP={u.levelXP} size="sm" />
+                </div>
+                <span className="mono tiny" style={{ color: "var(--ink-2)" }}>
+                  {u.levelXP.toLocaleString()} XP
+                </span>
+                <span className="mono tiny" style={{ color: "var(--muted-foreground)", width: 60, textAlign: "right" }}>
+                  {i === 0 ? "🥇" : i === 1 ? "🥈" : i === 2 ? "🥉" : ""}
+                </span>
+              </div>
+            ))}
+            {top.length === 0 && (
+              <div className="panel p-8 text-center" style={{ borderRadius: 0 }}>
+                <p className="muted">No creators at level 4+ yet. Be the first!</p>
+              </div>
+            )}
+          </div>
+        </section>
+
+        <div className="row gap-3">
+          <Link href="/profile" className="btn btn-ghost btn-sm">My Profile</Link>
+          <Link href="/spotlight" className="btn btn-ghost btn-sm">Spotlight</Link>
         </div>
-        {challenges.map((c: any, i: number) => (
-          <div key={c.id} style={{
-            display: "flex", alignItems: "center", gap: 16,
-            padding: "12px 20px", borderBottom: "1px solid var(--line)",
-          }}>
-            <span style={{ fontFamily: "var(--font-mono)", color: "var(--ink-3)", width: 24 }}>
-              {String(i + 1).padStart(2, "0")}
-            </span>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontWeight: 600, color: "var(--ink)", fontSize: "0.92rem" }}>{c.title}</p>
-              <p className="tiny" style={{ color: "var(--ink-3)" }}>{c.description?.slice(0, 80)}</p>
-            </div>
-            <span className="chip">{c._count?.submissions || 0} entries</span>
-            <span className="chip" style={{ color: c.status === "open" ? "var(--approved)" : "var(--ink-3)", background: c.status === "open" ? "var(--approved-soft)" : "var(--surface-2)" }}>
-              {c.status}
-            </span>
-          </div>
-        ))}
       </div>
     </PageWrap>
   )
