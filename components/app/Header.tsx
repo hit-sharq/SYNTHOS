@@ -144,13 +144,22 @@ export default function Header() {
             </>
           )}
           {isSignedIn && userRole === "talent" && (
-            <Link
-              href="/dashboard"
-              className={`topnav-link ${pathname === "/dashboard/talent" || pathname.startsWith("/dashboard/talent") ? "active" : ""}`}
-              onClick={() => setOpen(false)}
-            >
-              Dashboard
-            </Link>
+            <>
+              <Link
+                href="/dashboard"
+                className={`topnav-link ${pathname === "/dashboard/talent" || pathname.startsWith("/dashboard/talent") ? "active" : ""}`}
+                onClick={() => setOpen(false)}
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/profile"
+                className={`topnav-link ${pathname === "/profile" ? "active" : ""}`}
+                onClick={() => setOpen(false)}
+              >
+                Profile
+              </Link>
+            </>
           )}
           {isSignedIn && userRole === "client" && (
             <Link

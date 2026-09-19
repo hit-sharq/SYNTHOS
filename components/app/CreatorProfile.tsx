@@ -107,16 +107,16 @@ export function CreatorProfile() {
           </div>
         </div>
 
-        {!maxLevel && (
+        {!maxLevel && me.xpProgress && (
           <div className="mt-5" style={{ position: "relative", zIndex: 1 }}>
             <div className="row justify-between text-[11px] mono mb-1" style={{ color: "var(--muted-foreground)" }}>
               <span>Level {me.level} → {me.tier.title}</span>
-              <span>{me.levelXP} XP</span>
+              <span>{me.levelXP} XP · {me.xpProgress.percent}%</span>
             </div>
             <div className="w-full h-1.5 rounded-full" style={{ background: "var(--surface-2)" }}>
               <div
                 className="h-full rounded-full transition-all"
-                style={{ width: `${me.tier.level >= 5 ? 100 : (me.levelXP % 1000)}%`, background: me.tier.badgeColor }}
+                style={{ width: `${me.xpProgress.percent}%`, background: me.tier.badgeColor }}
               />
             </div>
           </div>

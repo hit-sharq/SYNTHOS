@@ -65,6 +65,7 @@ export async function GET() {
     level: user.level,
     levelXP: user.levelXP,
     tier,
+    xpProgress,
     presence: user.presence,
     stats: {
       portfolios: user.portfolios.length,
