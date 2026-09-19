@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { PageHead, PageWrap } from "@/components/app/Page"
-import LevelBadge from "@/components/app/LevelBadge"
 import { cn } from "@/lib/utils"
 
 async function fetchPortfolios() {
@@ -117,7 +116,6 @@ export default function PortfolioPage() {
           <div key={p.id} className="panel p-5" style={{ borderRadius: 0 }}>
             <div className="row between" style={{ marginBottom: 8 }}>
               <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "1.1rem", color: "var(--ink)" }}>{p.title}</h3>
-              <LevelBadge level={3} levelXP={500} size="sm" />
             </div>
             <p style={{ fontSize: "0.88rem", color: "var(--ink-3)", marginBottom: 12 }}>{p.description || "No description"}</p>
             <div className="row gap-2" style={{ marginBottom: 12 }}>

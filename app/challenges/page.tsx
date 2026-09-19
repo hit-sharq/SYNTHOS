@@ -4,7 +4,6 @@ import { useEffect, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import LevelBadge from "@/components/app/LevelBadge"
-import { cn } from "@/lib/utils"
 
 async function fetchChallenges() {
   const res = await fetch("/api/challenges")
@@ -68,6 +67,15 @@ export default function ChallengesPage() {
             <p style={{ fontSize: "0.88rem", color: "var(--ink-3)", marginBottom: 12, lineHeight: 1.6 }}>
               {c.description}
             </p>
+            {c.createdByUser && (
+              <div className="row gap-2 items-center mb-3" style={{ fontSize: "0.78rem" }}>
+                <div className="w-5 h-5 rounded-full flex items-center justify-center text-[8px] font-bold" style={{ background: "var(--surface-2)", color: "var(--ink)" }}>
+                  {c.createdByUser.initials}
+                </div>
+                <span style={{ color: "var(--ink-2)" }}>{c.createdByUser.name}</span>
+                <LevelBadge level={c.createdByUser.level || 1} levelXP={c.createdByUser.levelXP || 0} size="sm" />
+              </div>
+            )}
             <div className="meta-row" style={{ marginBottom: 16 }}>
               <div className="meta-item">
                 <strong>{c._count?.submissions || 0}</strong>

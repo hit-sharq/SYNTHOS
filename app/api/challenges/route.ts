@@ -28,6 +28,7 @@ export async function GET(req: Request) {
     where,
     orderBy: { createdAt: "desc" },
     include: {
+      createdByUser: { select: { id: true, name: true, initials: true, level: true, levelXP: true } },
       submissions: {
         where: { status: "winning" },
         include: { user: { select: { id: true, name: true, initials: true } } },
