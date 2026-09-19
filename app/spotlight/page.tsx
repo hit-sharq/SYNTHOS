@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
+import Link from "next/link"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import LevelBadge from "@/components/app/LevelBadge"
 
@@ -114,7 +115,11 @@ export default function SpotlightPage() {
                     {u.initials}
                   </div>
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: 600, color: "var(--ink)", fontSize: "0.88rem" }}>{u.name}</p>
+                    <p style={{ fontWeight: 600, color: "var(--ink)", fontSize: "0.88rem" }}>
+                      {u.talentId
+                        ? <Link href={`/talents/${u.talentId}`} className="hover:underline" style={{ color: "var(--ink)", textDecoration: "none" }}>{u.name}</Link>
+                        : u.name}
+                    </p>
                     <LevelBadge level={u.level} levelXP={u.levelXP} size="sm" />
                   </div>
                   <span style={{ fontFamily: "var(--font-mono)", color: "var(--ink-3)", fontSize: "0.78rem" }}>

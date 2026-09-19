@@ -100,7 +100,11 @@ export default function LeaderboardPage() {
                   {u.initials}
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontWeight: 600, color: "var(--ink)", margin: 0, fontSize: "0.92rem" }}>{u.name}</p>
+                  <p style={{ fontWeight: 600, color: "var(--ink)", margin: 0, fontSize: "0.92rem" }}>
+                    {u.talentId
+                      ? <Link href={`/talents/${u.talentId}`} className="hover:underline" style={{ color: "var(--ink)", textDecoration: "none" }}>{u.name}</Link>
+                      : u.name}
+                  </p>
                   <LevelBadge level={u.level} levelXP={u.levelXP} size="sm" />
                 </div>
                 <span className="mono tiny" style={{ color: "var(--ink-2)" }}>

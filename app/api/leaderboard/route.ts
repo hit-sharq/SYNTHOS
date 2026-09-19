@@ -31,7 +31,18 @@ export async function GET(req: Request) {
     orderBy: { levelXP: "desc" },
     take: 10,
     select: { id: true, name: true, initials: true, level: true, levelXP: true },
+    include: { talentProfile: { select: { id: true } } },
   })
 
-  return NextResponse.json({ tiers, top })
+  return NextResponse.json({
+    tiers,
+    top: top.map(u => ({
+      id: u.id,
+      name: u.name,
+      initials: u.initials,
+      level: u.level,
+      levelXP: u.levelXP,
+      talentId: u.talentProfile?.id || null,
+    })),
+  })
 }
