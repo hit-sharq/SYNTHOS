@@ -267,7 +267,7 @@ export function CreatorProfile() {
               {me.skillSwaps.slice(0, 4).map((s: any) => (
                 <Link key={s.id} href="/skill-swap" className="text-xs row gap-2 items-center" style={{ color: "var(--ink-2)", textDecoration: "none", padding: "4px 0" }}>
                   <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--accent)" }} />
-                  {s.title}
+                  {s.offerSkill} ↔ {s.wantSkill}
                   {s.status && (
                     <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "var(--surface-2)", color: "var(--muted-foreground)" }}>
                       {s.status}

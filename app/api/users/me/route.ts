@@ -24,7 +24,7 @@ export async function GET() {
       spotlights: { select: { id: true, title: true, createdAt: true } },
       challenges: { select: { id: true, title: true, status: true, createdAt: true } },
       submissions: { select: { id: true, challengeId: true, status: true, createdAt: true } },
-      skillSwaps: { select: { id: true, title: true, status: true, createdAt: true } },
+      skillSwaps: { select: { id: true, offerSkill: true, wantSkill: true, status: true, createdAt: true } },
       feedPosts: { orderBy: { createdAt: "desc" }, take: 5, select: { id: true, content: true, createdAt: true } },
       presence: true,
       connectionsSent: true,
@@ -37,16 +37,15 @@ export async function GET() {
   const followerCount = user.connectionsReceived.filter(c => c.status === "accepted").length
   const followingCount = user.connectionsSent.filter(c => c.status === "accepted").length
 
+  const tierInfo = LEVEL_TIERS.find(t => t.level === user.level) || LEVEL_TIERS[0]
+
   const tier = {
     level: user.level,
     levelXP: user.levelXP,
-    title: user.level >= 5 ? "Elite" : user.level >= 4 ? "Featured" : user.level >= 3 ? "Established" : user.level >= 2 ? "Rising" : "New",
-    badgeColor: user.level >= 5 ? "#0066ff" : user.level >= 4 ? "#e67e22" : user.level >= 3 ? "#27ae60" : user.level >= 2 ? "#4a90d9" : "#888888",
-    perks: user.level >= 5 ? ["Elite badge", "Spotlight eligible", "API access", "Mentor program"] :
-           user.level >= 4 ? ["Featured creator", "Challenge host", "Custom domain"] :
-           user.level >= 3 ? ["Verified badge", "Showcase on feed", "Portfolio feature"] :
-           user.level >= 2 ? ["Profile badge", "Priority search"] :
-           ["Basic profile"],
+    xpRequired: tierInfo.xpRequired,
+    title: tierInfo.title,
+    badgeColor: tierInfo.badgeColor,
+    perks: tierInfo.perks,
   }
 
   const currentTierIdx = LEVEL_TIERS.findIndex(t => t.level === tier.level)
