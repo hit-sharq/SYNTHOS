@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { LEVEL_TIERS } from "@/lib/levels"
 
 export const dynamic = "force-dynamic"
 
@@ -48,13 +49,15 @@ export async function GET() {
            ["Basic profile"],
   }
 
-  const xpProgress = {
-    current: user.levelXP,
-    needed: tier.level >= 5 ? tier.levelXP : (
-      [100, 500, 2000, 10000][tier.level - 1] || 10000
-    ),
-  }
-  xpProgress.percent = tier.level >= 5 ? 100 : Math.min(100, Math.round((user.levelXP / xpProgress.needed) * 100))
+  const currentTierIdx = LEVEL_TIERS.findIndex(t => t.level === tier.level)
+  const nextTier = currentTierIdx < LEVEL_TIERS.length - 1 ? LEVEL_TIERS[currentTierIdx + 1] : null
+  const xpProgress = nextTier
+    ? {
+        current: user.levelXP - tier.xpRequired,
+        needed: nextTier.xpRequired - tier.xpRequired,
+        percent: Math.min(100, Math.round(((user.levelXP - tier.xpRequired) / (nextTier.xpRequired - tier.xpRequired)) * 100)),
+      }
+    : { current: user.levelXP, needed: tier.levelXP, percent: 100 }
 
   return NextResponse.json({
     id: user.id,
