@@ -1,12 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams } from "next/navigation"
 import Link from "next/link"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import LevelBadge from "@/components/app/LevelBadge"
 import { Empty, ErrorState } from "@/components/app/ui"
-import { RevealOnScroll } from "@/components/app/useReveal"
 
 export const dynamic = "force-dynamic"
 
@@ -34,15 +33,22 @@ function getTierForLevel(level: number) {
 
 export default function TalentProfilePage() {
   const { id } = useParams()
-  const router = useRouter()
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+    if (!id) {
+      setError("No talent ID provided")
+      setLoading(false)
+      return
+    }
+    setLoading(true)
+    setError(null)
+    setData(null)
     fetchTalentProfile(id as string)
       .then(setData)
-      .catch(setError)
+      .catch((err: any) => setError(err instanceof Error ? err.message : String(err)))
       .finally(() => setLoading(false))
   }, [id])
 
@@ -50,18 +56,19 @@ export default function TalentProfilePage() {
     return <PageWrap><div style={{ padding: 40, textAlign: "center" }}><p className="muted tiny">Loading…</p></div></PageWrap>
   }
 
-  if (error || !data) {
-    return <PageWrap><ErrorState title="Could not load profile" message={error || "Talent not found"} onRetry={() => window.location.reload()} /></PageWrap>
+  if (error) {
+    return <PageWrap><ErrorState title="Could not load profile" message={error} onRetry={() => window.location.reload()} /></PageWrap>
   }
 
-  const talent = data.talent
-  const user = data.user
-  const tier = user ? getTierForLevel(user.level) : "New"
-  const tierColor = TIER_COLORS[tier]
+  const talent = data?.talent
+  const user = data?.user
 
   if (!talent) {
     return <PageWrap><Empty title="Talent not found" hint="This creator may have been removed." /></PageWrap>
   }
+
+  const tier = user ? getTierForLevel(user.level) : "New"
+  const tierColor = TIER_COLORS[tier]
 
   return (
     <PageWrap>
