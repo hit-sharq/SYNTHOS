@@ -69,7 +69,7 @@ export async function GET(req: Request) {
     skip: offset,
     take: limit,
     include: {
-      author: { select: { id: true, name: true, initials: true, role: true } },
+      author: { select: { id: true, name: true, initials: true, role: true, level: true, levelXP: true } },
       project: { select: { id: true, name: true } },
       reactions: { select: { id: true, type: true, userId: true } },
       comments: {
