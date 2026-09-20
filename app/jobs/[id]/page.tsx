@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { prisma } from "@/lib/prisma"
-import { auth } from "@clerk/nextjs/server"
+import { getSessionEmail } from "@/lib/auth"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
 import "@/components/app/blog.css"
@@ -20,7 +20,12 @@ export default async function JobPage({ params }: { params: { id: string } }) {
     )
   }
 
-  const { userId } = await auth()
+  const email = await getSessionEmail()
+  let userId: string | null = null
+  if (email) {
+    const user = await prisma.user.findUnique({ where: { email }, select: { id: true } })
+    userId = user?.id || null
+  }
   let applied = false
   if (userId) {
     const user = await prisma.user.findUnique({ where: { id: userId } })

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { prisma } from "@/lib/prisma"
-import { auth } from "@clerk/nextjs/server"
+import { getSessionEmail } from "@/lib/auth"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
 import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
@@ -31,7 +31,12 @@ type Job = {
 }
 
 export default async function JobsPage() {
-  const { userId } = await auth()
+  const email = await getSessionEmail()
+  let userId: string | null = null
+  if (email) {
+    const user = await prisma.user.findUnique({ where: { email }, select: { id: true } })
+    userId = user?.id || null
+  }
   const rawJobs = await prisma.jobPosting.findMany({
     where: { status: "approved" },
     orderBy: { postedAt: "desc" },
