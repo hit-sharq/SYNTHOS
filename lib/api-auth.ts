@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { Errors } from "@/lib/errors"
+import { getSessionEmail } from "@/lib/auth"
 
 export async function requireAuth() {
   const { userId } = await auth()
@@ -24,11 +25,8 @@ export async function requireAdmin() {
   return { userId, error: null as null | NextResponse }
 }
 
-export async function getUserEmail(userId: string): Promise<string | null> {
-  const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
-    headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
-  }).then(r => r.json()).catch(() => null)
-  return clerkUser?.email_addresses?.[0]?.email_address || null
+export async function getUserEmail(): Promise<string | null> {
+  return getSessionEmail()
 }
 
 export async function getUserByEmail(email: string) {
@@ -38,7 +36,7 @@ export async function getUserByEmail(email: string) {
 export async function getCurrentUser() {
   const { userId } = await auth()
   if (!userId) return null
-  const email = await getUserEmail(userId)
+  const email = await getUserEmail()
   if (!email) return null
   return getUserByEmail(email)
 }
@@ -56,7 +54,7 @@ export async function isProjectAccessible(projectId: string, userId?: string) {
     return { accessible: true, project, error: null }
   }
 
-  const email = await getUserEmail(userId)
+  const email = await getUserEmail()
   if (!email) {
     return { accessible: false, project: null, error: NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 }) }
   }

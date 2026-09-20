@@ -18,11 +18,8 @@ export async function GET(_req: Request, { params }: { params: { email: string }
   const isAdmin = adminIds.includes(userId)
 
   if (!isAdmin) {
-    const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
-      headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
-    }).then(r => r.json()).catch(() => null)
-
-    const userEmail = clerkUser?.email_addresses?.[0]?.email_address || null
+    const { getSessionEmail } = await import("@/lib/auth")
+    const userEmail = await getSessionEmail()
     if (userEmail !== decodedEmail) {
       return NextResponse.json({ projects: [] })
     }

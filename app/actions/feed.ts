@@ -9,10 +9,8 @@ export async function createPost(input: { content: string }) {
   const { userId } = await auth()
   if (!userId) throw new Error(Errors.auth.unauthorized)
 
-  const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
-    headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
-  }).then(r => r.json()).catch(() => null)
-  const email = clerkUser?.email_addresses?.[0]?.email_address || null
+  const { getSessionEmail } = await import("@/lib/auth")
+  const email = await getSessionEmail()
   if (!email) throw new Error(Errors.auth.unauthorized)
 
   const user = await prisma.user.findUnique({ where: { email }, select: { id: true } })

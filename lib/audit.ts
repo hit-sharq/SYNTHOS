@@ -14,10 +14,8 @@ export async function logAudit(params: {
     const { userId } = await auth()
     let actorEmail: string | undefined
     if (userId) {
-      const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
-        headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
-      }).then(r => r.json()).catch(() => null)
-      actorEmail = clerkUser?.email_addresses?.[0]?.email_address
+      const { getSessionEmail } = await import("@/lib/auth")
+      actorEmail = await getSessionEmail()
     }
     await prisma.auditLog.create({
       data: {

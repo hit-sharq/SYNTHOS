@@ -6,11 +6,8 @@ export async function GET() {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ role: null })
 
-  const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
-    headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
-  }).then(r => r.json()).catch(() => null)
-
-  const email = clerkUser?.email_addresses?.[0]?.email_address || null
+  const { getSessionEmail } = await import("@/lib/auth")
+  const email = await getSessionEmail()
 
   if (!email) return NextResponse.json({ role: "talent" })
 

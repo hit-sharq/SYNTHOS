@@ -14,7 +14,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url)
   const owner = url.searchParams.get("owner")
   
-  const email = await getUserEmail(userId)
+  const email = await getUserEmail()
   if (!email) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
   const user = await getUserByEmail(email)
   if (!user) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
@@ -50,7 +50,7 @@ export async function POST(req: Request) {
   if (authResult.error) return authResult.error
   const userId = authResult.userId!
 
-  const email = await getUserEmail(userId)
+  const email = await getUserEmail()
   if (!email) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
   const user = await getUserByEmail(email)
   if (!user) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
