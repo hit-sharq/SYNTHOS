@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { redirect } from "next/navigation"
+import { getSessionEmail } from "@/lib/auth"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth()
@@ -13,36 +14,33 @@ export default async function DashboardLayout({ children }: { children: React.Re
     return <DashboardShell role="admin">{children}</DashboardShell>
   }
 
-  const clerkUser = await fetch(`https://api.clerk.com/v1/users/${userId}`, {
-    headers: { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` },
-  }).then(r => r.json()).catch(() => null)
-
-  const email = clerkUser?.email_addresses?.[0]?.email_address || null
+  const email = await getSessionEmail()
   if (!email) redirect("/")
 
-  const user = await prisma.user.findUnique({ where: { email } })
+  let user = await prisma.user.findUnique({ where: { email } })
   if (!user) {
-    const initials = (clerkUser?.first_name || email.split("@")[0] || "TL")
+    const name = email.split("@")[0]
+    const initials = name
       .split(" ")
-      .map((n: string) => n[0])
+      .map((n) => n[0])
       .join("")
       .slice(0, 2)
-      .toUpperCase()
+      .toUpperCase() || "TL"
 
-    const newUser = await prisma.user.create({
+    user = await prisma.user.create({
       data: {
         email,
-        name: clerkUser?.first_name || email.split("@")[0],
-        initials: initials || "TL",
+        name,
+        initials,
         role: Role.talent,
       },
     })
 
     await prisma.talent.create({
       data: {
-        userId: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
+        userId: user.id,
+        name: user.name,
+        email: user.email,
         skills: [],
         experience: 0,
         rating: 0,
