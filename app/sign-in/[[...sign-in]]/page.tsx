@@ -19,6 +19,7 @@ export default function SignInPage() {
             }
           }}
           redirectUrl="/dashboard/overview"
+          signUpUrl="/sign-up"
         />
       </div>
     </AuthLayout>

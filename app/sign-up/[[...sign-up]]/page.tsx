@@ -12,6 +12,7 @@ export default function SignUpPage({ searchParams }: { searchParams: { redirect?
       <div style={{ width: "100%", maxWidth: 420 }}>
         <SignUp 
           redirectUrl={redirectUrl}
+          signInUrl="/sign-in"
           appearance={{
             elements: {
               rootBox: "mx-auto",
