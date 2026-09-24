@@ -21,7 +21,7 @@ export async function GET(req: Request) {
 
   const submissions = await prisma.submission.findMany({
     where: challengeId ? { challengeId } : { userId: user.id },
-    orderBy: { votes: "desc" },
+    orderBy: { voteCount: "desc" },
     include: {
       user: { select: { id: true, name: true, initials: true } },
       challenge: { select: { id: true, title: true } },

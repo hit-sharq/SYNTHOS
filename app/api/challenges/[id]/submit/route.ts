@@ -27,7 +27,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const existing = await prisma.submission.findUnique({
     where: { challengeId_userId: { challengeId: params.id, userId: user.id } },
   })
-  if (existing) return NextResponse.json({ error: Errors.actions.duplicateEntry }, { status: 409 })
+  if (existing) return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
 
   const submission = await prisma.submission.create({
     data: {

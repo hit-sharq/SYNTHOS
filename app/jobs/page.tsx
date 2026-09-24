@@ -13,14 +13,14 @@ type Job = {
   description: string
   requirements: string[]
   skills: string[]
-  budget: string
-  budgetMin: string
-  budgetMax: string
-  timeline: string
-  location: string
+  budget: string | null
+  budgetMin: string | null
+  budgetMax: string | null
+  timeline: string | null
+  location: string | null
   type: string
-  category: string
-  experience: string
+  category: string | null
+  experience: string | null
   postedAt: string
   company: {
     id: string

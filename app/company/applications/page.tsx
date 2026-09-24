@@ -26,7 +26,12 @@ export default async function CompanyApplicationsPage() {
     where: { job: { companyId: user.companyId } },
     include: {
       job: { select: { id: true, title: true, type: true, status: true } },
-      talent: { select: { id: true, name: true, email: true, skills: true, experience: true, rating: true, availability: true } },
+      talent: {
+        select: {
+          id: true, name: true, email: true,
+          talentProfile: { select: { skills: true, experience: true, rating: true, availability: true } }
+        }
+      },
     },
     orderBy: { createdAt: "desc" },
   })
@@ -92,7 +97,7 @@ export default async function CompanyApplicationsPage() {
                       <td data-label="Applicant">
                         <div style={{ fontWeight: 600 }}>{app.talent.name}</div>
                         <div className="tiny muted">{app.talent.email}</div>
-                        <div className="tiny muted">{app.talent.experience}y experience · {app.talent.rating.toFixed(1)} rating</div>
+                         <div className="tiny muted">{app.talent.talentProfile?.experience ?? 0}y experience · {(app.talent.talentProfile?.rating ?? 0).toFixed(1)} rating</div>
                       </td>
                       <td data-label="Job">
                         <div style={{ fontWeight: 600 }}>{app.job.title}</div>
@@ -105,7 +110,7 @@ export default async function CompanyApplicationsPage() {
                       </td>
                       <td data-label="Skills">
                         <div className="row gap-1 wrap">
-                          {app.talent.skills?.slice(0, 3).map(s => <span key={s} className="chip" style={{ fontSize: "0.7rem" }}>{s}</span>)}
+                           {(app.talent.talentProfile?.skills || []).slice(0, 3).map(s => <span key={s} className="chip" style={{ fontSize: "0.7rem" }}>{s}</span>)}
                         </div>
                       </td>
                       <td data-label="Applied" className="tiny muted">{app.createdAt.toLocaleDateString()}</td>

@@ -5,12 +5,12 @@ import "@/components/app/legal.css"
 export default function AboutPage() {
   return (
     <PageWrap>
-      <PageHead eyebrow="Company" title="About Synthos" desc="Kenya's creative job board and talent marketplace. Verified employers, curated roles, and AI-assisted project delivery." />
+      <PageHead eyebrow="Company" title="About Synthos" desc="Kenya&apos;s creative job board and talent marketplace. Verified employers, curated roles, and AI-assisted project delivery." />
 
       <div className="legal-wrap">
         <div className="legal-hero">
           <div className="legal-hero-eyebrow">About Synthos</div>
-          <h1>Kenya's creative job board<br/>and talent marketplace.</h1>
+          <h1>Kenya&apos;s creative job board<br/>and talent marketplace.</h1>
           <p>Connecting verified employers with the best creative professionals. Post jobs, find work, and deliver projects with AI-assisted precision.</p>
         </div>
 
@@ -18,7 +18,7 @@ export default function AboutPage() {
           <div className="legal-card">
             <div className="legal-card-num">01</div>
             <h2>Our Mission</h2>
-            <p>Synthos was built to solve a fundamental problem in Kenya's creative industry: the gap between talented professionals and verified employers. We built a transparent marketplace where companies post curated roles and creative professionals showcase their skills, set their rates, and get hired.</p>
+            <p>Synthos was built to solve a fundamental problem in Kenya&apos;s creative industry: the gap between talented professionals and verified employers. We built a transparent marketplace where companies post curated roles and creative professionals showcase their skills, set their rates, and get hired.</p>
           </div>
 
           <div className="legal-card">

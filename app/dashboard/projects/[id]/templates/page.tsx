@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
+import { FileText } from "lucide-react"
 import "@/components/app/admin.css"
 
 type Project = {

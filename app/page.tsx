@@ -16,13 +16,13 @@ export default function Home() {
       <section className="hero">
         <div className="hero-grid" aria-hidden="true" />
         <div className="container">
-          <span className="eyebrow anim-fade-up">Kenya's Creative Job Board</span>
+          <span className="eyebrow anim-fade-up">Kenya&apos;s Creative Job Board</span>
           <h1 className="hero-title anim-fade-up anim-delay-1">
             Find creative work.<br />
             Hire <span className="hero-human">verified talent.</span>
           </h1>
           <p className="hero-lede anim-fade-up anim-delay-2">
-            The marketplace for Kenya's best creative professionals. Verified companies post curated roles. Talents showcase skills, set rates, and get hired.
+            The marketplace for Kenya&apos;s best creative professionals. Verified companies post curated roles. Talents showcase skills, set rates, and get hired.
           </p>
           <div className="hero-actions anim-fade-up anim-delay-3">
             <Link href="/jobs" className="btn btn-signal btn-lg">Browse Open Gigs →</Link>
@@ -117,7 +117,7 @@ export default function Home() {
             <span className="eyebrow section-label">How It Works</span>
             <h2 className="section-title">Three ways to use<br/>Synthos.</h2>
             <p className="lede" style={{ maxWidth: 720, margin: "0 auto 48px" }}>
-              Whether you're hiring, looking for work, or running a project — there's a path for you.
+              Whether you&apos;re hiring, looking for work, or running a project — there&apos;s a path for you.
             </p>
 
             <StaggerContainer>

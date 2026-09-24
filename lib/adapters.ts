@@ -112,6 +112,8 @@ export function toUIProject(p: any): Project {
       terms: p.proposal?.terms || "",
       status: (p.proposal?.status || "draft") as any,
       sections: Array.isArray(p.proposal?.sections) ? p.proposal.sections : [],
+      sentToClient: p.proposal?.sentToClient || false,
+      sentAt: p.proposal?.sentAt ? new Date(p.proposal.sentAt).toISOString() : undefined,
     },
     quote: {
       services: quoteServices,
@@ -119,6 +121,8 @@ export function toUIProject(p: any): Project {
       tax: p.quote?.tax || 0,
       paymentTerms: p.quote?.paymentTerms || "",
       status: (p.quote?.status || "draft") as any,
+      sentToClient: p.quote?.sentToClient || false,
+      sentAt: p.quote?.sentAt ? new Date(p.quote.sentAt).toISOString() : undefined,
     },
     contactReport: {
       summary: p.contactReport?.summary || "",

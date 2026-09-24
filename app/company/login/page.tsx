@@ -25,7 +25,7 @@ export default function CompanyLoginPage() {
       if (!signInLoaded) throw new Error("Sign in not loaded")
 
       const result = await signIn.create({
-        emailAddress: email,
+        identifier: email,
         password,
       })
 

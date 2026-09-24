@@ -20,7 +20,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     where: { id: params.id },
     include: {
       submissions: {
-        orderBy: { votes: "desc" },
+        orderBy: { voteCount: "desc" },
         include: { user: { select: { id: true, name: true, initials: true } } },
       },
       _count: { select: { submissions: true } },

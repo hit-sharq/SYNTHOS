@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="foot-brand">
           <BrandMark />
           <p className="foot-tag">
-            Kenya's creative job board and talent marketplace. Verified employers, curated roles, and AI-assisted project delivery.
+            Kenya&apos;s creative job board and talent marketplace. Verified employers, curated roles, and AI-assisted project delivery.
           </p>
           <p className="foot-hai">
             <span className="chip" style={{ color: "var(--ai-ink)", background: "var(--ai-soft)" }}><span className="dot dot-ai" /> AI assists</span>

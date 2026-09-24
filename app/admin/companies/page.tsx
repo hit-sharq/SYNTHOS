@@ -7,6 +7,7 @@ import { Empty, ErrorState } from "@/components/app/ui"
 import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { logAuditAction } from "@/app/actions/audit"
 import { AdminShell } from "@/components/app/AdminShell"
+import Link from "next/link"
 
 type Company = {
   id: string

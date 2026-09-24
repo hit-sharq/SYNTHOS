@@ -148,6 +148,8 @@ export interface Project {
     terms: string
     status: Status
     sections: { title: string; body: string; attr: Attr }[]
+    sentToClient: boolean
+    sentAt?: string
   }
 
   quote: {
@@ -156,6 +158,8 @@ export interface Project {
     tax: number
     paymentTerms: string
     status: Status
+    sentToClient: boolean
+    sentAt?: string
   }
 
   contactReport: {

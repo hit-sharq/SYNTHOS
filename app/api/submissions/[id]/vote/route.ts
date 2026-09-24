@@ -34,7 +34,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       await prisma.vote.delete({ where: { id: existing.id } })
       await prisma.submission.update({
         where: { id: params.id },
-        data: { votes: { decrement: 1 } },
+        data: { voteCount: { decrement: 1 } },
       })
     } else {
       await prisma.vote.update({
@@ -43,7 +43,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       })
       await prisma.submission.update({
         where: { id: params.id },
-        data: { votes: { increment: vote === "up" ? 2 : -2 } },
+        data: { voteCount: { increment: vote === "up" ? 2 : -2 } },
       })
     }
   } else {
@@ -52,7 +52,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     })
     await prisma.submission.update({
       where: { id: params.id },
-      data: { votes: { increment: vote === "up" ? 1 : -1 } },
+      data: { voteCount: { increment: vote === "up" ? 1 : -1 } },
     })
   }
 

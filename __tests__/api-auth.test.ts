@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, vi } from "vitest"
 import { requireAuth, requireAdmin, isProjectAccessible } from "@/lib/api-auth"
 
 vi.mock("@clerk/nextjs/server", () => ({
@@ -22,7 +22,7 @@ vi.mock("@/lib/prisma", () => ({
 describe("API Auth Helpers", () => {
   it("requireAuth should reject when no user", async () => {
     const { auth } = await import("@clerk/nextjs/server")
-    vi.mocked(auth).mockResolvedValue({ userId: null })
+    vi.mocked(auth).mockResolvedValue({ userId: null } as any)
     const result = await requireAuth()
     expect(result.error).toBeDefined()
     expect(result.userId).toBeNull()
@@ -30,7 +30,7 @@ describe("API Auth Helpers", () => {
 
   it("requireAdmin should reject when user is not admin", async () => {
     const { auth } = await import("@clerk/nextjs/server")
-    vi.mocked(auth).mockResolvedValue({ userId: "user_123" })
+    vi.mocked(auth).mockResolvedValue({ userId: "user_123" } as any)
     const result = await requireAdmin()
     expect(result.error).toBeDefined()
     expect(result.userId).toBeNull()

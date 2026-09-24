@@ -12,7 +12,7 @@ export async function logAudit(params: {
 }) {
   try {
     const { userId } = await auth()
-    let actorEmail: string | undefined
+    let actorEmail: string | null = null
     if (userId) {
       const { getSessionEmail } = await import("@/lib/auth")
       actorEmail = await getSessionEmail()

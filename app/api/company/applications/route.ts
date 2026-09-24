@@ -15,7 +15,12 @@ export async function GET() {
       where: { job: { companyId: user.companyId } },
       include: {
         job: { select: { id: true, title: true, type: true, status: true } },
-        talent: { select: { id: true, name: true, email: true, skills: true, experience: true, rating: true } },
+        talent: {
+          select: {
+            id: true, name: true, email: true,
+            talentProfile: { select: { skills: true, experience: true, rating: true } }
+          }
+        },
       },
       orderBy: { createdAt: "desc" },
     })
@@ -28,7 +33,7 @@ export async function GET() {
         createdAt: a.createdAt,
         updatedAt: a.updatedAt,
         job: { id: a.job.id, title: a.job.title, type: a.job.type, status: a.job.status },
-        talent: { id: a.talent.id, name: a.talent.name, email: a.talent.email, skills: a.talent.skills, experience: a.talent.experience, rating: a.talent.rating },
+        talent: { id: a.talent.id, name: a.talent.name, email: a.talent.email, skills: a.talent.talentProfile?.skills ?? [], experience: a.talent.talentProfile?.experience ?? 0, rating: a.talent.talentProfile?.rating ?? 0 },
       })),
     })
   } catch (error) {

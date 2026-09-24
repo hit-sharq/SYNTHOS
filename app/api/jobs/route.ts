@@ -6,24 +6,24 @@ export async function GET() {
   try {
     const jobs = await prisma.jobPosting.findMany({
       where: { status: "open" },
-      orderBy: { postedAt: "desc" },
-      include: { project: { select: { id: true, name: true, slug: true, client: true } } },
-    })
+    orderBy: { postedAt: "desc" },
+    include: { company: { select: { id: true, name: true, slug: true, verified: true } } },
+  })
 
-    return NextResponse.json({ jobs: jobs.map(j => ({
-      id: j.id,
-      title: j.title,
-      description: j.description,
-      requirements: j.requirements,
-      skills: j.skills,
-      budget: j.budget,
-      timeline: j.timeline,
-      type: j.type,
-      status: j.status,
-      postedAt: j.postedAt.toISOString(),
-      expiresAt: j.expiresAt?.toISOString(),
-      project: j.project,
-    })) })
+  return NextResponse.json({ jobs: jobs.map(j => ({
+    id: j.id,
+    title: j.title,
+    description: j.description,
+    requirements: j.requirements,
+    skills: j.skills,
+    budget: j.budget,
+    timeline: j.timeline,
+    type: j.type,
+    status: j.status,
+    postedAt: j.postedAt.toISOString(),
+    expiresAt: j.expiresAt?.toISOString(),
+    company: j.company,
+  })) })
   } catch (error) {
     console.error("Failed to fetch jobs:", error)
     return NextResponse.json({ error: Errors.actions.operationFailed }, { status: 500 })

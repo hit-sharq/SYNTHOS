@@ -28,8 +28,7 @@ export async function GET(req: Request) {
     where: { level: { gte: 4 } },
     orderBy: { levelXP: "desc" },
     take: 10,
-    select: { id: true, name: true, initials: true, level: true, levelXP: true },
-    include: { talentProfile: { select: { id: true } } },
+    select: { id: true, name: true, initials: true, level: true, levelXP: true, talentProfile: { select: { id: true } } },
   })
 
   return NextResponse.json({

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
-import { getTierForXP } from "@/lib/levels"
+import { getTierForXP, getXPProgress } from "@/lib/levels"
 
 async function getCurrentUser() {
   const { userId } = await auth()
@@ -21,11 +21,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   if (!targetUser) return NextResponse.json({ error: Errors.resources.userNotFound }, { status: 404 })
 
   const tier = getTierForXP(targetUser.levelXP)
-  const progress = {
-    current: targetUser.levelXP - tier.xpRequired,
-    needed: tier.level < 5 ? (Math.min(...LEVEL_TIERS.filter(t => t.level > tier.level).map(t => t.xpRequired)) - tier.xpRequired) : 0,
-  }
-  progress.percent = progress.needed > 0 ? Math.round((progress.current / progress.needed) * 100) : 100
+  const progress = getXPProgress(targetUser.levelXP)
 
   return NextResponse.json({
     level: targetUser.level,

@@ -31,7 +31,7 @@ export default async function CompanyDashboardPage() {
     prisma.jobPosting.findMany({ where: { companyId: user.companyId }, orderBy: { createdAt: "desc" } }),
     prisma.jobApplication.findMany({
       where: { job: { companyId: user.companyId } },
-      include: { job: { select: { id: true, title: true, status: true } }, talent: { select: { id: true, name: true } } },
+      include: { job: { select: { id: true, title: true, status: true } }, talent: { select: { id: true, name: true, email: true } } },
       orderBy: { createdAt: "desc" },
     }),
     prisma.companyVerification.findMany({ where: { companyId: user.companyId }, orderBy: { createdAt: "desc" } }),

@@ -191,7 +191,7 @@ export default function CompanySignupPage() {
           <form onSubmit={handleVerify} style={{ marginTop: 24, paddingTop: 24, borderTop: "1px solid var(--line)" }}>
             <div className="auth-form-header">
               <h1>Verify Your Email</h1>
-              <p>We've sent a verification code to {email}. Enter it below to complete your registration.</p>
+              <p>We&apos;ve sent a verification code to {email}. Enter it below to complete your registration.</p>
             </div>
 
             <div className="auth-field">

@@ -184,8 +184,8 @@ export async function runAutoWorkflow(projectId: string) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 
   async function persistStatus(stage: string, step: string, status: string) {
-    const workflowStatus = {
-      ...((project.aiWorkflowStatus as any) || {}),
+      const workflowStatus = {
+        ...((project!.aiWorkflowStatus as any) || {}),
       [stage]: { step, status, updatedAt: new Date().toISOString() },
       currentStage: stage,
     }
