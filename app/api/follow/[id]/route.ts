@@ -23,8 +23,17 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const talent = await prisma.talent.findUnique({ where: { id: params.id } })
   if (!talent) return NextResponse.json({ error: Errors.resources.userNotFound }, { status: 404 })
 
+  // Connections reference a User, not a Talent. A talent without a linked
+  // user account cannot be followed.
+  if (!talent.userId) {
+    return NextResponse.json({ error: Errors.resources.userNotFound }, { status: 404 })
+  }
+
+  const followedId = talent.userId
+  if (followedId === user.id) return NextResponse.json({ error: Errors.actions.cannotFollowSelf }, { status: 400 })
+
   const existing = await prisma.connection.findUnique({
-    where: { followerId_followedId: { followerId: user.id, followedId: talent.userId || params.id } },
+    where: { followerId_followedId: { followerId: user.id, followedId } },
   })
 
   if (existing) {
@@ -40,7 +49,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   }
 
   await prisma.connection.create({
-    data: { followerId: user.id, followedId: talent.userId || params.id, status: "accepted" },
+    data: { followerId: user.id, followedId, status: "accepted" },
   })
 
   return NextResponse.json({ followed: true })
@@ -53,12 +62,18 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   const talent = await prisma.talent.findUnique({ where: { id: params.id } })
   if (!talent) return NextResponse.json({ error: Errors.resources.userNotFound }, { status: 404 })
 
+  if (!talent.userId) {
+    return NextResponse.json({ followed: false, followerCount: 0, followingCount: 0 })
+  }
+
+  const followedId = talent.userId
+
   const followed = await prisma.connection.findFirst({
-    where: { followerId: user.id, followedId: talent.userId || params.id, status: "accepted" },
+    where: { followerId: user.id, followedId, status: "accepted" },
   })
 
   const followerCount = await prisma.connection.count({
-    where: { followedId: talent.userId || params.id, status: "accepted" },
+    where: { followedId, status: "accepted" },
   })
 
   const followingCount = await prisma.connection.count({
