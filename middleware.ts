@@ -9,7 +9,7 @@ const protectedPaths = [
   /^\/company\/dashboard/,
   /^\/api\/admin/,
   /^\/api\/company/,
-  /^\/api\/talent/,
+  /^\/api\/talent\//,
   /^\/api\/feed/,
   /^\/api\/connections/,
   /^\/api\/reactions/,
