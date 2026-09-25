@@ -21,6 +21,7 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.create({
       data: {
+        clerkId,
         email: normalizedEmail,
         name: (name?.trim() || email.split("@")[0]).trim(),
         initials: initials || "TL",

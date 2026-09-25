@@ -34,6 +34,7 @@ export async function POST(req: Request) {
 
     const user = await prisma.user.create({
       data: {
+        clerkId,
         email: email.trim().toLowerCase(),
         name: name.trim(),
         initials: initials || "TL",
