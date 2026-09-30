@@ -29,6 +29,7 @@ const ADMIN_NAV = [
   { href: "/admin/clients", label: "Clients", icon: Users },
   { href: "/admin/companies", label: "Companies", icon: Briefcase },
   { href: "/admin/jobs", label: "Job Postings", icon: Briefcase },
+  { href: "/admin/jobs/reports", label: "Job Reports", icon: FileSearch },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/team", label: "Team", icon: UserPlus },
   { href: "/admin/careers", label: "Careers", icon: Briefcase },

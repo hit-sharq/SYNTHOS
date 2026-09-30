@@ -334,6 +334,23 @@ async function main() {
   }
   console.log(`jobs: ${jobCount}`)
 
+  // ---------- Job reports awaiting review ----------
+  const reportable = await prisma.jobPosting.findFirst({ where: { status: "approved" } })
+  if (reportable) {
+    const existing = await prisma.jobReport.findFirst({ where: { jobId: reportable.id, reason: "spam", status: "open" } })
+    if (!existing) {
+      await prisma.jobReport.create({
+        data: {
+          jobId: reportable.id,
+          reason: "spam",
+          details: "Seeded report so the moderation queue is not empty.",
+          reportedByEmail: "reporter@example.com",
+        },
+      })
+    }
+  }
+  console.log("job reports ensured")
+
   // ---------- Connections ----------
   const connected = talents.filter((t) => t.userId)
   let connCount = 0

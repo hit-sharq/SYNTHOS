@@ -16,6 +16,30 @@ enum Role {
   admin
 }
 
+// ----- Job Reports -----
+// A report flags a listing for review. It never changes the job status on
+// its own; an admin decides via /api/admin/jobs/[id]/approve|reject.
+model JobReport {
+  id          String    @id @default(cuid())
+  jobId       String
+  job         JobPosting @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  reason      String
+  details     String?
+  status      String    @default("open") // open | reviewing | resolved | dismissed
+  reportedById String?
+  reportedBy  User?     @relation("JobReportsReported", fields: [reportedById], references: [id], onDelete: SetNull)
+  reportedByEmail String?
+  reviewedById String?
+  reviewedBy  User?     @relation("JobReportsReviewed", fields: [reviewedById], references: [id], onDelete: SetNull)
+  reviewedAt  DateTime?
+  resolution  String?
+  createdAt   DateTime  @default(now())
+
+  @@index([jobId])
+  @@index([status])
+  @@index([createdAt])
+}
+
 model JobApplication {
   id        String   @id @default(cuid())
   jobId     String
@@ -51,6 +75,8 @@ model User {
   talentProfile Talent?
   jobApplications JobApplication[]
   projectJobApplications ProjectJobApplication[]
+  jobReports JobReport[] @relation("JobReportsReported")
+  jobReportsReviewed JobReport[] @relation("JobReportsReviewed")
   feedPosts FeedPost[]
   reactions Reaction[]
   comments Comment[]
@@ -473,6 +499,7 @@ model JobPosting {
   status       String   @default("pending") // pending | approved | rejected | expired | filled
   featured     Boolean  @default(false)
   applications JobApplication[]
+  reports      JobReport[]
   views        Int      @default(0)
   expiresAt    DateTime?
   approvedAt   DateTime?

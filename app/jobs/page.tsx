@@ -5,6 +5,7 @@ import { getSessionEmail } from "@/lib/auth"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
 import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
+import { ReportButton } from "@/components/app/ReportButton"
 import "@/components/app/blog.css"
 
 type Job = {
@@ -114,6 +115,7 @@ export default async function JobsPage() {
                     <Link href="/sign-in?redirect=/jobs" className="btn btn-signal btn-sm">Sign in to Apply</Link>
                   )}
                   <Link href={`/jobs/${job.id}`} className="btn btn-ghost btn-sm">View Details</Link>
+                  <ReportButton jobId={job.id} />
                 </div>
               </div>
               </article>

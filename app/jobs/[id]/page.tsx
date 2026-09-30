@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma"
 import { getSessionEmail } from "@/lib/auth"
 import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
+import { ReportButton } from "@/components/app/ReportButton"
 import "@/components/app/blog.css"
 
 export default async function JobPage({ params }: { params: { id: string } }) {
@@ -91,6 +92,7 @@ export default async function JobPage({ params }: { params: { id: string } }) {
             ) : (
               <Link href="/sign-in?redirect=/jobs" className="btn btn-signal">Sign in to Apply</Link>
             )}
+            <ReportButton jobId={job.id} label="Report Job" className="btn btn-ghost" />
           </div>
         </div>
       </div>
