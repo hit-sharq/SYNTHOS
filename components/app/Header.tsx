@@ -37,21 +37,20 @@ export default function Header() {
 
   useEffect(() => {
     if (isSignedIn) {
-      fetch("/api/auth/is-admin")
-        .then(res => res.json())
-        .then(data => {
-          const admin = data?.isAdmin === true
-          setIsAdmin(admin)
-          if (admin) setUserRole("admin")
-        })
-        .catch(() => setIsAdmin(false))
+      // Single source of truth for role and admin, so the two cannot race and
+      // overwrite each other. Admin is resolved from ADMIN_USER_IDS.
       fetch("/api/auth/role")
         .then(res => res.json())
         .then(data => {
-          if (data.role) setUserRole(data.role)
-          if (data.companyId) setCompanyId(data.companyId)
+          const admin = data?.role === "admin" || data?.isAdmin === true
+          setUserRole(data?.role || null)
+          setIsAdmin(admin)
+          if (data?.companyId) setCompanyId(data.companyId)
         })
-        .catch(() => {})
+        .catch(() => {
+          setIsAdmin(false)
+          setUserRole(null)
+        })
     } else {
       setIsAdmin(false)
       setUserRole(null)

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { type NextRequest } from "next/server"
-import { readSessionClerkId } from "@/lib/session"
+import { clerkMiddleware } from "@clerk/nextjs/server"
 
 const protectedPaths = [
   /^\/dashboard/,
@@ -20,7 +20,12 @@ const protectedPaths = [
   /^\/api\/people/,
 ]
 
-export async function middleware(req: NextRequest) {
+/**
+ * Clerk's middleware verifies the session token and populates the request
+ * context, which is what makes `auth()` work inside route handlers. The
+ * handler below layers this app's own path protection on top of it.
+ */
+export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl
 
   const isProtected = protectedPaths.some((p) => p.test(pathname))
@@ -28,17 +33,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
-  const clerkId = readSessionClerkId()
-  if (!clerkId) {
+  const { userId } = await auth()
+  if (!userId) {
     const signInUrl = new URL("/sign-in", req.url)
     signInUrl.searchParams.set("redirect", pathname)
     return NextResponse.redirect(signInUrl)
   }
 
-  const response = NextResponse.next()
-  response.headers.set("x-clerk-id", clerkId)
-  return response
-}
+  return NextResponse.next()
+})
 
 export const config = {
   matchers: [
