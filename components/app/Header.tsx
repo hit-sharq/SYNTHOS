@@ -40,9 +40,11 @@ export default function Header() {
       fetch("/api/auth/is-admin")
         .then(res => res.json())
         .then(data => {
-          setIsAdmin(data.isAdmin)
-          if (data.isAdmin) setUserRole("admin")
+          const admin = data?.isAdmin === true
+          setIsAdmin(admin)
+          if (admin) setUserRole("admin")
         })
+        .catch(() => setIsAdmin(false))
       fetch("/api/auth/role")
         .then(res => res.json())
         .then(data => {
