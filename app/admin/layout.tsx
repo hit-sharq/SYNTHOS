@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  if (!isAdminUser(userId)) redirect("/dashboard/overview")
+  if (!isAdminUser(userId)) redirect("/admin/workflow/overview")
 
   return <AdminShell>{children}</AdminShell>
 }

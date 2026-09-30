@@ -55,7 +55,7 @@ export default function ContactReportsPage() {
           actions={
             <div style={{ display: "flex", gap: 8 }}>
               <button className="admin-btn" onClick={() => setSelected(null)}>Back to list</button>
-              <Link href={`/dashboard/projects/${selected.projectId}`} className="admin-btn-primary">Open Project</Link>
+              <Link href={`/admin/workflow/projects/${selected.projectId}`} className="admin-btn-primary">Open Project</Link>
             </div>
           }
         />

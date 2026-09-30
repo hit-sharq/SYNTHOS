@@ -267,7 +267,7 @@ export default function TalentProfilePage() {
 
           <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
             <button className="btn btn-signal" onClick={handleSave} disabled={saving}>{saving ? "Saving..." : "Save Changes"}</button>
-            <a href="/dashboard/overview" className="btn btn-ghost">Go to Dashboard</a>
+            <a href="/admin/workflow/overview" className="btn btn-ghost">Go to Dashboard</a>
           </div>
         </div>
       </div>

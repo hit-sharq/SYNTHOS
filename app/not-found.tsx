@@ -11,7 +11,7 @@ export default function NotFoundPage() {
         <p className="tiny muted" style={{ marginBottom: 20 }}>It may have been archived, renamed, or the link is incorrect.</p>
         <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
           <Link href="/" className="btn btn-signal btn-sm">Go home</Link>
-          <Link href="/dashboard/overview" className="btn btn-ghost btn-sm">Open dashboard</Link>
+          <Link href="/admin/workflow/overview" className="btn btn-ghost btn-sm">Open dashboard</Link>
         </div>
       </div>
     </PageWrap>

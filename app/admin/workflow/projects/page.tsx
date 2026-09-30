@@ -39,7 +39,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: { q
         eyebrow="Workspace"
         title="Projects"
         desc="Every client engagement, tracked through the Human + AI workflow from brief to approval."
-        actions={<Link href="/dashboard/overview" className="btn btn-ghost">Overview</Link>}
+        actions={<Link href="/admin/workflow/overview" className="btn btn-ghost">Overview</Link>}
       />
 
       <RevealOnScroll>
@@ -83,7 +83,7 @@ export default async function ProjectsPage({ searchParams }: { searchParams: { q
           <div className={view === "grid" ? "proj-grid" : "proj-list"}>
             {sorted.map((p: any) => (
               <RevealOnScroll key={p.id}>
-               <Link href={`/dashboard/projects/${p.id}`} className={view === "grid" ? "proj-card" : "proj-row"}>
+               <Link href={`/admin/workflow/projects/${p.id}`} className={view === "grid" ? "proj-card" : "proj-row"}>
                 <div className="row between gap-2">
                   <span className="proj-type">{p.type}</span>
                   <StatusPill status={p.status} />

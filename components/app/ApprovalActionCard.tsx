@@ -43,7 +43,7 @@ export function ApprovalActionCard({ item, onUpdated }: { item: { projectId: str
 
   return (
     <div className="feat-row" style={{ gridTemplateColumns: "1.3fr 1fr auto auto auto" }}>
-      <Link href={`/dashboard/projects/${item.projectId}`} className="grow" style={{ textDecoration: "none", color: "inherit" }}>
+      <Link href={`/admin/workflow/projects/${item.projectId}`} className="grow" style={{ textDecoration: "none", color: "inherit" }}>
         <div className="stack gap-1">
           <span className="tiny muted">{item.client} · {item.kind}</span>
           <span style={{ fontWeight: 600, color: "var(--ink)" }}>{item.project}</span>

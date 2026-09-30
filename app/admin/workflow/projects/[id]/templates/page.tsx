@@ -76,7 +76,7 @@ export default function TemplatesPage() {
         <div style={{ display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center", marginBottom: 20 }}>
           <span className={`admin-badge admin-badge-${project.status}`}>{project.status}</span>
           <span className="chip">{project.stage}</span>
-          <Link href={`/dashboard/projects/${project.id}`} className="btn btn-ghost btn-sm" style={{ textDecoration: "none" }}>
+          <Link href={`/admin/workflow/projects/${project.id}`} className="btn btn-ghost btn-sm" style={{ textDecoration: "none" }}>
             Back to Project
           </Link>
         </div>

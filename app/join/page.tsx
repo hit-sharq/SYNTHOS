@@ -23,7 +23,7 @@ export default function JoinPage() {
       } else if (role === "company") {
         router.replace("/company/jobs")
       } else {
-        router.replace("/dashboard/overview")
+        router.replace("/admin/workflow/overview")
       }
     }
   }, [user, isLoaded, router])

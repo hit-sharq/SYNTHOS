@@ -85,7 +85,7 @@ export default function ExternalMeetingForm({ projects, selectedId }: { projects
 
           if (wf.currentStage === "approval" || wf.currentStage === "complete") {
             if (pollRef.current) clearInterval(pollRef.current)
-            setTimeout(() => router.push(`/dashboard/projects/${projectId}`), 2000)
+            setTimeout(() => router.push(`/admin/workflow/projects/${projectId}`), 2000)
           }
         }
       } catch (e) {

@@ -140,7 +140,7 @@ export function CallStage({ project }: { project: Project }) {
       ) : (
         <>
           <Panel>
-            <PanelHeader eyebrow="Stage 2" title="Discovery Session" desc="Partnership conversation." actions={<div className="row gap-2"><button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button><button className="btn btn-ghost btn-sm" onClick={() => { window.location.href = `/dashboard/meetings?project=${project.id}` }}>External Meeting</button><button className="btn btn-signal btn-sm" onClick={joinMeeting} disabled={joining}>{joining ? "Creating..." : "Join Meeting"}</button></div>} />
+            <PanelHeader eyebrow="Stage 2" title="Discovery Session" desc="Partnership conversation." actions={<div className="row gap-2"><button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button><button className="btn btn-ghost btn-sm" onClick={() => { window.location.href = `/admin/workflow/meetings?project=${project.id}` }}>External Meeting</button><button className="btn btn-signal btn-sm" onClick={joinMeeting} disabled={joining}>{joining ? "Creating..." : "Join Meeting"}</button></div>} />
             <div className="brief-grid">
               <Field label="Meeting date" value={c?.date} />
               <Field label="Duration" value={c?.duration} />

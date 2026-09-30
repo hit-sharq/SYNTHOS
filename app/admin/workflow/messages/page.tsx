@@ -85,7 +85,7 @@ export default function MessagesPage() {
                       <span className="tiny muted" style={{ marginTop: 6, display: "block" }}>{new Date(n.createdAt).toLocaleString()}</span>
                     </div>
                     {n.refId && (
-                      <Link href={`/dashboard/projects/${n.refId}`} className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }}>
+                      <Link href={`/admin/workflow/projects/${n.refId}`} className="btn btn-ghost btn-sm" style={{ flexShrink: 0 }}>
                         Open
                       </Link>
                     )}

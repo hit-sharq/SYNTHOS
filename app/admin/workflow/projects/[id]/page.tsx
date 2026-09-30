@@ -37,7 +37,7 @@ export default async function ProjectWorkspace({ params }: { params: { id: strin
     return (
       <PageWrap>
         <Empty title="Project not found" hint="It may have been archived." />
-        <div style={{ marginTop: 16 }}><Link href="/dashboard/projects" className="btn btn-ghost">Back to projects</Link></div>
+        <div style={{ marginTop: 16 }}><Link href="/admin/workflow/projects" className="btn btn-ghost">Back to projects</Link></div>
       </PageWrap>
     )
   }
@@ -50,7 +50,7 @@ export default async function ProjectWorkspace({ params }: { params: { id: strin
     <div className="ws">
       <div className="ws-top container">
         <div className="row gap-2 wrap" style={{ marginBottom: 10 }}>
-          <Link href="/dashboard/projects" className="tiny muted">Projects</Link>
+          <Link href="/admin/workflow/projects" className="tiny muted">Projects</Link>
           <span className="tiny muted">/</span>
           <span className="tiny" style={{ color: "var(--ink-2)" }}>{project.name}</span>
         </div>
@@ -73,7 +73,7 @@ export default async function ProjectWorkspace({ params }: { params: { id: strin
 
       <div className="ws-body container">
         <aside className="ws-rail">
-          <WorkflowRail current={project.stage} baseHref={`/dashboard/projects/${project.id}`} />
+          <WorkflowRail current={project.stage} baseHref={`/admin/workflow/projects/${project.id}`} />
         </aside>
       <section className="ws-main fade-up" key={project.stage}>
         {VIEWS[project.stage] ? VIEWS[project.stage](project) : <div className="panel-soft" style={{ padding: 40, textAlign: "center" }}><p>Stage not found: {project.stage}</p></div>}

@@ -80,7 +80,7 @@ export default function Header() {
     markAsRead(n.id)
     setNotifOpen(false)
     if (n.refId) {
-      router.push(`/dashboard/projects/${n.refId}`)
+      router.push(`/admin/workflow/projects/${n.refId}`)
     }
   }
 
@@ -127,23 +127,14 @@ export default function Header() {
              <Link href="/talent/signup" className={`topnav-link ${pathname === "/talent/signup" ? "active" : ""}`} onClick={() => setOpen(false)}>Join</Link>
            )}
             {isSignedIn && isAdmin && (
-            <>
-              <Link
-                href="/dashboard"
-                className={`topnav-link ${pathname === "/dashboard/overview" || pathname.startsWith("/dashboard") ? "active" : ""}`}
-                onClick={() => setOpen(false)}
-              >
-                Dashboard
-              </Link>
               <Link
                 href="/admin"
-                className={`topnav-link ${pathname === "/admin" || pathname.startsWith("/admin") ? "active" : ""}`}
+                className={`topnav-link ${pathname.startsWith("/admin") ? "active" : ""}`}
                 onClick={() => setOpen(false)}
               >
                 Admin
               </Link>
-            </>
-          )}
+            )}
           {isSignedIn && userRole === "talent" && (
             <>
               <Link

@@ -97,7 +97,7 @@ export default async function PipelinePage() {
                     {byStage[stage.id]?.map((p) => (
                       <a
                         key={p.id}
-                        href={`/dashboard/projects/${p.id}`}
+                        href={`/admin/workflow/projects/${p.id}`}
                         style={{ display: "block", padding: 14, background: "var(--surface-2)", border: "1px solid var(--line)", textDecoration: "none", color: "inherit" }}
                       >
                         <div style={{ fontWeight: 600, color: "var(--ink)", fontSize: "0.92rem", marginBottom: 4 }}>

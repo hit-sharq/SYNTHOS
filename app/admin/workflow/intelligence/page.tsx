@@ -27,7 +27,7 @@ export default async function IntelligencePage() {
           <div className="feat-grid">
             {ready.map((p) => (
               <RevealOnScroll key={p.id}>
-                <Link href={`/dashboard/projects/${p.id}`} className="feat-card">
+                <Link href={`/admin/workflow/projects/${p.id}`} className="feat-card">
                   <div className="row between" style={{ marginBottom: 10 }}>
                     <span className="feat-tag">Understanding</span>
                     <Confidence value={p.understanding!.confidence} />

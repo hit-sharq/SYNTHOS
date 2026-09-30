@@ -348,10 +348,10 @@ export default function AdminProjectsPage() {
                     <td data-label="Actions">
                       <div style={{ display: "flex", gap: 6, flexDirection: "column", alignItems: "flex-start" }}>
                         <div style={{ display: "flex", gap: 6 }}>
-                          <a href={`/dashboard/projects/${p.id}`} className="admin-icon-btn" title="Open workspace" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                          <a href={`/admin/workflow/projects/${p.id}`} className="admin-icon-btn" title="Open workspace" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
                             <ExternalLink size={14} />
                           </a>
-                          <a href={`/dashboard/projects/${p.id}/templates`} className="admin-icon-btn" title="View templates" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
+                          <a href={`/admin/workflow/projects/${p.id}/templates`} className="admin-icon-btn" title="View templates" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", justifyContent: "center" }}>
                             <FileText size={14} />
                           </a>
                           <button className="admin-icon-btn" title="Run AI workflow" onClick={() => runWorkflow(p.id)} disabled={workflowRunning === p.id}>

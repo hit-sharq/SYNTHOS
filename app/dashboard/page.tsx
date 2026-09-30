@@ -10,7 +10,7 @@ export default async function DashboardIndex() {
 
   const adminIds = process.env.ADMIN_USER_IDS?.split(",").map(id => id.trim()).filter(Boolean) || []
   if (adminIds.includes(userId)) {
-    redirect("/dashboard/overview")
+    redirect("/admin/workflow/overview")
   }
 
   const email = await getSessionEmail()

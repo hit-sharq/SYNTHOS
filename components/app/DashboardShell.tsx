@@ -25,19 +25,6 @@ import {
 import { NotificationBell } from "./NotificationBell"
 import "./dashboard.css"
 
-const ADMIN_NAV = [
-  { href: "/dashboard/overview", label: "Overview", icon: LayoutDashboard },
-  { href: "/dashboard/pipeline", label: "Pipeline", icon: GitBranch },
-  { href: "/dashboard/projects", label: "Projects", icon: FolderOpen },
-  { href: "/dashboard/briefs", label: "Blueprints", icon: FileText },
-  { href: "/dashboard/meetings", label: "Sessions", icon: Calendar },
-  { href: "/dashboard/proposals", label: "Offers", icon: FileSignature },
-  { href: "/dashboard/quotes", label: "Estimates", icon: Calculator },
-  { href: "/dashboard/approvals", label: "Approvals", icon: CheckCircle },
-  { href: "/jobs", label: "Jobs", icon: Briefcase },
-  { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
-]
-
 const TALENT_NAV = [
   { href: "/dashboard/talent", label: "My Workspace", icon: User },
   { href: "/profile", label: "Profile", icon: User },
@@ -46,9 +33,7 @@ const TALENT_NAV = [
   { href: "/dashboard/talent/deadlines", label: "Deadlines", icon: Calendar },
   { href: "/dashboard/talent/meetings", label: "Meetings", icon: Calendar },
   { href: "/dashboard/talent/applications", label: "Applications", icon: Briefcase },
-  { href: "/dashboard/projects", label: "My Projects", icon: FolderOpen },
   { href: "/jobs", label: "Open Gigs", icon: Briefcase },
-  { href: "/dashboard/messages", label: "Messages", icon: MessageSquare },
 ]
 
 const CLIENT_NAV = [
@@ -71,12 +56,9 @@ export function DashboardShell({
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
-  const NAV =
-    role === "admin"
-      ? ADMIN_NAV
-      : role === "talent"
-        ? TALENT_NAV
-        : CLIENT_NAV
+  // Admins are redirected to /admin before this shell renders, so only the
+  // talent and client navs remain here.
+  const NAV = role === "talent" ? TALENT_NAV : CLIENT_NAV
 
   return (
     <div className="dash-layout">
@@ -116,7 +98,7 @@ export function DashboardShell({
           {NAV.map((item) => {
             const active =
               pathname === item.href ||
-              (item.href !== "/dashboard/overview" &&
+              (item.href !== "/admin/workflow/overview" &&
                 item.href !== "/dashboard/talent" &&
                 pathname.startsWith(item.href))
             const Icon = item.icon

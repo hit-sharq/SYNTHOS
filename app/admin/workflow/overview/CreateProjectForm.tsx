@@ -49,7 +49,7 @@ export default function CreateProjectForm() {
       if (!res.ok) throw new Error("Failed to create project")
       setOpen(false)
       setForm({ name: "", client: "", email: "", company: "", phone: "", type: "Brand & Campaign", title: "", objective: "", audience: "", direction: "", budget: "", timeline: "", context: "" })
-      window.location.href = `/dashboard/projects`
+      window.location.href = `/admin/workflow/projects`
     } catch (e) {
       console.error("Failed to create project:", e)
     } finally {

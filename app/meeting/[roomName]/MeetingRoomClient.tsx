@@ -99,7 +99,7 @@ export default function MeetingRoomClient({ roomName, project }: { roomName: str
       })
       const data = await res.json()
       if (data.conversation || data.contactReport) {
-        router.push(`/dashboard/projects/${projectId}`)
+        router.push(`/admin/workflow/projects/${projectId}`)
       }
     } catch (e) {
       alert("Failed to end meeting")

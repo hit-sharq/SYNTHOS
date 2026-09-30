@@ -26,8 +26,8 @@ export default async function OverviewPage() {
         desc="A calm view of every active project, where the AI has moved things forward, and what only a human can decide."
         actions={
           <>
-            <Link href="/dashboard/projects" className="btn btn-ghost">All projects</Link>
-            <Link href="/dashboard/approvals" className="btn btn-signal">Review approvals · {awaitingApproval.length}</Link>
+            <Link href="/admin/workflow/projects" className="btn btn-ghost">All projects</Link>
+            <Link href="/admin/workflow/approvals" className="btn btn-signal">Review approvals · {awaitingApproval.length}</Link>
           </>
         }
       />
@@ -60,7 +60,7 @@ export default async function OverviewPage() {
             <StaggerContainer>
               {needsAttention.map((p: any) => (
                 <RevealOnScroll key={p.id}>
-                  <Link href={`/dashboard/projects/${p.id}`} className="ov-card">
+                  <Link href={`/admin/workflow/projects/${p.id}`} className="ov-card">
                     <div className="row between gap-3">
                       <div className="stack gap-1">
                         <span className="ov-card-title">{p.name}</span>
@@ -81,7 +81,7 @@ export default async function OverviewPage() {
             <StaggerContainer>
               {awaitingApproval.map((p: any) => (
                 <RevealOnScroll key={p.id}>
-                  <Link href={`/dashboard/projects/${p.id}`} className="ov-approve">
+                  <Link href={`/admin/workflow/projects/${p.id}`} className="ov-approve">
                     <span className="dot dot-attention" />
                     <div className="grow">
                       <span className="ov-card-title" style={{ fontSize: "0.95rem" }}>{p.name}</span>

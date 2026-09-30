@@ -21,7 +21,7 @@ export default async function WorkshopsPage() {
           <div className="feat-list">
             {started.map((p: any) => (
               <RevealOnScroll key={p.id}>
-                <Link href={`/dashboard/projects/${p.id}`} className="feat-row feat-row--4col">
+                <Link href={`/admin/workflow/projects/${p.id}`} className="feat-row feat-row--4col">
                   <div className="stack gap-1">
                     <span className="tiny muted">{p.client}</span>
                     <span style={{ fontWeight: 600, color: "var(--ink)" }}>{p.name}</span>

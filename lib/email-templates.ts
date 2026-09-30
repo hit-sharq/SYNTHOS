@@ -188,7 +188,7 @@ export function adminProjectApprovedEmail(params: { projectName: string }) {
       <p style="margin-top: 4px;"><strong>Next action:</strong> Begin production</p>
     </div>
     <div class="actions">
-      ${button(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/dashboard/projects`, "Open Dashboard", "primary")}
+      ${button(`${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/admin/workflow/projects`, "Open Dashboard", "primary")}
     </div>
   `
   return wrap("Project approved", body, `${projectName} is ready to begin.`)
