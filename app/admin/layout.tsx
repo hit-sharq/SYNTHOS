@@ -7,7 +7,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  if (!isAdminUser(userId)) redirect("/admin/workflow/overview")
+  // Must not redirect to another /admin path: this layout guards the whole
+  // /admin tree, so that would re-enter here and loop forever.
+  if (!isAdminUser(userId)) redirect("/dashboard/talent")
 
   return <AdminShell>{children}</AdminShell>
 }

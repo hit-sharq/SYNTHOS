@@ -172,7 +172,7 @@ export default function TalentDashboardPage() {
         actions={
           <div className="row gap-2 wrap">
             <Link href="/jobs" className="btn btn-ghost"><Briefcase size={16} /> Browse Jobs</Link>
-            <Link href="/dashboard/projects" className="btn btn-signal"><Plus size={16} /> New Project</Link>
+            <Link href="/admin/workflow/projects" className="btn btn-signal"><Plus size={16} /> New Project</Link>
           </div>
         }
       />
@@ -325,10 +325,10 @@ export default function TalentDashboardPage() {
                 <Link href="/jobs" className="btn btn-signal" style={{ justifyContent: "center" }}>
                   <Briefcase size={16} /> Browse Open Roles
                 </Link>
-                <Link href="/dashboard/projects" className="btn btn-ghost" style={{ justifyContent: "center" }}>
+                <Link href="/admin/workflow/projects" className="btn btn-ghost" style={{ justifyContent: "center" }}>
                   <ExternalLink size={16} /> Open Workspace
                 </Link>
-                <Link href="/dashboard/messages" className="btn btn-ghost" style={{ justifyContent: "center" }}>
+                <Link href="/admin/workflow/messages" className="btn btn-ghost" style={{ justifyContent: "center" }}>
                   <MessageSquare size={16} /> Messages
                 </Link>
                 <Link href="/talents/profile" className="btn btn-ghost" style={{ justifyContent: "center" }}>
@@ -388,13 +388,13 @@ export default function TalentDashboardPage() {
           <div className="panel-soft" style={{ padding: 24 }}>
             <div className="row between gap-2" style={{ marginBottom: 12 }}>
               <h3 style={{ margin: 0 }}>Your Projects</h3>
-              <Link href="/dashboard/projects" className="btn btn-ghost btn-sm">Open workspace</Link>
+              <Link href="/admin/workflow/projects" className="btn btn-ghost btn-sm">Open workspace</Link>
             </div>
             <StaggerContainer>
               <div className="stack gap-2">
                 {activeProjects.slice(0, 10).map(p => (
                   <RevealOnScroll key={p.id}>
-                    <Link href={`/dashboard/projects/${p.id}`} className="ov-card">
+                    <Link href={`/admin/workflow/projects/${p.id}`} className="ov-card">
                       <div className="row between gap-3">
                         <div className="stack gap-1">
                           <span className="ov-card-title">{p.name}</span>

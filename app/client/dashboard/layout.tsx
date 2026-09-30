@@ -16,7 +16,8 @@ export default async function ClientDashboardLayout({ children }: { children: Re
   if (!user) redirect("/")
 
   if (user.role !== Role.client) {
-    redirect("/dashboard/overview")
+    // Must stay outside /client, since this layout guards that whole tree.
+    redirect("/dashboard/talent")
   }
 
   return <ClientShell>{children}</ClientShell>

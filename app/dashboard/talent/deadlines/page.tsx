@@ -80,7 +80,7 @@ export default function TalentDeadlinesPage() {
           <div className="stack gap-2">
             {deadlines.map((d) => (
               <RevealOnScroll key={d.id}>
-                <Link href={`/dashboard/projects/${d.projectId}`} className="panel-soft" style={{ padding: 16, display: "flex", alignItems: "center", gap: 12, textDecoration: "none", color: "inherit" }}>
+                <Link href={`/admin/workflow/projects/${d.projectId}`} className="panel-soft" style={{ padding: 16, display: "flex", alignItems: "center", gap: 12, textDecoration: "none", color: "inherit" }}>
                   <Calendar size={18} style={{ color: "var(--signal)", flexShrink: 0 }} />
                   <div className="grow">
                     <span style={{ fontWeight: 600, color: "var(--ink)", fontSize: "0.92rem" }}>{d.label}</span>
