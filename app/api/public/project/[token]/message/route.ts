@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { getAdminEmails } from "@/lib/api-auth"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
@@ -55,7 +54,11 @@ export async function POST(req: Request, { params }: { params: { token: string }
     const recipients = new Set<string>()
     if (project.owner?.email) recipients.add(project.owner.email)
 
-    for (const adminEmail of await getAdminEmails()) recipients.add(adminEmail)
+    const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map((id) => id.trim()).filter(Boolean)
+    for (const adminId of adminIds) {
+      const adminUser = await prisma.user.findUnique({ where: { id: adminId } })
+      if (adminUser?.email) recipients.add(adminUser.email)
+    }
 
     for (const recipientEmail of recipients) {
       await sendEmail({

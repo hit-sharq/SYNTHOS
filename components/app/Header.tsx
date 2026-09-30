@@ -37,12 +37,16 @@ export default function Header() {
 
   useEffect(() => {
     if (isSignedIn) {
+      fetch("/api/auth/is-admin")
+        .then(res => res.json())
+        .then(data => {
+          setIsAdmin(data.isAdmin)
+          if (data.isAdmin) setUserRole("admin")
+        })
       fetch("/api/auth/role")
         .then(res => res.json())
         .then(data => {
-          const role = data.role || null
-          setUserRole(role)
-          setIsAdmin(role === "admin")
+          if (data.role) setUserRole(data.role)
           if (data.companyId) setCompanyId(data.companyId)
         })
         .catch(() => {})

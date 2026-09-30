@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
-import { isAdmin } from "@/lib/api-auth"
+import { isAdminUser } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   const user = await getCurrentUserId()
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  if (!(await isAdmin(user.clerkId))) {
+  if (!isAdminUser(user.clerkId)) {
     return NextResponse.json({ error: Errors.access.adminOnly }, { status: 403 })
   }
 

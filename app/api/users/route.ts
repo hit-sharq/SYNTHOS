@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { isAdmin } from "@/lib/api-auth"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
@@ -12,11 +11,12 @@ export async function GET() {
   const email = await getSessionEmail()
   if (!email) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const adminViewer = await isAdmin(userId)
+  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
+  const isAdmin = adminIds.includes(userId)
 
   try {
     const where: any = {}
-    if (!adminViewer) where.id = userId
+    if (!isAdmin) where.id = userId
 
     const users = await prisma.user.findMany({
       where,

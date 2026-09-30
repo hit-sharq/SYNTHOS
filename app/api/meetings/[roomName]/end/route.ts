@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server"
-import { getAdminsExcept } from "@/lib/api-auth"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
 import { generateWithGemini } from "@/lib/ai"
@@ -290,12 +289,18 @@ Return ONLY a JSON object:
       })
     }
 
-    for (const admin of await getAdminsExcept(project.ownerId)) {
-      await sendEmail({
-        to: admin.email,
-        subject: `Meeting completed: ${project.name}`,
-        html: meetingCompletedEmail({ projectName: project.name, clientName }),
-      })
+    const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
+    for (const adminId of adminIds) {
+      if (adminId !== project.ownerId) {
+        const adminUser = await prisma.user.findUnique({ where: { id: adminId } })
+        if (adminUser?.email) {
+            await sendEmail({
+              to: adminUser.email,
+              subject: `Meeting completed: ${project.name}`,
+              html: meetingCompletedEmail({ projectName: project.name, clientName }),
+            })
+        }
+      }
     }
 
     return NextResponse.json({
