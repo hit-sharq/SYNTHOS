@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { type NextRequest } from "next/server"
-import { getSessionEmail } from "@/lib/auth"
+import { readSessionClerkId } from "@/lib/session"
 
 const protectedPaths = [
   /^\/dashboard/,
@@ -28,22 +28,15 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next()
   }
 
-  const cookie = req.cookies.get("__session")?.value
-  if (!cookie) {
-    const signInUrl = new URL("/sign-in", req.url)
-    signInUrl.searchParams.set("redirect", pathname)
-    return NextResponse.redirect(signInUrl)
-  }
-
-  const email = await getSessionEmail()
-  if (!email) {
+  const clerkId = readSessionClerkId()
+  if (!clerkId) {
     const signInUrl = new URL("/sign-in", req.url)
     signInUrl.searchParams.set("redirect", pathname)
     return NextResponse.redirect(signInUrl)
   }
 
   const response = NextResponse.next()
-  response.headers.set("x-user-email", email)
+  response.headers.set("x-clerk-id", clerkId)
   return response
 }
 
