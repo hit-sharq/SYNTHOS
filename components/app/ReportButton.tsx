@@ -43,7 +43,7 @@ export function ReportButton({
         return
       }
       setStatus("done")
-      setMessage("Thanks. An admin will review this listing.")
+      setMessage("Thanks. We'll take a look at this listing.")
     } catch {
       setStatus("error")
       setMessage("Could not send report.")
@@ -76,7 +76,7 @@ export function ReportButton({
           >
             <h3 style={{ fontSize: "1.1rem", marginBottom: 6 }}>Report this listing</h3>
             <p className="tiny muted" style={{ marginBottom: 16 }}>
-              An admin reviews every report. The listing stays visible until then.
+              Thanks for letting us know. We'll review this listing.
             </p>
 
             <div className="stack gap-2" style={{ marginBottom: 14 }}>
