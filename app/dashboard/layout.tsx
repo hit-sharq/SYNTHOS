@@ -3,22 +3,18 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { redirect } from "next/navigation"
-import { getSessionEmail } from "@/lib/auth"
+import { getSessionUser } from "@/lib/auth"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const adminIds = process.env.ADMIN_USER_IDS?.split(",").map(id => id.trim()).filter(Boolean) || []
-  if (adminIds.includes(userId)) {
-    return <DashboardShell role="admin">{children}</DashboardShell>
-  }
-
-  const email = await getSessionEmail()
-  if (!email) redirect("/")
-
-  let user = await prisma.user.findUnique({ where: { email } })
+  let user = await getSessionUser()
   if (!user) {
+    const { getSessionEmail } = await import("@/lib/auth")
+    const email = await getSessionEmail()
+    if (!email) redirect("/")
+
     const name = email.split("@")[0]
     const initials = name
       .split(" ")
@@ -29,6 +25,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
     user = await prisma.user.create({
       data: {
+        clerkId: userId,
         email,
         name,
         initials,
@@ -51,6 +48,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
     })
 
     return <DashboardShell role="talent">{children}</DashboardShell>
+  }
+
+  if (user.role === Role.admin) {
+    return <DashboardShell role="admin">{children}</DashboardShell>
   }
 
   if (user.role === Role.client) {

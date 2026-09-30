@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { getAdminsExcept } from "@/lib/api-auth"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
@@ -130,18 +131,12 @@ export async function POST(req: Request, { params }: { params: { token: string }
                 })
               }
 
-            const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-            for (const adminId of adminIds) {
-              if (adminId !== project.ownerId) {
-                const adminUser = await prisma.user.findUnique({ where: { id: adminId } })
-                if (adminUser?.email) {
-                  await sendEmail({
-                    to: adminUser.email,
-                    subject: `Project approved: ${project.name}`,
-                    html: adminProjectApprovedEmail({ projectName: project.name }),
-                  })
-                }
-              }
+            for (const admin of await getAdminsExcept(project.ownerId)) {
+              await sendEmail({
+                to: admin.email,
+                subject: `Project approved: ${project.name}`,
+                html: adminProjectApprovedEmail({ projectName: project.name }),
+              })
             }
           }
         }
@@ -245,18 +240,12 @@ export async function POST(req: Request, { params }: { params: { token: string }
               },
             })
 
-            const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-            for (const adminId of adminIds) {
-              if (adminId !== project.ownerId) {
-                const adminUser = await prisma.user.findUnique({ where: { id: adminId } })
-                if (adminUser?.email) {
-                  await sendEmail({
-                    to: adminUser.email,
-                    subject: `Project approved: ${project.name}`,
-                    html: adminProjectApprovedEmail({ projectName: project.name }),
-                  })
-                }
-              }
+            for (const admin of await getAdminsExcept(project.ownerId)) {
+              await sendEmail({
+                to: admin.email,
+                subject: `Project approved: ${project.name}`,
+                html: adminProjectApprovedEmail({ projectName: project.name }),
+              })
             }
           }
         }

@@ -14,16 +14,33 @@ export async function requireAuth() {
 }
 
 /**
- * Admin is env-only: ADMIN_USER_IDS holds Clerk user ids, so it must always
- * be compared against the Clerk session userId, never a database record id.
+ * Admin identity is database-driven: a user is an admin when their record has
+ * the `admin` role. The Clerk session id is used to find that record.
  */
-export function getAdminIds(): string[] {
-  return (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
+export async function isAdmin(clerkUserId: string | null | undefined): Promise<boolean> {
+  if (!clerkUserId) return false
+  const user = await prisma.user.findUnique({ where: { clerkId: clerkUserId }, select: { role: true } })
+  return user?.role === Role.admin
 }
 
-export function isAdminUser(clerkUserId: string | null | undefined): boolean {
-  if (!clerkUserId) return false
-  return getAdminIds().includes(clerkUserId)
+/** Database ids of all admin users, for notifications and fan-out. */
+export async function getAdminUserIds(): Promise<string[]> {
+  const admins = await prisma.user.findMany({ where: { role: Role.admin }, select: { id: true } })
+  return admins.map(a => a.id)
+}
+
+/** Admin records excluding an owner, for approval and meeting email fan-out. */
+export async function getAdminsExcept(ownerId: string | null | undefined) {
+  return prisma.user.findMany({
+    where: { role: Role.admin, ...(ownerId ? { id: { not: ownerId } } : {}) },
+    select: { id: true, email: true },
+  })
+}
+
+/** Email addresses of all admins, for recipient collection. */
+export async function getAdminEmails(): Promise<string[]> {
+  const admins = await prisma.user.findMany({ where: { role: Role.admin }, select: { email: true } })
+  return admins.map(a => a.email)
 }
 
 export async function requireAdmin() {
@@ -31,7 +48,7 @@ export async function requireAdmin() {
   if (!userId) {
     return { userId: null as string | null, error: NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 }) }
   }
-  if (!isAdminUser(userId)) {
+  if (!(await isAdmin(userId))) {
     return { userId: null as string | null, error: NextResponse.json({ error: Errors.access.forbidden }, { status: 403 }) }
   }
   return { userId, error: null as null | NextResponse }
@@ -61,8 +78,7 @@ export async function isProjectAccessible(projectId: string, userId?: string) {
     return { accessible: false, project: null, error: NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 }) }
   }
 
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  if (adminIds.includes(userId)) {
+  if (await isAdmin(userId)) {
     return { accessible: true, project, error: null }
   }
 

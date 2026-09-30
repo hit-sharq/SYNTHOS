@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
-import { isAdminUser } from "@/lib/api-auth"
+import { isAdmin } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 
 async function getCurrentUser() {
@@ -32,7 +32,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   if (!connection) return NextResponse.json({ error: Errors.resources.connectionNotFound }, { status: 404 })
 
-  if (connection.followedId !== user.id && connection.followerId !== user.id && !isAdminUser(user.clerkId)) {
+  if (connection.followedId !== user.id && connection.followerId !== user.id && !(await isAdmin(user.clerkId))) {
     return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 
@@ -63,7 +63,7 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   const connection = await prisma.connection.findUnique({ where: { id: params.id } })
   if (!connection) return NextResponse.json({ error: Errors.resources.connectionNotFound }, { status: 404 })
 
-  if (connection.followerId !== user.id && connection.followedId !== user.id && !isAdminUser(user.clerkId)) {
+  if (connection.followerId !== user.id && connection.followedId !== user.id && !(await isAdmin(user.clerkId))) {
     return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 

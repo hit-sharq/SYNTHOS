@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
-import { isAdminUser } from "@/lib/api-auth"
+import { isAdmin } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 
 async function getCurrentUserId() {
@@ -24,7 +24,7 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   if (!comment) return NextResponse.json({ error: Errors.resources.commentNotFound }, { status: 404 })
 
   if (comment.userId !== user.id) {
-    if (!isAdminUser(user.clerkId)) {
+    if (!(await isAdmin(user.clerkId))) {
       return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
     }
   }

@@ -1,43 +1,82 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest"
-import { isAdminUser, getAdminIds } from "@/lib/api-auth"
+import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const ORIGINAL = process.env.ADMIN_USER_IDS
+vi.mock("@clerk/nextjs/server", () => ({
+  auth: vi.fn(),
+}))
 
-describe("env-only admin identity", () => {
-  afterEach(() => {
-    process.env.ADMIN_USER_IDS = ORIGINAL
+vi.mock("@/lib/prisma", () => ({
+  prisma: {
+    user: {
+      findUnique: vi.fn(),
+      findMany: vi.fn(),
+    },
+  },
+}))
+
+vi.mock("@/lib/auth", () => ({
+  getSessionEmail: vi.fn(),
+}))
+
+const { prisma } = await import("@/lib/prisma")
+const { isAdmin, getAdminUserIds, getAdminsExcept, getAdminEmails } = await import("@/lib/api-auth")
+
+describe("database-driven admin identity", () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
   })
 
-  it("reads and trims the admin id list from env", () => {
-    process.env.ADMIN_USER_IDS = "user_a, user_b ,user_c"
-    expect(getAdminIds()).toEqual(["user_a", "user_b", "user_c"])
+  it("treats a user with the admin role as an admin", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ role: "admin" } as any)
+    expect(await isAdmin("user_a")).toBe(true)
   })
 
-  it("returns an empty list when the env var is unset", () => {
-    delete process.env.ADMIN_USER_IDS
-    expect(getAdminIds()).toEqual([])
+  it("rejects users with other roles", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ role: "talent" } as any)
+    expect(await isAdmin("user_a")).toBe(false)
   })
 
-  it("matches a Clerk user id in the list", () => {
-    process.env.ADMIN_USER_IDS = "user_a,user_b"
-    expect(isAdminUser("user_a")).toBe(true)
-    expect(isAdminUser("user_b")).toBe(true)
+  it("rejects when no user record matches the session id", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(null as any)
+    expect(await isAdmin("user_a")).toBe(false)
   })
 
-  it("rejects a Clerk user id that is not listed", () => {
-    process.env.ADMIN_USER_IDS = "user_a"
-    expect(isAdminUser("user_zzz")).toBe(false)
+  it("rejects an absent session without querying the database", async () => {
+    expect(await isAdmin(null)).toBe(false)
+    expect(await isAdmin(undefined)).toBe(false)
+    expect(prisma.user.findUnique).not.toHaveBeenCalled()
   })
 
-  it("rejects null and undefined sessions", () => {
-    process.env.ADMIN_USER_IDS = "user_a"
-    expect(isAdminUser(null)).toBe(false)
-    expect(isAdminUser(undefined)).toBe(false)
-    expect(isAdminUser("")).toBe(false)
+  it("does not read ADMIN_USER_IDS from the environment", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ role: "talent" } as any)
+    await isAdmin("user_a")
+    expect(prisma.user.findUnique).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { clerkId: "user_a" } })
+    )
   })
 
-  it("does not match a database id, since the list holds Clerk ids only", () => {
-    process.env.ADMIN_USER_IDS = "user_a"
-    expect(isAdminUser("clx0abcdefghijklmnop")).toBe(false)
+  it("returns database ids of all admins", async () => {
+    vi.mocked(prisma.user.findMany).mockResolvedValue([{ id: "cuid_1" }, { id: "cuid_2" }] as any)
+    expect(await getAdminUserIds()).toEqual(["cuid_1", "cuid_2"])
+  })
+
+  it("excludes the project owner from admin fan-out", async () => {
+    vi.mocked(prisma.user.findMany).mockResolvedValue([] as any)
+    await getAdminsExcept("cuid_owner")
+    expect(prisma.user.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { role: "admin", id: { not: "cuid_owner" } } })
+    )
+  })
+
+  it("omits the owner filter when there is no owner", async () => {
+    vi.mocked(prisma.user.findMany).mockResolvedValue([] as any)
+    await getAdminsExcept(null)
+    expect(prisma.user.findMany).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { role: "admin" } })
+    )
+  })
+
+  it("returns admin emails for recipient fan-out", async () => {
+    vi.mocked(prisma.user.findMany).mockResolvedValue([{ email: "a@x.com" }] as any)
+    expect(await getAdminEmails()).toEqual(["a@x.com"])
   })
 })

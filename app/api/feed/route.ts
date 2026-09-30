@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
-import { isAdminUser } from "@/lib/api-auth"
+import { isAdmin } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 
 async function getCurrentUser() {
@@ -109,13 +109,13 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
-  const isAdmin = isAdminUser(user.clerkId)
+  const adminViewer = await isAdmin(user.clerkId)
 
   if (body.workplaceId) {
     const membership = await prisma.workplaceMember.findFirst({
       where: { workplaceId: body.workplaceId, userId: user.id },
     })
-    if (!membership && !isAdmin) {
+    if (!membership && !adminViewer) {
       return NextResponse.json({ error: Errors.actions.workplaceMemberRequired }, { status: 403 })
     }
   }
@@ -123,7 +123,7 @@ export async function POST(req: Request) {
   if (body.projectId) {
     const project = await prisma.project.findUnique({ where: { id: body.projectId } })
     if (!project) return NextResponse.json({ error: Errors.resources.projectNotFound }, { status: 404 })
-    if (project.ownerId !== user.id && project.clientId !== user.id && !isAdmin) {
+    if (project.ownerId !== user.id && project.clientId !== user.id && !adminViewer) {
       return NextResponse.json({ error: Errors.actions.projectAccessDenied }, { status: 403 })
     }
   }

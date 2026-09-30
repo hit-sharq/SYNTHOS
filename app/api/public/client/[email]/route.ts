@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { NextResponse } from "next/server"
+import { isAdmin } from "@/lib/api-auth"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@clerk/nextjs/server"
 
@@ -14,10 +15,9 @@ export async function GET(_req: Request, { params }: { params: { email: string }
     return NextResponse.json({ projects: [] })
   }
 
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  const isAdmin = adminIds.includes(userId)
+  const adminViewer = await isAdmin(userId)
 
-  if (!isAdmin) {
+  if (!adminViewer) {
     const { getSessionEmail } = await import("@/lib/auth")
     const userEmail = await getSessionEmail()
     if (userEmail !== decodedEmail) {

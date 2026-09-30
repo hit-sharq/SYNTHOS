@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { isAdmin } from "@/lib/api-auth"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Stage, ProjStatus, ReviewStatus } from "@prisma/client"
@@ -19,11 +20,10 @@ export async function GET(req: Request) {
   const user = await getUserByEmail(email)
   if (!user) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  const isAdmin = adminIds.includes(userId)
+  const adminViewer = await isAdmin(userId)
 
   let where: any = {}
-  if (!isAdmin) {
+  if (!adminViewer) {
     if (user.role === "talent") {
       where.ownerId = user.id
     } else if (user.role === "client") {
@@ -55,8 +55,7 @@ export async function POST(req: Request) {
   const user = await getUserByEmail(email)
   if (!user) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  if (!adminIds.includes(userId) && user.role !== "talent") {
+  if (!(await isAdmin(userId)) && user.role !== "talent") {
     return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 

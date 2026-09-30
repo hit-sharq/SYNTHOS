@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server"
+import { isAdmin } from "@/lib/api-auth"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { logAudit } from "@/lib/audit"
@@ -9,8 +10,7 @@ export async function POST(_req: Request, { params }: { params: { id: string } }
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-    const adminIds = process.env.ADMIN_USER_IDS?.split(",").map(id => id.trim()).filter(Boolean) || []
-    if (!adminIds.includes(userId)) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
+    if (!(await isAdmin(userId))) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
     const job = await prisma.jobPosting.update({
       where: { id: params.id },
