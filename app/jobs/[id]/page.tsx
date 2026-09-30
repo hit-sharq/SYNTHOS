@@ -91,7 +91,6 @@ export default async function JobPage({ params }: { params: { id: string } }) {
             ) : (
               <Link href="/sign-in?redirect=/jobs" className="btn btn-signal">Sign in to Apply</Link>
             )}
-            <button onClick={() => alert("Report feature coming soon")} className="btn btn-ghost" style={{ border: "1px solid var(--line)" }}>Report Job</button>
           </div>
         </div>
       </div>

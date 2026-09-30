@@ -114,7 +114,6 @@ export default async function JobsPage() {
                     <Link href="/sign-in?redirect=/jobs" className="btn btn-signal btn-sm">Sign in to Apply</Link>
                   )}
                   <Link href={`/jobs/${job.id}`} className="btn btn-ghost btn-sm">View Details</Link>
-                  <button onClick={() => alert("Report feature coming soon")} className="btn btn-ghost btn-sm" style={{ border: "1px solid var(--line)" }}>Report</button>
                 </div>
               </div>
               </article>
