@@ -13,13 +13,25 @@ export async function requireAuth() {
   return { userId, error: null as null | NextResponse }
 }
 
+/**
+ * Admin is env-only: ADMIN_USER_IDS holds Clerk user ids, so it must always
+ * be compared against the Clerk session userId, never a database record id.
+ */
+export function getAdminIds(): string[] {
+  return (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
+}
+
+export function isAdminUser(clerkUserId: string | null | undefined): boolean {
+  if (!clerkUserId) return false
+  return getAdminIds().includes(clerkUserId)
+}
+
 export async function requireAdmin() {
   const { userId } = await auth()
   if (!userId) {
     return { userId: null as string | null, error: NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 }) }
   }
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  if (!adminIds.includes(userId)) {
+  if (!isAdminUser(userId)) {
     return { userId: null as string | null, error: NextResponse.json({ error: Errors.access.forbidden }, { status: 403 }) }
   }
   return { userId, error: null as null | NextResponse }

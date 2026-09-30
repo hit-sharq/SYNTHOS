@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { isAdminUser } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 
 async function getCurrentUser() {
@@ -11,7 +12,8 @@ async function getCurrentUser() {
   const email = await getSessionEmail()
   if (!email) return null
   const user = await prisma.user.findUnique({ where: { email }, select: { id: true, name: true, initials: true, role: true } })
-  return user
+  if (!user) return null
+  return { ...user, clerkId: userId }
 }
 
 export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
@@ -21,8 +23,7 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   const post = await prisma.feedPost.findUnique({ where: { id: params.id }, select: { authorId: true } })
   if (!post) return NextResponse.json({ error: Errors.resources.postNotFound }, { status: 404 })
 
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  if (post.authorId !== user.id && !adminIds.includes(user.id)) {
+  if (post.authorId !== user.id && !isAdminUser(user.clerkId)) {
     return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 

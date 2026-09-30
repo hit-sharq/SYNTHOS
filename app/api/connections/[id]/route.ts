@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { isAdminUser } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 
 async function getCurrentUser() {
@@ -10,7 +11,8 @@ async function getCurrentUser() {
   const email = await getSessionEmail()
   if (!email) return null
   const user = await prisma.user.findUnique({ where: { email }, select: { id: true, name: true, initials: true, role: true } })
-  return user
+  if (!user) return null
+  return { ...user, clerkId: userId }
 }
 
 export async function PATCH(req: Request, { params }: { params: { id: string } }) {
@@ -30,8 +32,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   if (!connection) return NextResponse.json({ error: Errors.resources.connectionNotFound }, { status: 404 })
 
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  if (connection.followedId !== user.id && connection.followerId !== user.id && !adminIds.includes(user.id)) {
+  if (connection.followedId !== user.id && connection.followerId !== user.id && !isAdminUser(user.clerkId)) {
     return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 
@@ -62,8 +63,7 @@ export async function DELETE(_req: Request, { params }: { params: { id: string }
   const connection = await prisma.connection.findUnique({ where: { id: params.id } })
   if (!connection) return NextResponse.json({ error: Errors.resources.connectionNotFound }, { status: 404 })
 
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  if (connection.followerId !== user.id && connection.followedId !== user.id && !adminIds.includes(user.id)) {
+  if (connection.followerId !== user.id && connection.followedId !== user.id && !isAdminUser(user.clerkId)) {
     return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 

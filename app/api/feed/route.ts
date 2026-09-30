@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { isAdminUser } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 
 async function getCurrentUser() {
@@ -11,7 +12,8 @@ async function getCurrentUser() {
   const email = await getSessionEmail()
   if (!email) return null
   const user = await prisma.user.findUnique({ where: { email }, select: { id: true, name: true, initials: true, role: true } })
-  return user
+  if (!user) return null
+  return { ...user, clerkId: userId }
 }
 
 export async function GET(req: Request) {
@@ -107,8 +109,7 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
   const body = await req.json()
-  const adminIds = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).filter(Boolean)
-  const isAdmin = adminIds.includes(user.id)
+  const isAdmin = isAdminUser(user.clerkId)
 
   if (body.workplaceId) {
     const membership = await prisma.workplaceMember.findFirst({

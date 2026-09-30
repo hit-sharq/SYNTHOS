@@ -1,23 +1,13 @@
 import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { isAdminUser } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 
-async function getCurrentUser() {
-  const { userId } = await auth()
-  if (!userId) return null
-  const { getSessionEmail } = await import("@/lib/auth")
-  const email = await getSessionEmail()
-  if (!email) return null
-  return prisma.user.findUnique({ where: { email } })
-}
-
 export async function GET(req: Request) {
-  const user = await getCurrentUser()
-  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
-
-  const isAdmin = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).includes(user.id)
-  if (!isAdmin) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
+  const { userId } = await auth()
+  if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
+  if (!isAdminUser(userId)) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
   const spotlights = await prisma.spotlight.findMany({
     orderBy: { order: "asc" },
@@ -27,11 +17,9 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const user = await getCurrentUser()
-  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
-
-  const isAdmin = (process.env.ADMIN_USER_IDS || "").split(",").map(id => id.trim()).includes(user.id)
-  if (!isAdmin) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
+  const { userId } = await auth()
+  if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
+  if (!isAdminUser(userId)) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
   const body = await req.json()
   const spotlight = await prisma.spotlight.create({
