@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET() {
   const adminResult = await requireAdmin()
@@ -24,7 +25,8 @@ export async function POST(req: Request) {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const message = await prisma.message.create({
     data: {
       conversationId: body.conversationId,

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export const dynamic = 'force-dynamic'
 
@@ -49,7 +50,8 @@ export async function POST(req: Request) {
   if (adminResult.error) return adminResult.error
 
   try {
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const company = await prisma.company.create({
       data: {
         name: body.name,

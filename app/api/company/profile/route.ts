@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET() {
   try {
@@ -48,7 +49,8 @@ export async function PATCH(req: Request) {
     const user = await prisma.user.findUnique({ where: { id: userId } })
     if (!user?.companyId) return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
 
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const company = await prisma.company.update({
       where: { id: user.companyId },
       data: {

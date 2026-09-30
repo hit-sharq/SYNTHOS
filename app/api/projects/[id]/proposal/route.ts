@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const p = await prisma.proposal.findUnique({ where: { projectId: params.id } })
@@ -9,7 +10,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   
   if (body.action === "sendToClient") {
     const p = await prisma.proposal.findUnique({ where: { projectId: params.id } })

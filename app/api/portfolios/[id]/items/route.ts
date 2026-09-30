@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUser() {
   const { userId } = await auth()
@@ -20,7 +21,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!portfolio) return NextResponse.json({ error: Errors.resources.postNotFound }, { status: 404 })
   if (portfolio.userId !== user.id) return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const item = await prisma.portfolioItem.create({
     data: {
       portfolioId: params.id,

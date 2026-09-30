@@ -4,6 +4,7 @@ import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
 import { proposalApprovedEmail, quoteApprovedEmail, adminProjectApprovedEmail } from "@/lib/email-templates"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET(_req: Request, { params }: { params: { token: string } }) {
   const proposal = await prisma.proposal.findUnique({ where: { publicToken: params.token } })
@@ -21,7 +22,8 @@ export async function GET(_req: Request, { params }: { params: { token: string }
 
 export async function POST(req: Request, { params }: { params: { token: string } }) {
   try {
-    const body = await req.json().catch(() => ({}))
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const action = body?.action as string | undefined
     const feedback = body?.feedback as string | undefined
     const suggestions = body?.suggestions as { budget?: string; timeline?: string; scope?: string } | undefined

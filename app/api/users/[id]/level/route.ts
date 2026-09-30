@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
 import { getTierForXP, getXPProgress } from "@/lib/levels"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUser() {
   const { userId } = await auth()
@@ -46,7 +47,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ error: Errors.access.forbidden }, { status: 403 })
   }
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const { xp, type } = body
   if (typeof xp !== "number" || xp <= 0) {
     return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })

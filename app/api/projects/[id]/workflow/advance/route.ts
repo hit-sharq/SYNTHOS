@@ -6,6 +6,7 @@ import { adminProjectApprovedEmail, projectApprovedClientEmail } from "@/lib/ema
 import { STAGES, type StageId } from "@/lib/types"
 import { generateWithGemini } from "@/lib/ai"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 const CONTACT_REPORT_PROMPT = (project: any, call: any) => `You are a creative intelligence AI. Generate a contact report for a client call.
 
@@ -106,7 +107,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "Project not found" }, { status: 404 })
     }
 
-    const body = await req.json().catch(() => ({}))
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const action = body.action || "auto"
 
     let nextStage = project.stage as StageId

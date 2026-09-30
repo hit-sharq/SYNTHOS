@@ -3,10 +3,12 @@ import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function POST(req: Request, { params }: { params: { token: string } }) {
   try {
-    const body = await req.json().catch(() => ({}))
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const { name, email, subject, message: msg } = body || {}
 
     if (!name?.trim() || !email?.trim() || !msg?.trim()) {

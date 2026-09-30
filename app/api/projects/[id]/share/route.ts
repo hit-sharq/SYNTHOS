@@ -4,13 +4,15 @@ import { prisma } from "@/lib/prisma"
 import { sendNotification } from "@/lib/notifications"
 import { isProjectAccessible } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
   const { userId } = await auth()
   const authResult = await isProjectAccessible(params.id, userId || undefined)
   if (!authResult.accessible) return authResult.error!
   try {
-    const body = await req.json().catch(() => ({}))
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const action = body?.action as string | undefined
 
     if (action !== "generate" && action !== "regenerate") {

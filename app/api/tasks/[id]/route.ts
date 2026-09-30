@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -19,7 +20,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   const user = await getCurrentUserId()
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const existing = await prisma.task.findUnique({ where: { id: params.id } })
   if (!existing) return NextResponse.json({ error: Errors.resources.taskNotFound }, { status: 404 })
 

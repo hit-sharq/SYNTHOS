@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function POST(req: Request) {
   try {
@@ -34,7 +35,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: Errors.actions.limitReached }, { status: 403 })
     }
 
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const job = await prisma.jobPosting.create({
       data: {
         companyId: company.id,

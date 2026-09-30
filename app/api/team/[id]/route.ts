@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const adminResult = await requireAdmin()
@@ -23,7 +24,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (adminResult.error) return adminResult.error
 
   try {
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const member = await prisma.teamMember.update({
       where: { id: params.id },
       data: body,

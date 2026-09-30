@@ -2,10 +2,12 @@ import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const { name, email, company, clerkId } = body || {}
 
     if (!name?.trim() || !email?.trim() || !clerkId) {

@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -18,7 +19,8 @@ export async function POST(req: Request) {
   const user = await getCurrentUserId()
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const { postId, type = "like" } = body
   const validTypes = ["like", "celebrate", "support", "insightful", "congrats"]
   if (!validTypes.includes(type)) {
@@ -53,7 +55,8 @@ export async function DELETE(req: Request) {
   const user = await getCurrentUserId()
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const { postId, type = "like" } = body
 
   await prisma.reaction.deleteMany({

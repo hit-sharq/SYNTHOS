@@ -4,12 +4,14 @@ import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function POST(req: Request) {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
   try {
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const { projectId, mode, projectName, clientName, company, clientEmail, source, transcript } = body
 
     if (!transcript || !transcript.trim()) {

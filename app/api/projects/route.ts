@@ -5,6 +5,7 @@ import { Stage, ProjStatus, ReviewStatus } from "@prisma/client"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
 import { requireAuth, getUserEmail, getUserByEmail } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET(req: Request) {
   const authResult = await requireAuth()
@@ -61,7 +62,8 @@ export async function POST(req: Request) {
   }
 
   try {
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const project = await prisma.project.create({
       data: {
         name: body.name,

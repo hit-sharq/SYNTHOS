@@ -2,9 +2,11 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { sendNotification, notifyAdmins } from "@/lib/notifications"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
 
   const report = await prisma.contactReport.upsert({
     where: { projectId: params.id },

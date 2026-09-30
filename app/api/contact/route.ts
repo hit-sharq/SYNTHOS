@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export const dynamic = "force-dynamic"
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
+    const body = await readJson<any>(request)
+    if (isJsonError(body)) return body
     const { name, email, company, subject, message } = body
 
     if (!name || !email || !subject || !message) {

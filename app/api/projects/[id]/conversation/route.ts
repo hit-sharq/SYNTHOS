@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET(_req: Request, { params }: { params: { projectId: string } }) {
   const conversation = await prisma.conversation.findFirst({
@@ -10,7 +11,8 @@ export async function GET(_req: Request, { params }: { params: { projectId: stri
 }
 
 export async function POST(req: Request, { params }: { params: { projectId: string } }) {
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const conversation = await prisma.conversation.create({
     data: {
       projectId: params.projectId,

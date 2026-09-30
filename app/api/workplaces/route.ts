@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { isAdminUser } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -31,7 +32,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: Errors.access.adminOnly }, { status: 403 })
   }
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const { name, description, slug } = body
   if (!name) return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
 

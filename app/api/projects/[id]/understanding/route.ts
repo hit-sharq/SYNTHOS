@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const data = await prisma.understanding.findUnique({
@@ -10,7 +11,8 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
 }
 
 export async function POST(req: Request, { params }: { params: { id: string } }) {
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const existing = await prisma.understanding.findUnique({ where: { projectId: params.id } })
   const data = existing
     ? await prisma.understanding.update({ where: { projectId: params.id }, data: { ...body, insights: { deleteMany: {}, create: (body.insights || []).map((i: any) => ({ ...i })) } } })

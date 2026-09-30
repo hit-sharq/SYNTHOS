@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET(req: Request) {
   const adminResult = await requireAdmin()
@@ -25,7 +26,8 @@ export async function POST(req: Request) {
   const adminResult = await requireAdmin()
   if (adminResult.error) return adminResult.error
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const career = await prisma.career.create({
     data: {
       title: body.title,

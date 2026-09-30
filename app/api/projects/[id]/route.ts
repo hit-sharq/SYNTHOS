@@ -5,6 +5,7 @@ import { Stage, ProjStatus } from "@prisma/client"
 import { sendNotification } from "@/lib/notifications"
 import { isProjectAccessible } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET(_req: Request, { params }: { params: { id: string } }) {
   const { userId } = await auth()
@@ -46,7 +47,8 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   const { userId } = await auth()
   const authResult = await isProjectAccessible(params.id, userId || undefined)
   if (!authResult.accessible) return authResult.error!
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const data: any = { ...body }
 
   if (body.stage) data.stage = body.stage as Stage
@@ -112,7 +114,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   const { userId } = await auth()
   const authResult = await isProjectAccessible(params.id, userId || undefined)
   if (!authResult.accessible) return authResult.error!
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   if (body.stage) {
     const updated = await prisma.project.update({
       where: { id: params.id },

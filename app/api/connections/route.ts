@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -65,7 +66,8 @@ export async function POST(req: Request) {
   const user = await getCurrentUserId()
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const { followedId } = body
   if (!followedId) return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
   if (followedId === user.id) return NextResponse.json({ error: Errors.actions.cannotFollowSelf }, { status: 400 })

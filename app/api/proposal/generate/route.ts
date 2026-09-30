@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUser() {
   const { userId } = await auth()
@@ -16,7 +17,8 @@ export async function POST(req: Request) {
   const user = await getCurrentUser()
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const { brief, tone, style } = body
   if (!brief) return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
 

@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET() {
   try {
@@ -50,7 +51,8 @@ export async function PATCH(req: Request) {
     const user = await prisma.user.findUnique({ where: { email } })
     if (!user || user.role !== Role.talent) return NextResponse.json({ error: Errors.access.notFound }, { status: 404 })
 
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const talent = await prisma.talent.update({
       where: { userId: user.id },
       data: {

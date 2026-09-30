@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET() {
   try {
@@ -17,7 +18,8 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const talent = await prisma.talent.create({
       data: {
         name: body.name,

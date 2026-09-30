@@ -5,6 +5,7 @@ import { generateWithGemini } from "@/lib/ai"
 import { sendNotification } from "@/lib/notifications"
 import { sendEmail } from "@/lib/email"
 import { proposalReadyEmail, quoteReadyEmail, meetingCompletedEmail } from "@/lib/email-templates"
+import { readJson, isJsonError } from "@/lib/request"
 
 function cleanJson(text: string): any {
   try {
@@ -32,7 +33,8 @@ async function withRetry<T>(fn: () => Promise<T>, fallback: T, retries = 3, dela
 
 export async function POST(req: Request, { params }: { params: { roomName: string } }) {
   try {
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const { projectId, notes, transcript, meetingSource, artifacts } = body
 
     if (!projectId) {

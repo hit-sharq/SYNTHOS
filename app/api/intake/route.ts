@@ -5,10 +5,12 @@ import { generateWithGemini } from "@/lib/ai"
 import { sendNotification } from "@/lib/notifications"
 import { runAutoWorkflow } from "@/lib/auto-workflow"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json()
+    const body = await readJson<any>(req)
+    if (isJsonError(body)) return body
     const { name, company, email, phone, type, title, objective, audience, direction, budget, timeline, context } = body
 
     if (!name || !email || !title) {

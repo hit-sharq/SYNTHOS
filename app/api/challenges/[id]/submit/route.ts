@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUser() {
   const { userId } = await auth()
@@ -20,7 +21,8 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!challenge) return NextResponse.json({ error: Errors.resources.postNotFound }, { status: 404 })
   if (challenge.status !== "open") return NextResponse.json({ error: "Challenge is not open" }, { status: 400 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const { content, mediaUrl } = body
   if (!content) return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
 

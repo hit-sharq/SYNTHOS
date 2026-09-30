@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { Errors } from "@/lib/errors"
+import { readJson, isJsonError } from "@/lib/request"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -57,7 +58,8 @@ export async function POST(req: Request) {
   if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
   if (user.role !== Role.talent) return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const task = await prisma.task.create({
     data: {
       projectId: body.projectId,

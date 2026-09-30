@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
+import { readJson, isJsonError } from "@/lib/request"
 
 export async function GET() {
   const adminResult = await requireAdmin()
@@ -31,7 +32,8 @@ export async function POST(req: Request) {
   const adminResult = await requireAdmin()
   if (adminResult.error) return adminResult.error
 
-  const body = await req.json()
+  const body = await readJson<any>(req)
+  if (isJsonError(body)) return body
   const results: any = {}
 
   for (const [key, value] of Object.entries(body.settings || {})) {
