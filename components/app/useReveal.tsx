@@ -66,11 +66,29 @@ export function RevealOnScroll({
 export function StaggerContainer({
   children,
   className = "",
+  as = "div",
 }: {
   children: React.ReactNode
   className?: string
+  /**
+   * Use "contents" when the children need to participate in a parent CSS grid
+   * (for example .blog-grid). A wrapper element would otherwise become the
+   * single grid item and stack all children into one column.
+   */
+  as?: "div" | "contents"
 }) {
   const { ref, isVisible } = useReveal()
+
+  if (as === "contents") {
+    // `display: contents` removes the wrapper from the layout tree, so the
+    // children become direct grid items. The class list is kept for any
+    // styles that target .stagger-children.
+    return (
+      <>
+        {children}
+      </>
+    )
+  }
 
   return (
     <div

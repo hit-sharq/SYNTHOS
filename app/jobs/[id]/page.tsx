@@ -82,7 +82,7 @@ export default async function JobPage({ params }: { params: { id: string } }) {
             <p className="tiny muted" style={{ marginTop: 4 }}>{job.company.industry || "N/A"} · {job.company.location || "N/A"}</p>
           </div>
 
-          <div style={{ display: "flex", gap: 12 }}>
+          <div className="row gap-2 wrap">
             {applied ? (
               <span className="btn btn-subtle" style={{ opacity: 0.6, cursor: "default" }}>Applied</span>
             ) : userId ? (
@@ -92,6 +92,7 @@ export default async function JobPage({ params }: { params: { id: string } }) {
             ) : (
               <Link href="/sign-in?redirect=/jobs" className="btn btn-signal">Sign in to Apply</Link>
             )}
+            <Link href="/jobs" className="btn btn-ghost">Back to Jobs</Link>
             <ReportButton jobId={job.id} label="Report Job" className="btn btn-ghost" />
           </div>
         </div>

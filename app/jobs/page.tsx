@@ -89,7 +89,7 @@ export default async function JobsPage() {
               <p className="muted">No open gigs right now. Approved jobs will appear here.</p>
             </div>
           )}
-          <StaggerContainer>
+          <StaggerContainer as="contents">
             {jobs.map((job) => (
               <RevealOnScroll key={job.id}>
                 <article key={job.id} className="blog-card">
@@ -104,7 +104,7 @@ export default async function JobsPage() {
                   {job.experience && <span className="chip">{job.experience}</span>}
                   {job.company.verified && <span className="chip" style={{ background: "var(--approved-soft)", color: "var(--approved)", border: "1px solid var(--approved)" }}>Verified</span>}
                 </div>
-                <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 12 }}>
+                <div className="blog-card-actions">
                   {userId && appliedJobIds.includes(job.id) ? (
                     <span className="btn btn-subtle btn-sm" style={{ opacity: 0.6, cursor: "default" }}>Applied</span>
                   ) : userId ? (

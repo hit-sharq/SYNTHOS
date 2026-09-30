@@ -1,7 +1,11 @@
 .blog-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 0;
+  /* Even gutters between cards. The cards previously shared their borders,
+       which is why the border rules below strip the right and bottom edge. */
+  gap: 16px;
+  /* Equal-height rows regardless of how much content each card holds. */
+  align-items: stretch;
 }
 
 .blog-card {
@@ -11,8 +15,9 @@
   transition: all var(--tr);
   display: flex;
   flex-direction: column;
-  border-right: none;
-  border-bottom: none;
+  /* Fill the grid row so short cards match tall ones. */
+  height: 100%;
+  min-width: 0;
 }
 
 .blog-card:hover {
@@ -52,6 +57,33 @@
 .blog-card-body .btn {
   margin-top: auto;
   align-self: flex-start;
+}
+
+/* Card footer actions. Wraps so a third button is never pushed out of the
+   card, and pins to the bottom so every card's actions line up. */
+.blog-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.blog-card-actions > * {
+  flex: 0 0 auto;
+}
+
+.blog-card-actions form {
+  margin: 0;
+}
+
+/* Keep the summary from making one card far taller than its neighbours. */
+.blog-card-body > p {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 @media (max-width: 720px) {

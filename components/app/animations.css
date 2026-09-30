@@ -196,6 +196,24 @@ a.anim-underline:hover::after {
 }
 
 /* ---- Scroll Reveal Base ---- */
+/* .reveal* wrappers are frequently the direct children of a CSS grid (see
+   .blog-grid). As grid items they must stretch to fill their cell, otherwise
+   the wrapper keeps its intrinsic width and the row looks ragged. */
+.reveal,
+.reveal-left,
+.reveal-right,
+.reveal-scale {
+  display: grid;
+  align-items: stretch;
+  min-width: 0;
+}
+.reveal > *,
+.reveal-left > *,
+.reveal-right > *,
+.reveal-scale > * {
+  min-width: 0;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(20px);

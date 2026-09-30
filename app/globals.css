@@ -329,7 +329,13 @@ button {
   background: var(--surface-2);
   color: var(--ink-3);
   border: 1px solid var(--line);
-  white-space: nowrap;
+  /* Long values such as "KES 180K - 240K/mo" must not spill past the card
+     edge. Allow wrapping, and cap the width so a single chip can never be
+     wider than its container. */
+  white-space: normal;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* ---- Buttons ---- */
