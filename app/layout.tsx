@@ -32,6 +32,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head>
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+          <link rel="alternate icon" href="/favicon.ico" sizes="48x48" />
+          <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+          <meta name="apple-mobile-web-app-title" content="Synthos" />
+          <meta name="application-name" content="Synthos" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
           <link
