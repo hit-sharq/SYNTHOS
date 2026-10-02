@@ -6,6 +6,7 @@ import { PageHead, PageWrap } from "@/components/app/Page"
 import Link from "next/link"
 import { ReportButton } from "@/components/app/ReportButton"
 import "@/components/app/blog.css"
+import { getSessionUser } from "@/lib/auth"
 
 export default async function JobPage({ params }: { params: { id: string } }) {
   const job = await prisma.jobPosting.findUnique({
@@ -29,7 +30,7 @@ export default async function JobPage({ params }: { params: { id: string } }) {
   }
   let applied = false
   if (userId) {
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const user = await getSessionUser()
     if (user?.role === "talent") {
       const application = await prisma.jobApplication.findUnique({
         where: { jobId_talentId: { jobId: job.id, talentId: userId } },

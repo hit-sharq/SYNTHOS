@@ -3,13 +3,14 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
 import { readJson, isJsonError } from "@/lib/request"
+import { getSessionUser } from "@/lib/auth"
 
 export async function POST(req: Request) {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const user = await getSessionUser()
     if (!user || !user.companyId) {
       return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
     }

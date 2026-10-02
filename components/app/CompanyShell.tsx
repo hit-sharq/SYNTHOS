@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
-import { LayoutDashboard, Briefcase, Users, Settings, Building2, ArrowLeft, Menu, X, FileText, MessageSquare } from "lucide-react"
+import { LayoutDashboard, Briefcase, Users, Settings, Building2, ArrowLeft, Menu, X, FileText, MessageSquare, ShieldCheck } from "lucide-react"
 import "./company-shell.css"
 
 const COMPANY_NAV = [
@@ -12,6 +12,7 @@ const COMPANY_NAV = [
   { href: "/company/jobs", label: "My Jobs", icon: Briefcase },
   { href: "/company/applications", label: "Applications", icon: Users },
   { href: "/company/profile", label: "Profile", icon: Building2 },
+  { href: "/company/verification", label: "Verification", icon: ShieldCheck },
   { href: "/company/messages", label: "Messages", icon: MessageSquare },
   { href: "/company/settings", label: "Settings", icon: Settings },
 ]

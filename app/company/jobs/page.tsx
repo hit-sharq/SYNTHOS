@@ -7,10 +7,11 @@ import { auth } from "@clerk/nextjs/server"
 import Link from "next/link"
 import { RevealOnScroll } from "@/components/app/useReveal"
 import "@/components/app/admin.css"
+import { getSessionUser } from "@/lib/auth"
 
 export default async function CompanyJobsPage() {
   const { userId } = await auth()
-  const user = await prisma.user.findUnique({ where: { id: userId! } })
+  const user = await getSessionUser()
   if (!user?.companyId) {
     return (
       <CompanyShell>

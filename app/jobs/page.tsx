@@ -7,6 +7,7 @@ import Link from "next/link"
 import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { ReportButton } from "@/components/app/ReportButton"
 import "@/components/app/blog.css"
+import { getSessionUser } from "@/lib/auth"
 
 type Job = {
   id: string
@@ -50,7 +51,7 @@ export default async function JobsPage() {
 
   let appliedJobIds: string[] = []
   if (userId) {
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const user = await getSessionUser()
     if (user?.role === "talent") {
       const applications = await prisma.jobApplication.findMany({
         where: { talentId: userId },

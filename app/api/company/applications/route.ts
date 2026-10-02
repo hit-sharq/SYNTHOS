@@ -2,13 +2,14 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { getSessionUser } from "@/lib/auth"
 
 export async function GET() {
   try {
     const { userId } = await auth()
     if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    const user = await getSessionUser()
     if (!user?.companyId) return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
 
     const applications = await prisma.jobApplication.findMany({

@@ -16,6 +16,9 @@ vi.mock("@/lib/prisma", () => ({
       findFirst: vi.fn(),
       findMany: vi.fn(),
     },
+    user: {
+      findUnique: vi.fn(),
+    },
   },
 }))
 
@@ -34,7 +37,7 @@ describe("PATCH /api/companies/[id]", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.mocked(requireAdmin).mockResolvedValue({ userId: "u1", error: null })
-    vi.mocked(prisma.company.findUnique).mockResolvedValue({ id: "co_1" } as any)
+    vi.mocked(prisma.company.findUnique).mockResolvedValue({ id: "co_1", verified: false } as any)
   })
 
   it("rejects a non-admin", async () => {
@@ -48,10 +51,10 @@ describe("PATCH /api/companies/[id]", () => {
 
   it("only sends the fields present in the body to prisma", async () => {
     vi.mocked(prisma.company.update).mockResolvedValue({ id: "co_1" } as any)
-    await PATCH(req({ verified: true }), { params })
+    await PATCH(req({ industry: "Tech" }), { params })
     expect(prisma.company.update).toHaveBeenCalledWith({
       where: { id: "co_1" },
-      data: { verified: true },
+      data: { industry: "Tech" },
     })
   })
 
@@ -60,10 +63,29 @@ describe("PATCH /api/companies/[id]", () => {
     await PATCH(req({ verified: true }), { params })
     const data = vi.mocked(prisma.company.update).mock.calls[0][0].data as Record<string, unknown>
     // The admin verify toggle sends only `verified`; anything else present
-    // here would blank the company name, email and status.
-    for (const key of ["name", "email", "phone", "status", "slug"]) {
+    // here would blank the company name, email and phone.
+    for (const key of ["name", "email", "phone", "slug"]) {
       expect(data).not.toHaveProperty(key)
     }
+  })
+
+  it("records who verified the company and activates it", async () => {
+    vi.mocked(prisma.user.findUnique).mockResolvedValue({ id: "u_admin" } as any)
+    vi.mocked(prisma.company.update).mockResolvedValue({ id: "co_1" } as any)
+    await PATCH(req({ verified: true }), { params })
+    const data = vi.mocked(prisma.company.update).mock.calls[0][0].data as Record<string, unknown>
+    expect(data.verifiedBy).toBe("u_admin")
+    expect(data.verifiedAt).toBeInstanceOf(Date)
+    expect(data.status).toBe("active")
+  })
+
+  it("clears the verification trail when a company is unverified", async () => {
+    vi.mocked(prisma.company.findUnique).mockResolvedValue({ id: "co_1", verified: true } as any)
+    vi.mocked(prisma.company.update).mockResolvedValue({ id: "co_1" } as any)
+    await PATCH(req({ verified: false }), { params })
+    const data = vi.mocked(prisma.company.update).mock.calls[0][0].data as Record<string, unknown>
+    expect(data.verifiedAt).toBeNull()
+    expect(data.verifiedBy).toBeNull()
   })
 
   it("applies a full edit when every field is sent", async () => {

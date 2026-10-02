@@ -45,12 +45,27 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     "status",
   ] as const
 
-  const existing = await prisma.company.findUnique({ where: { id: params.id }, select: { id: true } })
+  const existing = await prisma.company.findUnique({ where: { id: params.id }, select: { id: true, verified: true } })
   if (!existing) return NextResponse.json({ error: Errors.resources.companyNotFound }, { status: 404 })
 
   const data: Record<string, unknown> = {}
   for (const key of editable) {
     if (body[key] !== undefined) data[key] = body[key]
+  }
+
+  // Record who approved the company and when, so verification is auditable.
+  if (body.verified === true && body.verified !== existing.verified) {
+    const reviewer = adminResult.userId
+      ? await prisma.user.findUnique({ where: { clerkId: adminResult.userId }, select: { id: true } })
+      : null
+    data.verifiedAt = new Date()
+    data.verifiedBy = reviewer?.id ?? null
+    data.status = body.status ?? "active"
+  }
+
+  if (body.verified === false) {
+    data.verifiedAt = null
+    data.verifiedBy = null
   }
 
   if (Object.keys(data).length === 0) {

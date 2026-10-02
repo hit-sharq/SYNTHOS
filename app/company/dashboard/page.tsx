@@ -9,10 +9,11 @@ import { Briefcase, Users, Eye, TrendingUp, Plus, ExternalLink } from "lucide-re
 import { RevealOnScroll, StaggerContainer } from "@/components/app/useReveal"
 import { Empty } from "@/components/app/ui"
 import "@/components/app/admin.css"
+import { getSessionUser } from "@/lib/auth"
 
 export default async function CompanyDashboardPage() {
   const { userId } = await auth()
-  const user = await prisma.user.findUnique({ where: { id: userId! } })
+  const user = await getSessionUser()
   if (!user?.companyId) {
     return (
       <CompanyShell>

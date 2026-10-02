@@ -43,6 +43,7 @@ export async function POST(req: Request) {
 
     await prisma.user.create({
       data: {
+        clerkId,
         email: email.trim().toLowerCase(),
         name: name.trim(),
         initials: name.trim().split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase(),
