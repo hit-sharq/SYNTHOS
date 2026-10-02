@@ -100,6 +100,10 @@ model Project {
   id           String     @id @default(cuid())
   slug         String     @unique
   name         String
+  /// The business this project is for. `client` below is the contact person's
+  /// display name and `clientRef` the contact; this is the company link.
+  companyId    String?
+  companyRef   Company?   @relation(fields: [companyId], references: [id], onDelete: SetNull)
   client       String
   clientId     String?
   clientRef    Client?    @relation(fields: [clientId], references: [id])
@@ -455,6 +459,8 @@ model Company {
   jobs          JobPosting[]
   verifications CompanyVerification[]
   users         User[]
+  clients       Client[]
+  projects      Project[]
 
   @@index([status])
   @@index([verified])
@@ -522,6 +528,10 @@ model Client {
   id          String   @id @default(cuid())
   name        String
   company     String
+  /// The business this person works for. `company` above stays as a display
+  /// name; this is the authoritative link.
+  companyId   String?
+  companyRef  Company? @relation(fields: [companyId], references: [id], onDelete: SetNull)
   email       String
   phone       String?
   industry    String?
@@ -539,6 +549,7 @@ model Client {
   projects    Project[]
 
   @@index([status])
+  @@index([companyId])
 }
 
 // ----- Blog & News -----

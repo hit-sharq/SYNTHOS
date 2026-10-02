@@ -72,15 +72,26 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   if (!project) return NextResponse.json({ error: Errors.access.notFound }, { status: 404 })
 
   if (body.email || body.company) {
-    const client = await prisma.client.findFirst({ where: { name: project.client } })
+    // Resolve the contact through the project's clientId rather than matching
+    // the display-name string, which could hit the wrong person.
+    const client = project.clientId
+      ? await prisma.client.findUnique({ where: { id: project.clientId } })
+      : await prisma.client.findFirst({ where: { name: project.client } })
     if (client) {
-      await prisma.client.update({
-        where: { id: client.id },
-        data: {
-          ...(body.email ? { email: body.email } : {}),
-          ...(body.company ? { company: body.company } : {}),
-        },
-      })
+      const update: Record<string, unknown> = {}
+      if (body.email) update.email = body.email
+      if (body.company) {
+        update.company = body.company
+        // Keep the authoritative link in step with the renamed company.
+        const target = await prisma.company.findFirst({
+          where: { name: body.company },
+          select: { id: true },
+        })
+        if (target) update.companyId = target.id
+      }
+      if (Object.keys(update).length > 0) {
+        await prisma.client.update({ where: { id: client.id }, data: update })
+      }
     }
     delete data.email
     delete data.company

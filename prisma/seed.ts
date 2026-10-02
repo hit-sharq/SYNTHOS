@@ -57,13 +57,15 @@ async function main() {
     { name: "Neema Njoroge", company: "Nairobi Fitness Co", email: "neema@nairobifitness.co.ke", industry: "Health & Fitness", status: "lead", value: "KES 480K", tags: ["web", "new"] },
   ]
 
-  const clients = [] as { id: string; name: string }[]
+  const clients = [] as { id: string; name: string; companyId: string | null }[]
   for (const c of clientSpecs) {
     const found = await prisma.client.findFirst({ where: { email: c.email } })
     const row = found ?? await prisma.client.create({
       data: {
         name: c.name,
         company: c.company,
+        // Link the contact to the company record so it is not just text.
+        companyId: companies.find((co) => co.name === c.company)?.id ?? null,
         email: c.email,
         industry: c.industry,
         status: c.status as any,
@@ -72,7 +74,7 @@ async function main() {
         nextAction: "Schedule discovery call",
       },
     })
-    clients.push(row as { id: string; name: string })
+    clients.push(row as { id: string; name: string; companyId: string | null })
   }
   console.log(`clients: ${clients.length}`)
 
@@ -165,6 +167,7 @@ async function main() {
         name: spec.name,
         client: spec.client,
         clientId: clients[spec.clientIdx].id,
+        companyId: clients[spec.clientIdx].companyId ?? null,
         type: spec.type,
         stage: spec.stage,
         status: spec.status as any,
