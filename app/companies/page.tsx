@@ -28,7 +28,7 @@ export default function CompaniesPage() {
   const [filterIndustry, setFilterIndustry] = useState("all")
 
   useEffect(() => {
-    fetch("/api/companies")
+    fetch("/api/companies/public")
       .then(res => res.json())
       .then(data => {
         setCompanies(data)

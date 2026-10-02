@@ -26,22 +26,38 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   const body = await readJson<any>(req)
   if (isJsonError(body)) return body
-  const company = await prisma.company.update({
-    where: { id: params.id },
-    data: {
-      name: body.name,
-      slug: body.slug,
-      email: body.email,
-      phone: body.phone,
-      website: body.website,
-      industry: body.industry,
-      location: body.location,
-      description: body.description,
-      logo: body.logo,
-      verified: body.verified,
-      status: body.status,
-    },
-  })
+
+  // Only apply the fields the caller actually sent. Passing the whole body
+  // straight to prisma.update would clear every omitted column, so the admin
+  // UI's partial "toggle verified" payload would wipe the company name,
+  // email, phone and status.
+  const editable = [
+    "name",
+    "slug",
+    "email",
+    "phone",
+    "website",
+    "industry",
+    "location",
+    "description",
+    "logo",
+    "verified",
+    "status",
+  ] as const
+
+  const existing = await prisma.company.findUnique({ where: { id: params.id }, select: { id: true } })
+  if (!existing) return NextResponse.json({ error: Errors.resources.companyNotFound }, { status: 404 })
+
+  const data: Record<string, unknown> = {}
+  for (const key of editable) {
+    if (body[key] !== undefined) data[key] = body[key]
+  }
+
+  if (Object.keys(data).length === 0) {
+    return NextResponse.json({ error: Errors.validation.requiredField }, { status: 400 })
+  }
+
+  const company = await prisma.company.update({ where: { id: params.id }, data })
   return NextResponse.json(company)
 }
 

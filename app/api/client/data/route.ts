@@ -7,11 +7,33 @@ export async function GET() {
   const { userId } = await auth()
   if (!userId) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const { getSessionEmail } = await import("@/lib/auth")
-  const email = await getSessionEmail()
-  if (!email) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
+  const { getSessionUser } = await import("@/lib/auth")
+  const user = await getSessionUser()
+  if (!user) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const client = await prisma.client.findFirst({ where: { email } })
+  // Company signup creates a User linked to a Company, not a Client record,
+  // so resolve the client identity from the session user first and fall back
+  // to a Client row for contacts that were created from a project instead.
+  type ClientIdentity = { id: string; name: string; company: string; email: string }
+
+  let client: ClientIdentity | null =
+    (await prisma.client.findFirst({ where: { email: user.email } })) ?? null
+
+  if (!client && user.companyId) {
+    const company = await prisma.company.findUnique({
+      where: { id: user.companyId },
+      select: { id: true, name: true },
+    })
+    if (company) {
+      client = {
+        id: user.companyId,
+        name: user.name,
+        company: company.name,
+        email: user.email,
+      }
+    }
+  }
+
   if (!client) return NextResponse.json({ projects: [] })
 
   const projects = await prisma.project.findMany({
