@@ -22,6 +22,31 @@ export function ProposalStage({ project }: { project: Project }) {
     terms: p?.terms || "",
   })
   const [loading, setLoading] = useState(false)
+  const [sending, setSending] = useState(false)
+  const [sendError, setSendError] = useState<string | null>(null)
+
+  // A proposal held by the intake confidence gate stays in draft until
+  // someone has read the brief and deliberately sends it.
+  async function sendToClient() {
+    setSending(true)
+    setSendError(null)
+    try {
+      const res = await fetch(`/api/projects/${project.id}/proposal`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sentToClient: true, sentAt: new Date().toISOString(), status: "review" }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || "Could not send the proposal")
+      }
+      window.location.reload()
+    } catch (e: any) {
+      setSendError(e?.message || "Could not send the proposal")
+    } finally {
+      setSending(false)
+    }
+  }
 
   useEffect(() => {
     fetch("/api/proposal-templates")
@@ -118,10 +143,22 @@ export function ProposalStage({ project }: { project: Project }) {
           <div className="row gap-2">
             <StatusPill status={p.status} />
             <span className="chip" style={{ fontSize: "0.72rem" }}>{p.sentToClient ? "Sent to partner" : "Draft"}</span>
+            {!p.sentToClient && (
+              <button
+                className="btn btn-signal btn-sm"
+                onClick={sendToClient}
+                disabled={sending}
+              >
+                {sending ? "Sending…" : "Send to client"}
+              </button>
+            )}
             <button className="btn btn-ghost btn-sm" onClick={() => setEditing(true)}>Edit</button>
           </div>
         } />
         <div className="stack gap-4" style={{ padding: 24 }}>
+          {sendError && (
+            <p className="tiny" style={{ color: "var(--rejected)" }}>{sendError}</p>
+          )}
           <div className="proposal-meta">
             <Field label="Client details" value={p.clientDetails} />
             <Field label="Investment" value={p.investment} />

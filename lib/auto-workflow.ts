@@ -139,6 +139,13 @@ Return ONLY JSON:
   "status": "review"
 }`
 
+/**
+ * Minimum intake-analysis confidence before an AI proposal is sent to a client
+ * without a human reading it first. The intake output drives both the scope
+ * and the price, so a thin brief produces a wrong number in a client's inbox.
+ */
+export const MIN_INTUKE_CONFIDENCE = 70
+
 const FALLBACKS = {
   contactReport: { summary: "Project brief reviewed successfully", keyPoints: ["Discussed project scope", "Aligned on timeline", "Confirmed budget"], decisions: ["Proceed with proposed approach"], actionItems: [{ who: "Producer", task: "Schedule follow-up", due: "TBD" }], nextSteps: ["Generate proposal", "Send to client for review"] },
   productionMeeting: { decision: "approved", notes: "Team aligned on scope, timeline, and deliverables. Ready to proceed to proposal.", agenda: ["Review brief and confirm objectives", "Align on creative direction and deliverables", "Confirm timeline and budget", "Assign team roles", "Next steps and kickoff plan"], team: ["Producer", "Creative Director", "Strategist"], timeline: "8-12 weeks", deliverables: ["Final Deliverables"], budget: "$50,000 - $100,000" },
@@ -205,26 +212,42 @@ export async function runAutoWorkflow(projectId: string) {
 
     if (currentStage === "brief" && project.brief) {
       if (isIntake) {
+        // A thin intake makes for a speculative scope and a speculative price.
+        // Below the confidence floor the proposal is drafted but not sent, so
+        // someone reads the analysis before a client sees a number.
+        const confidence = typeof project.brief.aiConfidence === "number" ? project.brief.aiConfidence : 0
+        const heldForReview = confidence < MIN_INTUKE_CONFIDENCE
+
         const proposalData = await withRetry(
           () => generateWithGemini(PROPOSAL_PROMPT(project)).then(cleanJson),
           FALLBACKS.proposal
         )
         const publicToken = crypto.randomUUID()
         await prisma.proposal.create({
-          data: { projectId, clientDetails: proposalData.clientDetails, overview: proposalData.overview, problem: proposalData.problem, solution: proposalData.solution, scope: proposalData.scope, deliverables: proposalData.deliverables, timeline: proposalData.timeline, team: proposalData.team, investment: proposalData.investment, terms: proposalData.terms, status: "review", sections: proposalData.sections, publicToken, sentToClient: true, sentAt: new Date() },
+          data: { projectId, clientDetails: proposalData.clientDetails, overview: proposalData.overview, problem: proposalData.problem, solution: proposalData.solution, scope: proposalData.scope, deliverables: proposalData.deliverables, timeline: proposalData.timeline, team: proposalData.team, investment: proposalData.investment, terms: proposalData.terms, status: "draft", sections: proposalData.sections, publicToken, sentToClient: !heldForReview, sentAt: heldForReview ? null : new Date() },
         })
-        await prisma.project.update({ where: { id: projectId }, data: { stage: "proposal", nextAction: "Proposal sent to client for review" } })
+
+        await prisma.project.update({
+          where: { id: projectId },
+          data: heldForReview
+            ? { stage: "proposal", nextAction: `Review intake before sending (AI confidence ${confidence}%)`, aiActivity: 1 }
+            : { stage: "proposal", nextAction: "Proposal sent to client for review", aiActivity: 1 },
+        })
         currentStage = "proposal"
         results.proposal = proposalData
-        results.steps.push({ stage: "proposal", step: "generate", status: "completed" })
-        await persistStatus("proposal", "generate", "completed")
+        results.heldForReview = heldForReview
+        results.intakeConfidence = confidence
+        results.steps.push({ stage: "proposal", step: "generate", status: heldForReview ? "needs_review" : "completed" })
+        await persistStatus("proposal", "generate", heldForReview ? "needs_review" : "completed")
 
         if (project.ownerId) {
           await sendNotification({
             userId: project.ownerId,
-            title: "AI generated proposal",
-            message: `AI drafted a proposal for "${project.name}" from intake. It has been sent to the client for review.`,
-            kind: "info",
+            title: heldForReview ? "Proposal needs review before sending" : "AI generated proposal",
+            message: heldForReview
+              ? `AI drafted a proposal for "${project.name}" from intake, but intake confidence was ${confidence}%. It has NOT been sent. Review the brief and send it from the project.`
+              : `AI drafted a proposal for "${project.name}" from intake. It has been sent to the client for review.`,
+            kind: heldForReview ? "warning" : "info",
             refId: project.id,
           })
         }
