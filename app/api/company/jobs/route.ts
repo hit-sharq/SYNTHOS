@@ -16,8 +16,26 @@ export async function POST(req: Request) {
     }
 
     const company = await prisma.company.findUnique({ where: { id: user.companyId } })
-    if (!company || company.status !== "active") {
-      return NextResponse.json({ error: Errors.access.roleRestricted }, { status: 403 })
+    if (!company) {
+      return NextResponse.json({ error: Errors.resources.companyNotFound }, { status: 404 })
+    }
+
+    // A company stays pending until we verify it. Say so plainly, otherwise
+    // the company only sees a bare 403 and cannot tell what to fix.
+    if (company.status !== "active") {
+      return NextResponse.json(
+        {
+          error:
+            company.status === "pending"
+              ? "Your company is still being verified. Submit your documents to get verified."
+              : "Your company is not active. Please contact support.",
+          code: "company_pending",
+          companyStatus: company.status,
+          verified: company.verified,
+          action: company.status === "pending" ? "submit_verification" : "contact_support",
+        },
+        { status: 403 }
+      )
     }
 
     const startOfMonth = new Date()

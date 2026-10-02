@@ -43,11 +43,38 @@ export default async function CompanyDashboardPage() {
   const totalApplications = applications.length
   const pendingApplications = applications.filter(a => a.status === "pending").length
   const totalViews = jobs.reduce((a, j) => a + (j.views || 0), 0)
+  const isPending = company?.status === "pending"
   const pendingVerifications = verifications.filter(v => v.status === "pending").length
 
   return (
     <CompanyShell>
       <div className="company-content">
+        {isPending && (
+          <div
+            className="panel-soft"
+            style={{
+              padding: 20,
+              marginBottom: 22,
+              border: "1px solid var(--review)",
+              background: "var(--review-soft)",
+            }}
+          >
+            <div className="row gap-2 items-center" style={{ marginBottom: 8 }}>
+              <strong style={{ color: "var(--review)" }}>Waiting for verification</strong>
+            </div>
+            <p className="tiny" style={{ color: "var(--ink-2)", marginBottom: pendingVerifications ? 0 : 12 }}>
+              {pendingVerifications
+                ? "Your documents are with us. We'll let you know as soon as they're reviewed."
+                : "Submit your company documents so we can approve you. You can post jobs once you're verified."}
+            </p>
+            {!pendingVerifications && (
+              <Link href="/company/verification" className="btn btn-signal btn-sm" style={{ marginTop: 12 }}>
+                Submit documents
+              </Link>
+            )}
+          </div>
+        )}
+
         <PageHead
           eyebrow="Company"
           title={company?.name || "Dashboard"}
