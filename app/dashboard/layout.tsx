@@ -54,7 +54,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   if (user.role === Role.client) {
-    redirect("/client/dashboard")
+    // A user linked to a company is an employer, so they belong on the
+    // company dashboard (jobs and applications). Only project-track clients
+    // without a company go to the client dashboard.
+    redirect(user.companyId ? "/company/dashboard" : "/client/dashboard")
   }
 
   return <DashboardShell role="talent">{children}</DashboardShell>

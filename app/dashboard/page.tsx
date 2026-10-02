@@ -20,7 +20,7 @@ export default async function DashboardIndex() {
   if (!user) redirect("/")
 
   if (user.role === Role.client) {
-    redirect("/client/dashboard")
+    redirect(user.companyId ? "/company/dashboard" : "/client/dashboard")
   }
 
   redirect("/dashboard/talent")
