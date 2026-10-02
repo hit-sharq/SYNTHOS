@@ -70,7 +70,16 @@ export default function CompanySignupPage() {
         code: verificationCode,
       })
 
-      await setActive({ session: result.createdSessionId })
+      // Capture the id before setActive, which clears the SignUp resource and
+      // leaves createdUserId null.
+      const createdUserId = result.createdUserId
+      const createdSessionId = result.createdSessionId
+
+      if (!createdUserId) {
+        throw new Error("Could not read the new account id. Please sign in and complete your company profile.")
+      }
+
+      await setActive({ session: createdSessionId })
 
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
 
@@ -82,7 +91,7 @@ export default function CompanySignupPage() {
         industry: industry,
         location: location,
         slug: slug,
-        clerkId: result.createdUserId,
+        clerkId: createdUserId,
       }
 
       const res = await fetch("/api/company/signup", {

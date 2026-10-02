@@ -7,8 +7,14 @@ const protectedPaths = [
   /^\/admin/,
   /^\/client\/dashboard/,
   /^\/company\/dashboard/,
+  /^\/company\/jobs/,
+  /^\/company\/applications/,
+  /^\/company\/profile/,
+  /^\/company\/verification/,
   /^\/api\/admin/,
-  /^\/api\/company/,
+  // Signup and login create the account, so they must stay reachable without
+  // a session. Everything else under /api/company requires one.
+  /^\/api\/company\/(?!signup$|login$)/,
   /^\/api\/talent\//,
   /^\/api\/feed/,
   /^\/api\/connections/,
