@@ -41,6 +41,20 @@
   letter-spacing: 0.05em;
 }
 
+.foot-credit {
+  color: var(--ink-2);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 1px;
+  transition: color var(--tr), border-color var(--tr);
+}
+
+.foot-credit:hover,
+.foot-credit:focus-visible {
+  color: var(--signal);
+  border-color: var(--signal);
+}
+
 @media (max-width: 860px) {
   .foot-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
   .foot-brand { grid-column: 1 / -1; }

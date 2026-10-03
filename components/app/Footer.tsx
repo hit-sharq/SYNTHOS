@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="foot-brand">
           <BrandMark />
           <p className="foot-tag">
-            Kenya&apos;s creative job board and talent marketplace. Verified employers, curated roles, and AI-assisted project delivery.
+            Kenya&apos;s creative job board and talent marketplace. Verified employers, curated roles, and talent hired on proven work.
           </p>
           <p className="foot-hai">
             <span className="chip" style={{ color: "var(--ai-ink)", background: "var(--ai-soft)" }}><span className="dot dot-ai" /> AI assists</span>
@@ -61,7 +61,17 @@ export default function Footer() {
       </div>
       <div className="container foot-base">
         <span className="tiny muted">© {new Date().getFullYear()} Synthos. Human + AI creative intelligence.</span>
-        <span className="tiny muted">Built for creative teams &amp; agencies.</span>
+        <span className="tiny muted">
+          Built and maintained by{" "}
+          <a
+            href="https://www.lumyn.co.ke/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="foot-credit"
+          >
+            Lumyn Technologies
+          </a>
+        </span>
       </div>
     </footer>
   )
