@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readPagination, paginated } from "@/lib/pagination"
 
 export const dynamic = "force-dynamic"
 
@@ -12,30 +13,38 @@ export const dynamic = "force-dynamic"
  * active and verified. Pending or unverified companies stay invisible until
  * an admin approves them.
  */
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const companies = await prisma.company.findMany({
-      where: { verified: true, status: "active" },
-      orderBy: { createdAt: "desc" },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        industry: true,
-        location: true,
-        website: true,
-        description: true,
-        logo: true,
-        verified: true,
-        joinedAt: true,
-        jobs: {
-          where: { status: "approved" },
-          select: { id: true },
-        },
-      },
-    })
+    const { page, limit, skip, take } = readPagination(new URL(req.url))
+    const where = { verified: true, status: "active" }
 
-    return NextResponse.json(
+    const [companies, total] = await prisma.$transaction([
+      prisma.company.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+        take,
+        skip,
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          industry: true,
+          location: true,
+          website: true,
+          description: true,
+          logo: true,
+          verified: true,
+          joinedAt: true,
+          jobs: {
+            where: { status: "approved" },
+            select: { id: true },
+          },
+        },
+      }),
+      prisma.company.count({ where }),
+    ])
+
+    return paginated(
       companies.map((c) => ({
         id: c.id,
         name: c.name,
@@ -48,7 +57,10 @@ export async function GET() {
         verified: c.verified,
         joinedAt: c.joinedAt,
         openJobs: c.jobs.length,
-      }))
+      })),
+      total,
+      page,
+      limit
     )
   } catch (error) {
     console.error("Failed to load public companies:", error)

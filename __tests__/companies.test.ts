@@ -15,10 +15,12 @@ vi.mock("@/lib/prisma", () => ({
       update: vi.fn(),
       findFirst: vi.fn(),
       findMany: vi.fn(),
+      count: vi.fn(),
     },
     user: {
       findUnique: vi.fn(),
     },
+    $transaction: vi.fn(),
   },
 }))
 
@@ -31,6 +33,7 @@ const { GET: PUBLIC_GET } = await import("../app/api/companies/public/route")
 function req(body: unknown) {
   return { json: async () => body } as unknown as Request
 }
+const listReq = () => new Request("http://localhost/api/companies/public")
 const params = { id: "co_1" }
 
 describe("PATCH /api/companies/[id]", () => {
@@ -113,6 +116,10 @@ describe("PATCH /api/companies/[id]", () => {
 describe("GET /api/companies/public", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(prisma.company.count).mockResolvedValue(0 as any)
+    vi.mocked(prisma.$transaction).mockImplementation((arg: any) =>
+      Array.isArray(arg) ? Promise.all(arg) : Promise.resolve(arg)
+    )
   })
 
   it("returns only verified, active companies", async () => {
@@ -120,11 +127,11 @@ describe("GET /api/companies/public", () => {
       { id: "c1", name: "Verified Co", slug: "verified-co", industry: null, location: null, website: null, description: null, logo: null, verified: true, joinedAt: new Date(), jobs: [{ id: "j1" }, { id: "j2" }] },
     ] as any)
 
-    const res = await PUBLIC_GET()
+    const res = await PUBLIC_GET(listReq())
     expect(res.status).toBe(200)
     const body = await res.json()
-    expect(body).toHaveLength(1)
-    expect(body[0].openJobs).toBe(2)
+    expect(body.items).toHaveLength(1)
+    expect(body.items[0].openJobs).toBe(2)
 
     const call = vi.mocked(prisma.company.findMany).mock.calls[0][0]
     expect(call?.where).toEqual({ verified: true, status: "active" })
@@ -132,14 +139,14 @@ describe("GET /api/companies/public", () => {
 
   it("counts only approved jobs", async () => {
     vi.mocked(prisma.company.findMany).mockResolvedValue([] as any)
-    await PUBLIC_GET()
+    await PUBLIC_GET(listReq())
     const call = vi.mocked(prisma.company.findMany).mock.calls[0][0] as any
     expect(call.select.jobs.where).toEqual({ status: "approved" })
   })
 
   it("never exposes private contact fields", async () => {
     vi.mocked(prisma.company.findMany).mockResolvedValue([] as any)
-    await PUBLIC_GET()
+    await PUBLIC_GET(listReq())
     const call = vi.mocked(prisma.company.findMany).mock.calls[0][0] as any
     const keys = Object.keys(call.select)
     expect(keys).not.toContain("email")
@@ -149,7 +156,7 @@ describe("GET /api/companies/public", () => {
 
   it("needs no authentication", async () => {
     vi.mocked(prisma.company.findMany).mockResolvedValue([] as any)
-    const res = await PUBLIC_GET()
+    const res = await PUBLIC_GET(listReq())
     expect(res.status).toBe(200)
     expect(requireAdmin).not.toHaveBeenCalled()
   })

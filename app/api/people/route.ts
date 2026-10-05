@@ -3,6 +3,7 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
+import { readPagination, paginated } from "@/lib/pagination"
 
 async function getCurrentUserId() {
   const { userId } = await auth()
@@ -14,31 +15,49 @@ async function getCurrentUserId() {
   return user
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   const currentUser = await getCurrentUserId()
   if (!currentUser) return NextResponse.json({ error: Errors.auth.unauthorized }, { status: 401 })
 
-  const users = await prisma.user.findMany({
-    where: { id: { not: currentUser.id } },
-    select: { id: true, name: true, initials: true, role: true },
-    orderBy: { name: "asc" },
+  const { page, limit, skip, take } = readPagination(new URL(req.url))
+  const where = { id: { not: currentUser.id } }
+
+  const [users, total] = await prisma.$transaction([
+    prisma.user.findMany({
+      where,
+      select: {
+        id: true,
+        name: true,
+        initials: true,
+        role: true,
+        connectionsSent: {
+          where: { followedId: currentUser.id },
+          select: { status: true },
+          take: 1,
+        },
+        connectionsReceived: {
+          where: { followerId: currentUser.id },
+          select: { status: true },
+          take: 1,
+        },
+      },
+      orderBy: { name: "asc" },
+      take,
+      skip,
+    }),
+    prisma.user.count({ where }),
+  ])
+
+  const items = users.map((user) => {
+    const connection = user.connectionsSent[0] ?? user.connectionsReceived[0]
+    return {
+      id: user.id,
+      name: user.name,
+      initials: user.initials,
+      role: user.role,
+      connectionStatus: connection?.status ?? null,
+    }
   })
 
-  const usersWithConnection = await Promise.all(
-    users.map(async (user) => {
-      const connection = await prisma.connection.findFirst({
-        where: {
-          OR: [
-            { followerId: currentUser.id, followedId: user.id },
-            { followerId: user.id, followedId: currentUser.id },
-          ],
-        },
-        select: { status: true },
-      })
-
-      return { ...user, connectionStatus: connection?.status || null }
-    })
-  )
-
-  return NextResponse.json({ users: usersWithConnection })
+  return paginated(items, total, page, limit)
 }
