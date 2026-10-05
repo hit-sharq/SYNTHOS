@@ -162,7 +162,7 @@ function cleanJson(text: string): any {
   }
 }
 
-async function withRetry<T>(fn: () => Promise<T>, fallback: T, retries = 3, delayMs = 2000): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, fallback: T, retries = 2, delayMs = 1000): Promise<T> {
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       return await fn()
@@ -184,6 +184,11 @@ export async function runAutoWorkflow(projectId: string) {
   })
 
   if (!project) return { error: "Project not found" }
+
+  const budgetMs = Number(process.env.WORKFLOW_BUDGET_MS || 45_000)
+  const deadline = Date.now() + budgetMs
+
+  const outOfBudget = () => Date.now() > deadline
 
   const projectWithClient = project as any
   let currentStage = project.stage
@@ -349,6 +354,18 @@ export async function runAutoWorkflow(projectId: string) {
       }
     }
 
+    if (outOfBudget()) {
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          nextAction: "Workflow paused to stay within the request budget. Continue from the project.",
+        },
+      })
+      await persistStatus(currentStage, "budget", "paused")
+      results.budgetExceeded = true
+      return results
+    }
+
     if (currentStage === "contactReport") {
       await prisma.project.update({ where: { id: projectId }, data: { stage: "productionMeeting", nextAction: "Production meeting completed" } })
       currentStage = "productionMeeting"
@@ -376,6 +393,18 @@ export async function runAutoWorkflow(projectId: string) {
           refId: project.id,
         })
       }
+    }
+
+    if (outOfBudget()) {
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          nextAction: "Workflow paused to stay within the request budget. Continue from the project.",
+        },
+      })
+      await persistStatus(currentStage, "budget", "paused")
+      results.budgetExceeded = true
+      return results
     }
 
     if (currentStage === "productionMeeting") {
@@ -412,6 +441,18 @@ export async function runAutoWorkflow(projectId: string) {
       }
     }
 
+    if (outOfBudget()) {
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          nextAction: "Workflow paused to stay within the request budget. Continue from the project.",
+        },
+      })
+      await persistStatus(currentStage, "budget", "paused")
+      results.budgetExceeded = true
+      return results
+    }
+
     if (currentStage === "proposal") {
       const proposal = await prisma.proposal.findUnique({ where: { projectId } })
       if (proposal && !hasRealQuote) {
@@ -445,6 +486,18 @@ export async function runAutoWorkflow(projectId: string) {
         currentStage = "quote"
         await persistStatus("quote", "generate", "completed")
       }
+    }
+
+    if (outOfBudget()) {
+      await prisma.project.update({
+        where: { id: projectId },
+        data: {
+          nextAction: "Workflow paused to stay within the request budget. Continue from the project.",
+        },
+      })
+      await persistStatus(currentStage, "budget", "paused")
+      results.budgetExceeded = true
+      return results
     }
 
     if (currentStage === "quote") {

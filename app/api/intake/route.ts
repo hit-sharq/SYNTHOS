@@ -7,6 +7,8 @@ import { runAutoWorkflow } from "@/lib/auto-workflow"
 import { Errors } from "@/lib/errors"
 import { readJson, isJsonError } from "@/lib/request"
 
+export const maxDuration = 60
+
 export async function POST(req: Request) {
   try {
     const body = await readJson<any>(req)

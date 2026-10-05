@@ -102,6 +102,18 @@ Visit `http://localhost:3000`. Signed-in users land on the dashboard for their r
 
 `DATABASE_URL`, `CLERK_SECRET_KEY` and `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` must be set in `.env`.
 
+### Deployment
+
+Deployed on Vercel. Serverless runs many short-lived instances, which shapes several decisions:
+
+- `DATABASE_URL` uses the Neon pooled endpoint with `connection_limit=5&pool_timeout=20`. Each instance opens its own connections, so without a cap the pooler is exhausted under load.
+- `lib/cache.ts` is a per-process TTL cache. It reduces load per instance, not globally. A multi-instance deployment would put Redis in front of it.
+- `maxDuration = 60` is set on the routes that trigger the AI workflow. Vercel otherwise freezes an instance as soon as its response is sent, killing the work in progress.
+- `lib/ai.ts` aborts a Gemini request after `AI_REQUEST_TIMEOUT_MS` (default 20s) so a slow call cannot outlive the invocation.
+- `runAutoWorkflow` checks `WORKFLOW_BUDGET_MS` (default 45s) between stages and persists progress before pausing, so a long workflow stops cleanly instead of being killed mid-write.
+
+Optional tuning: `AI_REQUEST_TIMEOUT_MS`, `WORKFLOW_BUDGET_MS`.
+
 ### Scripts
 
 | Command | Purpose |

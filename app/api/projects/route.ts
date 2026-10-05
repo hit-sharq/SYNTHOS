@@ -7,6 +7,8 @@ import { requireAuth, getUserEmail, getUserByEmail } from "@/lib/api-auth"
 import { Errors } from "@/lib/errors"
 import { readJson, isJsonError } from "@/lib/request"
 
+export const maxDuration = 60
+
 export async function GET(req: Request) {
   const authResult = await requireAuth()
   if (authResult.error) return authResult.error
