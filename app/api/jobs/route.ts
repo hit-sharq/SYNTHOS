@@ -3,54 +3,67 @@ import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
 import { readJson, isJsonError } from "@/lib/request"
 import { readPagination, paginated } from "@/lib/pagination"
+import { cached, cachedJson, pruneCache, DEFAULT_TTL_MS } from "@/lib/cache"
 
 export async function GET(req: Request) {
   try {
-    const { page, limit, skip, take } = readPagination(new URL(req.url))
+    const url = new URL(req.url)
+    const { page, limit, skip, take } = readPagination(url)
     const where = { status: "approved" as const }
+    const key = `jobs:${take}:${skip}`
 
-    const [jobs, total] = await prisma.$transaction([
-      prisma.jobPosting.findMany({
-        where,
-        orderBy: { postedAt: "desc" },
-        take,
-        skip,
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          requirements: true,
-          skills: true,
-          budget: true,
-          timeline: true,
-          type: true,
-          status: true,
-          postedAt: true,
-          expiresAt: true,
-          company: { select: { id: true, name: true, slug: true, verified: true } },
+    const [jobs, total] = await cached(key, DEFAULT_TTL_MS, () =>
+      prisma.$transaction([
+        prisma.jobPosting.findMany({
+          where,
+          orderBy: { postedAt: "desc" },
+          take,
+          skip,
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            requirements: true,
+            skills: true,
+            budget: true,
+            timeline: true,
+            type: true,
+            status: true,
+            postedAt: true,
+            expiresAt: true,
+            company: { select: { id: true, name: true, slug: true, verified: true } },
+          },
+        }),
+        prisma.jobPosting.count({ where }),
+      ])
+    )
+    pruneCache()
+
+    return cachedJson(
+      {
+        items: jobs.map((j) => ({
+          id: j.id,
+          title: j.title,
+          description: j.description,
+          requirements: j.requirements,
+          skills: j.skills,
+          budget: j.budget,
+          timeline: j.timeline,
+          type: j.type,
+          status: j.status,
+          postedAt: j.postedAt.toISOString(),
+          expiresAt: j.expiresAt?.toISOString(),
+          company: j.company,
+        })),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: limit > 0 ? Math.ceil(total / limit) : 0,
+          hasMore: page * limit < total,
         },
-      }),
-      prisma.jobPosting.count({ where }),
-    ])
-
-    return paginated(
-      jobs.map((j) => ({
-        id: j.id,
-        title: j.title,
-        description: j.description,
-        requirements: j.requirements,
-        skills: j.skills,
-        budget: j.budget,
-        timeline: j.timeline,
-        type: j.type,
-        status: j.status,
-        postedAt: j.postedAt.toISOString(),
-        expiresAt: j.expiresAt?.toISOString(),
-        company: j.company,
-      })),
-      total,
-      page,
-      limit
+      },
+      30
     )
   } catch (error) {
     console.error("Failed to fetch jobs:", error)

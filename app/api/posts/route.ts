@@ -4,6 +4,8 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
 import { readJson, isJsonError } from "@/lib/request"
+import { readPagination } from "@/lib/pagination"
+import { cached, cachedJson, pruneCache, DEFAULT_TTL_MS } from "@/lib/cache"
 
 export async function GET(req: Request) {
   const adminResult = await requireAdmin()
@@ -17,11 +19,19 @@ export async function GET(req: Request) {
   if (kind) where.kind = kind
   if (status) where.status = status
 
-  const posts = await prisma.post.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-  })
-  return NextResponse.json(posts)
+  const { take, skip } = readPagination(new URL(req.url))
+  const key = `post:${take}:${skip}:${searchParams.get("status") ?? ""}:${searchParams.get("kind") ?? ""}`
+
+  const rows = await cached(key, DEFAULT_TTL_MS, () =>
+    prisma.post.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take,
+      skip,
+    })
+  )
+  pruneCache()
+  return cachedJson(rows)
 }
 
 export async function POST(req: Request) {

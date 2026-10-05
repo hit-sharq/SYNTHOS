@@ -29,6 +29,7 @@ const { requireAdmin } = await import("@/lib/api-auth")
 const { prisma } = await import("@/lib/prisma")
 const { PATCH, GET } = await import("../app/api/companies/[id]/route")
 const { GET: PUBLIC_GET } = await import("../app/api/companies/public/route")
+const { clearCache } = await import("@/lib/cache")
 
 function req(body: unknown) {
   return { json: async () => body } as unknown as Request
@@ -116,6 +117,7 @@ describe("PATCH /api/companies/[id]", () => {
 describe("GET /api/companies/public", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    clearCache()
     vi.mocked(prisma.company.count).mockResolvedValue(0 as any)
     vi.mocked(prisma.$transaction).mockImplementation((arg: any) =>
       Array.isArray(arg) ? Promise.all(arg) : Promise.resolve(arg)

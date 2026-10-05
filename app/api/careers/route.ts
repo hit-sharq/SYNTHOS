@@ -4,6 +4,8 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { requireAdmin } from "@/lib/api-auth"
 import { readJson, isJsonError } from "@/lib/request"
+import { readPagination } from "@/lib/pagination"
+import { cached, cachedJson, pruneCache, DEFAULT_TTL_MS } from "@/lib/cache"
 
 export async function GET(req: Request) {
   const adminResult = await requireAdmin()
@@ -15,11 +17,19 @@ export async function GET(req: Request) {
   const where: any = {}
   if (status) where.status = status
 
-  const careers = await prisma.career.findMany({
-    where,
-    orderBy: { createdAt: "desc" },
-  })
-  return NextResponse.json(careers)
+  const { take, skip } = readPagination(new URL(req.url))
+  const key = `career:${take}:${skip}:${searchParams.get("status") ?? ""}:${searchParams.get("kind") ?? ""}`
+
+  const rows = await cached(key, DEFAULT_TTL_MS, () =>
+    prisma.career.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      take,
+      skip,
+    })
+  )
+  pruneCache()
+  return cachedJson(rows)
 }
 
 export async function POST(req: Request) {

@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { Errors } from "@/lib/errors"
-import { readPagination, paginated } from "@/lib/pagination"
+import { readPagination } from "@/lib/pagination"
+import { cached, cachedJson, pruneCache, DEFAULT_TTL_MS } from "@/lib/cache"
 
 export const dynamic = "force-dynamic"
 
@@ -18,7 +19,10 @@ export async function GET(req: Request) {
     const { page, limit, skip, take } = readPagination(new URL(req.url))
     const where = { verified: true, status: "active" }
 
-    const [companies, total] = await prisma.$transaction([
+    const key = `companies-public:${take}:${skip}`
+
+    const [companies, total] = await cached(key, DEFAULT_TTL_MS, () =>
+      prisma.$transaction([
       prisma.company.findMany({
         where,
         orderBy: { createdAt: "desc" },
@@ -41,26 +45,35 @@ export async function GET(req: Request) {
           },
         },
       }),
-      prisma.company.count({ where }),
-    ])
+        prisma.company.count({ where }),
+      ])
+    )
+    pruneCache()
 
-    return paginated(
-      companies.map((c) => ({
-        id: c.id,
-        name: c.name,
-        slug: c.slug,
-        industry: c.industry,
-        location: c.location,
-        website: c.website,
-        description: c.description,
-        logo: c.logo,
-        verified: c.verified,
-        joinedAt: c.joinedAt,
-        openJobs: c.jobs.length,
-      })),
-      total,
-      page,
-      limit
+    return cachedJson(
+      {
+        items: companies.map((c) => ({
+          id: c.id,
+          name: c.name,
+          slug: c.slug,
+          industry: c.industry,
+          location: c.location,
+          website: c.website,
+          description: c.description,
+          logo: c.logo,
+          verified: c.verified,
+          joinedAt: c.joinedAt,
+          openJobs: c.jobs.length,
+        })),
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: limit > 0 ? Math.ceil(total / limit) : 0,
+          hasMore: page * limit < total,
+        },
+      },
+      60
     )
   } catch (error) {
     console.error("Failed to load public companies:", error)
