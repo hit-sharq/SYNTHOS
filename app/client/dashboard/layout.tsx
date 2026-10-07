@@ -3,20 +3,19 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { redirect } from "next/navigation"
-import { getSessionEmail } from "@/lib/auth"
+import { ensureLocalUser } from "@/lib/auth"
 
 export default async function ClientDashboardLayout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const email = await getSessionEmail()
-  if (!email) redirect("/")
+  const local = await ensureLocalUser()
+  if (!local) redirect("/sign-in")
 
-  const user = await prisma.user.findUnique({ where: { email } })
+  const user = await prisma.user.findUnique({ where: { id: local.userId } })
   if (!user) redirect("/")
 
   if (user.role !== Role.client) {
-    // Must stay outside /client, since this layout guards that whole tree.
     redirect("/dashboard/talent")
   }
 

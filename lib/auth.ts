@@ -39,24 +39,29 @@ export async function ensureLocalUser(): Promise<{ userId: string; email: string
     return { userId: existing.id, email: existing.email, isNew: false }
   }
 
-  const clerkUser = await (await import("@clerk/nextjs/server")).auth()
-  const email = clerkUser.userId ? (await prisma.user.findUnique({ where: { clerkId: clerkUser.userId } }))?.email : null
-
-  // Fallback: we can't reliably get email from Clerk server-side without extra calls,
-  // so create a minimal record and let the client fill in details later.
   const name = "New User"
   const initials = "NU"
-  const randomEmail = `user_${userId.slice(0, 8)}@pending.synthos.co.ke`
+  const randomEmail = `user_${userId.slice(0, 8)}_${Date.now().toString(36)}@pending.synthos.co.ke`
 
-  const user = await prisma.user.create({
-    data: {
-      clerkId: userId,
-      email: email || randomEmail,
-      name,
-      initials,
-      role: Role.talent,
-    },
-  })
+  try {
+    const user = await prisma.user.create({
+      data: {
+        clerkId: userId,
+        email: randomEmail,
+        name,
+        initials,
+        role: Role.talent,
+      },
+    })
 
-  return { userId: user.id, email: user.email, isNew: true }
+    return { userId: user.id, email: user.email, isNew: true }
+  } catch (error: any) {
+    if (error.code === "P2002") {
+      const retry = await prisma.user.findUnique({ where: { clerkId: userId } })
+      if (retry) {
+        return { userId: retry.id, email: retry.email, isNew: false }
+      }
+    }
+    throw error
+  }
 }
