@@ -16,13 +16,7 @@ export async function POST(req: Request) {
 
     const normalizedEmail = email.trim().toLowerCase()
 
-    const existingUser = await prisma.user.findFirst({ where: { email: normalizedEmail } })
     const existingCompany = await prisma.company.findFirst({ where: { email: normalizedEmail } })
-
-    if (existingUser) {
-      return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
-    }
-
     if (existingCompany) {
       return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
     }
@@ -30,7 +24,7 @@ export async function POST(req: Request) {
     const company = await prisma.company.create({
       data: {
         name,
-        email,
+        email: normalizedEmail,
         slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
         phone: phone || "",
         website: website || "",
@@ -41,16 +35,24 @@ export async function POST(req: Request) {
       },
     })
 
-    await prisma.user.create({
-      data: {
-        clerkId,
-        email: email.trim().toLowerCase(),
-        name: name.trim(),
-        initials: name.trim().split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase(),
-        role: Role.client,
-        companyId: company.id,
-      },
-    })
+    let user = await prisma.user.findUnique({ where: { clerkId } })
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          clerkId,
+          email: normalizedEmail,
+          name: name.trim(),
+          initials: name.trim().split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase(),
+          role: Role.client,
+          companyId: company.id,
+        },
+      })
+    } else {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { role: Role.client, companyId: company.id },
+      })
+    }
 
     return NextResponse.json({ id: company.id, name: company.name, email: company.email, status: company.status }, { status: 201 })
   } catch (error) {

@@ -17,32 +17,34 @@ export async function POST(req: Request) {
     const normalizedEmail = email.trim().toLowerCase()
 
     const existingUser = await prisma.user.findFirst({ where: { email: normalizedEmail } })
-    const existingCompany = await prisma.company.findFirst({ where: { email: normalizedEmail } })
-
     if (existingUser) {
       return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
     }
 
-    if (existingCompany) {
-      return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
+    let user = await prisma.user.findUnique({ where: { clerkId } })
+    if (!user) {
+      const initials = name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase()
+
+      user = await prisma.user.create({
+        data: {
+          clerkId,
+          email: normalizedEmail,
+          name: name.trim(),
+          initials: initials || "TL",
+          role: Role.client,
+        },
+      })
+    } else {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { role: Role.client },
+      })
     }
-
-    const initials = name
-      .split(" ")
-      .map((n: string) => n[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase()
-
-    const user = await prisma.user.create({
-      data: {
-        clerkId,
-        email: email.trim().toLowerCase(),
-        name: name.trim(),
-        initials: initials || "TL",
-        role: Role.client,
-      },
-    })
 
     return NextResponse.json({ id: user.id, email: user.email, name: user.name, role: user.role }, { status: 201 })
   } catch (error) {

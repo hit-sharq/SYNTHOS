@@ -15,21 +15,24 @@ export async function POST(req: Request) {
     }
 
     const normalizedEmail = email.trim().toLowerCase()
-    const existing = await prisma.user.findFirst({ where: { email: normalizedEmail } })
 
-    if (existing) {
-      return NextResponse.json({ error: Errors.validation.duplicateEntry }, { status: 409 })
+    let user = await prisma.user.findUnique({ where: { clerkId } })
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          clerkId,
+          email: normalizedEmail,
+          name: (name?.trim() || email.split("@")[0]).trim(),
+          initials: initials || "TL",
+          role: Role.talent,
+        },
+      })
     }
 
-    const user = await prisma.user.create({
-      data: {
-        clerkId,
-        email: normalizedEmail,
-        name: (name?.trim() || email.split("@")[0]).trim(),
-        initials: initials || "TL",
-        role: Role.talent,
-      },
-    })
+    const existingTalent = await prisma.talent.findUnique({ where: { userId: user.id } })
+    if (existingTalent) {
+      return NextResponse.json({ userId: user.id, talentId: existingTalent.id }, { status: 200 })
+    }
 
     const talent = await prisma.talent.create({
       data: {
