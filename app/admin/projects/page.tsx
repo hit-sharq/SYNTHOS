@@ -56,7 +56,7 @@ export default function AdminProjectsPage() {
         throw new Error(data.error || "Failed to load projects")
       }
       const data = await res.json()
-      setProjects(data)
+      setProjects(data.projects || [])
     } catch (e) {
       setActionError(e instanceof Error ? e.message : "Something went wrong")
     } finally {
