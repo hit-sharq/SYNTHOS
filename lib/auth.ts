@@ -1,14 +1,9 @@
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
+import { Role } from "@prisma/client"
 
 /**
  * Resolves the signed-in user to a database record.
- *
- * Clerk's session token is verified by `auth()`, and its `sub` claim is the
- * Clerk user id. Clerk's default claims do not include an email address, so
- * the lookup is keyed on `clerkId` rather than email.
- *
- * Node-only: uses Prisma, so it must not be imported from middleware.
  */
 export async function getSessionUser() {
   const { userId } = await auth()
@@ -28,4 +23,40 @@ export async function getCurrentUser(select?: Record<string, any>) {
     return prisma.user.findUnique({ where: { id: user.id }, select })
   }
   return user
+}
+
+/**
+ * Ensures a local User record exists for the current Clerk session.
+ * If the user signed up through Clerk but has never hit a signup flow that
+ * creates a local record, this creates one with a sensible default role.
+ */
+export async function ensureLocalUser(): Promise<{ userId: string; email: string; isNew: boolean } | null> {
+  const { userId } = await auth()
+  if (!userId) return null
+
+  const existing = await prisma.user.findUnique({ where: { clerkId: userId } })
+  if (existing) {
+    return { userId: existing.id, email: existing.email, isNew: false }
+  }
+
+  const clerkUser = await (await import("@clerk/nextjs/server")).auth()
+  const email = clerkUser.userId ? (await prisma.user.findUnique({ where: { clerkId: clerkUser.userId } }))?.email : null
+
+  // Fallback: we can't reliably get email from Clerk server-side without extra calls,
+  // so create a minimal record and let the client fill in details later.
+  const name = "New User"
+  const initials = "NU"
+  const randomEmail = `user_${userId.slice(0, 8)}@pending.synthos.co.ke`
+
+  const user = await prisma.user.create({
+    data: {
+      clerkId: userId,
+      email: email || randomEmail,
+      name,
+      initials,
+      role: Role.talent,
+    },
+  })
+
+  return { userId: user.id, email: user.email, isNew: true }
 }

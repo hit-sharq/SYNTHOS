@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 import { Role } from "@prisma/client"
 import { redirect } from "next/navigation"
-import { getSessionEmail } from "@/lib/auth"
+import { ensureLocalUser } from "@/lib/auth"
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { userId } = await auth()
@@ -14,12 +14,12 @@ export default async function DashboardLayout({ children }: { children: React.Re
     return <DashboardShell role="admin">{children}</DashboardShell>
   }
 
-  const email = await getSessionEmail()
-  if (!email) redirect("/")
+  const local = await ensureLocalUser()
+  if (!local) redirect("/sign-in")
 
-  let user = await prisma.user.findUnique({ where: { email } })
+  let user = await prisma.user.findUnique({ where: { id: local.userId } })
   if (!user) {
-    const name = email.split("@")[0]
+    const name = local.email.split("@")[0]
     const initials = name
       .split(" ")
       .map((n) => n[0])
@@ -29,7 +29,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
     user = await prisma.user.create({
       data: {
-        email,
+        clerkId: userId,
+        email: local.email,
         name,
         initials,
         role: Role.talent,
@@ -54,9 +55,6 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   if (user.role === Role.client) {
-    // A user linked to a company is an employer, so they belong on the
-    // company dashboard (jobs and applications). Only project-track clients
-    // without a company go to the client dashboard.
     redirect(user.companyId ? "/company/dashboard" : "/client/dashboard")
   }
 

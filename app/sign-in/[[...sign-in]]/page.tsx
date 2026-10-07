@@ -18,7 +18,7 @@ export default function SignInPage() {
               footerActionLink: "text-[var(--signal)]",
             }
           }}
-          redirectUrl="/admin/workflow/overview"
+          redirectUrl="/dashboard"
           signUpUrl="/sign-up"
         />
       </div>
