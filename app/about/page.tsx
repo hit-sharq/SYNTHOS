@@ -56,6 +56,7 @@ export default function AboutPage() {
             <Link href="/terms">Terms</Link>
             <Link href="/privacy">Privacy</Link>
             <Link href="/contact">Contact</Link>
+            <Link href="/vue-demo">Vue.js Demo</Link>
           </div>
         </div>
       </div>
